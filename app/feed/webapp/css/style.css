@@ -1,0 +1,83 @@
+.aymaxProfileCard {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.aymaxPostCreator {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.aymaxPostCard {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  margin-bottom: 16px;
+}
+
+.aymaxPostContent {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1f2937;
+}
+
+.aymaxTag {
+  background: #eff6ff !important;
+  color: #1e3a8a !important;
+  border: 1px solid #dbeafe !important;
+  border-radius: 16px !important;
+  font-size: 12px !important;
+  margin-right: 6px;
+  margin-bottom: 4px;
+}
+
+.aymaxTrendTag {
+  background: #f3f4f6 !important;
+  color: #4b5563 !important;
+  border: none !important;
+  border-radius: 16px !important;
+  font-size: 11px !important;
+  margin: 2px;
+  padding: 4px 10px;
+}
+
+.aymaxMetaText {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.aymaxPostActions {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 8px;
+}
+
+.aymaxCommentsSection {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.aymaxCommentAuthor {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.aymaxSidePanel {
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+/* Header */
+#feedPage .sapFDynamicPageTitle {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Layout responsive */
+@media (max-width: 1200px) {
+  #mainLayout {
+    flex-direction: column !important;
+  }
+}
