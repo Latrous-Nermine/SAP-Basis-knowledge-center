@@ -1,0 +1,8 @@
+userID,email,displayName,department,jobTitle,reputation,badgesCount,isActive
+sami,sami.benyoussef@aymax.tn,Sami Ben Youssef,SAP Basis,Consultant SAP BTP,1200,4,true
+nadia,nadia.ferchichi@aymax.tn,Nadia Ferchichi,SAP Technical,Consultante SAP HANA,2140,9,true
+karim,karim.trabelsi@aymax.tn,Karim Trabelsi,SAP Technical,Developpeur Cloud Foundry,1875,7,true
+manon,manon.jelassi@aymax.tn,Manon Jelassi,SAP Basis,Department Manager,980,3,true
+yasmine,yasmine.gharbi@aymax.tn,Yasmine Gharbi,SAP Basis,Stagiaire,120,1,true
+rania,rania.hammami@aymax.tn,Rania Hammami,RH,Responsable RH,0,0,true
+admin,admin@aymax.tn,Administrateur Plateforme,IT,Administrateur,0,0,true
