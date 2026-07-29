@@ -14,7 +14,7 @@ fail() { echo "  ❌ $1"; }
 
 echo
 echo "── 1. admin emits a COMMENT notification for sami ──────────"
-EMIT=$(curl -s -u admin: -X POST "$BASE/emit" \
+EMIT=$(curl -s -u admin: -X POST "$BASE/raise" \
   -H "Content-Type: application/json" \
   -d '{
         "recipientID": "sami",
@@ -28,7 +28,7 @@ echo "$EMIT" | grep -q '"value"' && pass "emit returned an ID" || fail "emit fai
 
 echo
 echo "── 2. and a SECURITY_EVENT (should come back CRITICAL) ─────"
-curl -s -u admin: -X POST "$BASE/emit" \
+curl -s -u admin: -X POST "$BASE/raise" \
   -H "Content-Type: application/json" \
   -d '{"recipientID":"sami","type":"SECURITY_EVENT","sourceType":"SYSTEM",
        "params":"{\"detail\":\"Acces sensible detecte\"}"}'
@@ -54,7 +54,7 @@ echo
 
 echo
 echo "── 6. validation: an unknown type must be rejected (400) ───"
-BAD=$(curl -s -u admin: -X POST "$BASE/emit" \
+BAD=$(curl -s -u admin: -X POST "$BASE/raise" \
   -H "Content-Type: application/json" \
   -d '{"recipientID":"sami","type":"NOT_A_REAL_TYPE"}')
 echo "$BAD"
