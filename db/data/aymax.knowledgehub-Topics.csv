@@ -1,0 +1,4 @@
+ID,name,description,department,articleCount,questionCount
+6b2c0001-0000-4000-8000-000000000001,SAP BTP,"Cloud Foundry, CAP, HANA, Build Apps, Workflow",SAP Technical,4,2
+6b2c0001-0000-4000-8000-000000000002,Solutions SAP,"Fiori, reporting et solutions métier SAP",SAP Basis,1,0
+6b2c0001-0000-4000-8000-000000000003,Développement Digital,"Portails clients, CI/CD, architecture applicative",SAP Technical,2,0

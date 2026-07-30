@@ -1,0 +1,5 @@
+ID,item_ID,fileName,fileUrl,fileType,fileSize
+ae6f0001-0000-4000-8000-000000000001,7c3d0001-0000-4000-8000-000000000001,Guide-Authentification-JWT-OAuth2.pdf,https://example.com/docs/guide-jwt-oauth2.pdf,pdf,1258291
+ae6f0001-0000-4000-8000-000000000002,7c3d0001-0000-4000-8000-000000000002,Guide-Parametrage-CDS-HANA-Cloud.pdf,https://example.com/docs/guide-cds-hana-cloud.pdf,pdf,3250585
+ae6f0001-0000-4000-8000-000000000003,7c3d0001-0000-4000-8000-000000000005,Gabarit-Fiori-Elements-Reporting.pptx,https://example.com/docs/gabarit-fiori-reporting.pptx,pptx,5347737
+ae6f0001-0000-4000-8000-000000000004,7c3d0001-0000-4000-8000-000000000006,Bilan-Performance-HANA-Cloud-T2-2026.pdf,https://example.com/docs/bilan-perf-hana-cloud.pdf,pdf,2936012
