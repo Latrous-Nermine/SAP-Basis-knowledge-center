@@ -1,83 +1,139 @@
-.aymaxProfileCard {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+/* ===== HEADER COMMUN ===== */
+.aymaxHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--aymax-surface);
+  border-bottom: 1px solid var(--aymax-border);
+  padding: 8px 24px;
+  height: 56px;
+  backdrop-filter: blur(8px);
 }
 
-.aymaxPostCreator {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+.aymaxLogo {
+  margin-right: 16px;
+}
+
+.aymaxLogoSub {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aymax-primary);
+}
+
+/* ===== PAGE CONTAINER ===== */
+.aymaxPage {
+  background: var(--aymax-bg);
+}
+
+/* ===== NAVBAR MENU BUTTON ===== */
+.aymaxHeader .sapMBtnTransparent {
+  color: var(--aymax-text);
+  font-weight: 500;
+}
+
+/* ===== TRANSITIONS FLUIDES ===== */
+.sapMNavItem.sapMNavItemHidden {
+  display: none;
+}
+
+.sapMNavItem.sapMNavItemSliding {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== CARDS ===== */
+.aymaxCard {
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md);
+  border: 1px solid var(--aymax-border);
+  box-shadow: var(--aymax-shadow-sm);
 }
 
 .aymaxPostCard {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md);
+  border: 1px solid var(--aymax-border);
+  box-shadow: var(--aymax-shadow-sm);
   margin-bottom: 16px;
 }
 
-.aymaxPostContent {
-  font-size: 14px;
-  line-height: 1.5;
-  color: #1f2937;
+.aymaxRoomCard {
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md);
+  border: 1px solid var(--aymax-border);
+  box-shadow: var(--aymax-shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
 }
 
+.aymaxRoomCard:hover {
+  box-shadow: var(--aymax-shadow-md);
+  transform: translateY(-1px);
+}
+
+/* ===== TAGS ===== */
 .aymaxTag {
-  background: #eff6ff !important;
-  color: #1e3a8a !important;
-  border: 1px solid #dbeafe !important;
-  border-radius: 16px !important;
+  background: color-mix(in srgb, var(--aymax-primary) 10%, transparent) !important;
+  color: var(--aymax-primary) !important;
+  border: 1px solid color-mix(in srgb, var(--aymax-primary) 25%, transparent) !important;
+  border-radius: 999px !important;
   font-size: 12px !important;
   margin-right: 6px;
   margin-bottom: 4px;
 }
 
+.aymaxTagAccent {
+  background: color-mix(in srgb, var(--aymax-accent) 10%, transparent) !important;
+  color: var(--aymax-accent) !important;
+  border: 1px solid color-mix(in srgb, var(--aymax-accent) 25%, transparent) !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 600;
+  padding: 2px 10px;
+}
+
 .aymaxTrendTag {
-  background: #f3f4f6 !important;
-  color: #4b5563 !important;
+  background: var(--aymax-neutral-100) !important;
+  color: var(--aymax-neutral-600) !important;
   border: none !important;
-  border-radius: 16px !important;
+  border-radius: 999px !important;
   font-size: 11px !important;
   margin: 2px;
   padding: 4px 10px;
 }
 
-.aymaxMetaText {
-  color: #6b7280;
+/* ===== META TEXT ===== */
+.aymaxMeta {
+  color: var(--aymax-text-muted);
   font-size: 12px;
 }
 
+/* ===== POST ACTIONS ===== */
 .aymaxPostActions {
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid var(--aymax-border-subtle);
   padding-top: 8px;
 }
 
-.aymaxCommentsSection {
-  background: #f9fafb;
-  border-radius: 8px;
-  padding: 12px;
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-.aymaxCommentAuthor {
-  font-weight: 600;
-  font-size: 13px;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.aymaxSidePanel {
-  background: #ffffff;
-  border-radius: 12px;
+::-webkit-scrollbar-thumb {
+  background: var(--aymax-neutral-300);
+  border-radius: 3px;
 }
 
-/* Header */
-#feedPage .sapFDynamicPageTitle {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-/* Layout responsive */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
   #mainLayout {
     flex-direction: column !important;
+  }
+  #mainLayout > div {
+    width: 100% !important;
+    margin-right: 0 !important;
   }
 }

@@ -1,0 +1,63 @@
+<mvc:View
+  controllerName="aymax.feed.controller.Rooms"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding">
+        <HBox class="sapUiMediumMarginBottom" alignItems="Center" justifyContent="SpaceBetween">
+          <Title text="Rooms" titleStyle="H3"/>
+          <Button icon="sap-icon://add" text="Créer une room" type="Emphasized" press=".onCreateRoom"/>
+        </HBox>
+
+        <HBox class="sapUiMediumMarginBottom">
+          <SegmentedButton selectedKey="{view>/roomFilter}" selectionChange=".onFilterChange">
+            <items>
+              <SegmentedButtonItem text="Toutes" key="all"/>
+              <SegmentedButtonItem text="Publiques" key="public"/>
+              <SegmentedButtonItem text="Privées" key="private"/>
+              <SegmentedButtonItem text="Stage" key="stage"/>
+              <SegmentedButtonItem text="Mes rooms" key="myrooms"/>
+            </items>
+          </SegmentedButton>
+        </HBox>
+
+        <List id="roomsList"
+              items="{path:'/Rooms', templateShareable:'false'}"
+              growing="true"
+              growingThreshold="12">
+          <CustomListItem>
+            <HBox class="aymaxRoomCard sapUiMediumMargin" alignItems="Start">
+              <Avatar
+                src="{parts:[{path:'avatarUrl'},{path:'name'}], formatter:'.formatAvatar'}"
+                displaySize="L"
+                class="sapUiMediumMarginEnd"/>
+              <VBox width="100%">
+                <HBox justifyContent="SpaceBetween" alignItems="Center">
+                  <VBox>
+                    <Title text="{name}" level="H4"/>
+                    <Text text="{description}" class="aymaxMeta sapUiTinyMarginTop" maxLines="2"/>
+                  </VBox>
+                  <HBox>
+                    <Token text="{category}" class="aymaxTagAccent"/>
+                    <Button icon="sap-icon://arrow-right" type="Transparent" press=".onRoomPress" tooltip="Entrer"/>
+                  </HBox>
+                </HBox>
+                <HBox class="sapUiSmallMarginTop" alignItems="Center">
+                  <Text text="{memberCount} membres" class="aymaxMeta"/>
+                  <Text text=" · " class="aymaxMeta sapUiTinyMarginBeginEnd"/>
+                  <Text text="{postCount} publications" class="aymaxMeta"/>
+                  <ToolbarSpacer/>
+                  <Button text="Rejoindre" type="Emphasized" press=".onJoinRoom" visible="{= !${isFollowed}}"/>
+                  <Button text="Quitter" type="Transparent" press=".onLeaveRoom" visible="{isFollowed}"/>
+                </HBox>
+              </VBox>
+            </HBox>
+          </CustomListItem>
+        </List>
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

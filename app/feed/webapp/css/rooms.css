@@ -1,0 +1,37 @@
+/* Rooms */
+.aymaxRoomCard {
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md);
+  border: 1px solid var(--aymax-border);
+  box-shadow: var(--aymax-shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.aymaxRoomCard:hover {
+  box-shadow: var(--aymax-shadow-md);
+  transform: translateY(-1px);
+}
+
+.aymaxMemberRow {
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md);
+  border: 1px solid var(--aymax-border);
+}
+
+/* Room Detail Tabs */
+.sapMITBContent {
+  background: transparent !important;
+  border-bottom: none !important;
+}
+
+.sapMITBHead {
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md) var(--aymax-radius-md) 0 0;
+  border: 1px solid var(--aymax-border);
+  border-bottom: none;
+  padding: 0 8px;
+}
+
+.sapMITBSelected {
+  border-bottom: 2px solid var(--aymax-primary) !important;
+}

@@ -1,248 +1,130 @@
-<mvc:View
-  controllerName="aymax.feed.controller.Feed"
-  xmlns:mvc="sap.ui.core.mvc"
-  xmlns="sap.m"
-  xmlns:f="sap.f"
-  xmlns:layout="sap.ui.layout"
-  xmlns:core="sap.ui.core"
-  displayBlock="true">
-
-  <f:DynamicPage id="feedPage" headerExpanded="true">
-    
-    <!-- ===== HEADER ===== -->
-    <f:title>
-      <f:DynamicPageTitle>
-        <f:heading>
-          <HBox alignItems="Center">
-            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
-            <MenuButton text="Fil d'actualité" type="Transparent">
-              <menu>
-                <Menu>
-                  <MenuItem text="Tableau de bord"/>
-                  <MenuItem text="Questions"/>
-                  <MenuItem text="Centre de connaissances"/>
-                  <MenuItem text="Rooms"/>
-                  <MenuItem text="Experts"/>
-                  <MenuItem text="Profil"/>
-                </Menu>
-              </menu>
-            </MenuButton>
-          </HBox>
-        </f:heading>
-        <f:actions>
-          <SearchField width="320px" placeholder="Rechercher..." search=".onSearch"/>
-          <Button icon="sap-icon://bell" type="Transparent"/>
-          <Avatar src="{view>/currentUser/avatarUrl}" displaySize="S"/>
-        </f:actions>
-      </f:DynamicPageTitle>
-    </f:title>
-
-    <!-- ===== CONTENU 3 COLONNES ===== -->
-    <f:content>
-      <layout:HorizontalLayout id="mainLayout" allowWrapping="false" class="sapUiContentPadding">
-        
-        <!-- ===== COLONNE GAUCHE ===== -->
-        <layout:VerticalLayout width="280px" class="sapUiMediumMarginEnd">
-          
-          <Panel class="aymaxProfileCard">
-            <VBox alignItems="Center" class="sapUiMediumMarginBottom">
-              <Avatar 
-                src="{view>/currentUser/avatarUrl}" 
-                displaySize="XL" 
-                class="sapUiMediumMarginBottom"/>
-              <Title text="{view>/currentUser/displayName}" level="H3"/>
-              <Text text="{view>/currentUser/jobTitle} · {view>/currentUser/department}"/>
-              <HBox class="sapUiMediumMarginTop">
-                <VBox alignItems="Center" width="80px">
-                  <Title text="{view>/currentUser/reputation}" level="H2"/>
-                  <Text text="Réputation"/>
-                </VBox>
-                <VBox alignItems="Center" width="80px">
-                  <Title text="{view>/currentUser/badgesCount}" level="H2"/>
-                  <Text text="Badges"/>
-                </VBox>
-              </HBox>
-            </VBox>
-          </Panel>
-
-          <Panel headerText="Raccourcis" class="sapUiMediumMarginTop">
-            <List showSeparators="None">
-              <StandardListItem title="Mes publications" type="Navigation" icon="sap-icon://document-text"/>
-              <StandardListItem title="Mes questions" type="Navigation" icon="sap-icon://question-mark"/>
-              <StandardListItem title="Rooms favoris" type="Navigation" icon="sap-icon://favorite"/>
-              <StandardListItem title="Contenus sauvegardés" type="Navigation" icon="sap-icon://save"/>
-            </List>
-          </Panel>
-
-          <Panel headerText="Sujets suivis" class="sapUiMediumMarginTop">
-            <List items="{/Rooms}" showSeparators="None">
-              <StandardListItem title="{name}" info="{followersCount}" infoState="Success" type="Active"/>
-            </List>
-          </Panel>
-        </layout:VerticalLayout>
-
-        <!-- ===== COLONNE CENTRALE ===== -->
-        <layout:VerticalLayout width="640px" class="sapUiMediumMarginEnd">
-          
-          <!-- Champ de publication -->
-          <Panel class="aymaxPostCreator">
-            <HBox alignItems="Start">
-              <Avatar src="{view>/currentUser/avatarUrl}" displaySize="S" class="sapUiSmallMarginEnd"/>
-              <VBox width="100%">
-                <TextArea 
-                  value="{view>/postText}" 
-                  placeholder="Partagez une connaissance..." 
-                  growing="true" 
-                  growingMaxLines="4"
-                  width="100%"/>
-                <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
-                  <HBox>
-                    <Button icon="sap-icon://attachment" type="Transparent"/>
-                    <Button icon="sap-icon://tag" type="Transparent"/>
-                  </HBox>
-                  <Button text="Publier" type="Emphasized" press=".onPublishPost" enabled="{= ${view>/postText}.length > 0 }"/>
-                </HBox>
-              </VBox>
-            </HBox>
-          </Panel>
-
-          <!-- Filtres -->
-          <OverflowToolbar class="sapUiMediumMarginTopBottom">
-            <SegmentedButton selectedKey="{view>/selectedFilter}" selectionChange=".onFilterChange">
-              <items>
-                <SegmentedButtonItem text="Tout" key="all"/>
-                <SegmentedButtonItem text="Abonnements" key="subscriptions"/>
-                <SegmentedButtonItem text="Mon département" key="department"/>
-                <SegmentedButtonItem text="Mes rooms" key="rooms"/>
-              </items>
-            </SegmentedButton>
-          </OverflowToolbar>
-
-          <!-- Liste des Posts -->
-          <List 
-            id="feedList" 
-            items="{path:'/Posts', parameters:{$expand:'author,tags,comments,documents'}}"
-            growing="true" 
-            growingThreshold="10"
-            busyIndicatorDelay="0">
-            <CustomListItem>
-              <VBox class="aymaxPostCard sapUiMediumMargin">
-                
-                <!-- Header Post -->
-                <HBox alignItems="Center" class="sapUiSmallMarginBottom">
-                  <Avatar src="{author/avatarUrl}" displaySize="S" class="sapUiSmallMarginEnd"/>
-                  <VBox>
-                    <HBox>
-                      <Title text="{author/displayName}" level="H5"/>
-                      <Text text="{author/jobTitle}" class="sapUiTinyMarginBegin"/>
-                    </HBox>
-                    <Text text="{path:'createdAt', formatter:'.formatDate'}" class="aymaxMetaText"/>
-                  </VBox>
-                  <ToolbarSpacer/>
-                  <Button icon="sap-icon://overflow" type="Transparent"/>
-                </HBox>
-
-                <!-- Contenu -->
-                <Text text="{content}" class="sapUiSmallMarginBottom aymaxPostContent" wrapping="true"/>
-
-                <!-- Tags -->
-                <HBox wrap="Wrap" visible="{= ${tags}.length > 0}" class="sapUiTinyMarginBottom">
-                  <Tokenizer tokens="{path:'tags', templateShareable:'false'}">
-                    <Token text="{tag/name}" class="aymaxTag"/>
-                  </Tokenizer>
-                </HBox>
-
-                <!-- Documents joints -->
-                <List items="{path:'documents', templateShareable:'false'}" visible="{= ${documents}.length > 0}" showSeparators="None" class="sapUiTinyMarginBottom">
-                  <StandardListItem 
-                    title="{fileName}" 
-                    description="{path:'fileSize', formatter:'.formatFileSize'}"
-                    icon="{path:'fileType', formatter:'.formatFileIcon'}"
-                    type="Active"/>
-                </List>
-
-                <!-- Actions -->
-                <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxPostActions">
-                  <HBox>
-                    <ToggleButton 
-                      text="{likeCount}" 
-                      icon="sap-icon://thumb-up" 
-                      pressed="{isLikedByMe}"
-                      press=".onLikePress"/>
-                    <Button text="{commentCount}" icon="sap-icon://comment" type="Transparent"/>
-                    <Button text="{shareCount}" icon="sap-icon://share-2" type="Transparent" press=".onShare"/>
-                  </HBox>
-                  <Button text="Partager" type="Transparent"/>
-                </HBox>
-
-                <!-- Commentaires -->
-                <VBox visible="{= ${commentCount} > 0}" class="aymaxCommentsSection sapUiSmallMarginTop">
-                  <List items="{path:'comments', templateShareable:'false'}" showSeparators="None" class="sapUiNoContentPadding">
-                    <CustomListItem>
-                      <HBox class="sapUiTinyMarginTop">
-                        <Avatar src="{author/avatarUrl}" displaySize="XS" class="sapUiTinyMarginEnd"/>
-                        <VBox>
-                          <HBox>
-                            <Text text="{author/displayName}" class="aymaxCommentAuthor"/>
-                            <Text text="{path:'createdAt', formatter:'.formatDate'}" class="aymaxMetaText sapUiTinyMarginBegin"/>
-                          </HBox>
-                          <Text text="{content}" wrapping="true"/>
-                        </VBox>
-                      </HBox>
-                    </CustomListItem>
-                  </List>
-                  
-                  <HBox class="sapUiSmallMarginTop" alignItems="Center">
-                    <Avatar src="{view>/currentUser/avatarUrl}" displaySize="XS" class="sapUiTinyMarginEnd"/>
-                    <Input 
-                      placeholder="Ajouter un commentaire..." 
-                      submit=".onAddComment"
-                      width="100%"/>
-                  </HBox>
-                </VBox>
-
-              </VBox>
-            </CustomListItem>
-          </List>
-        </layout:VerticalLayout>
-
-        <!-- ===== COLONNE DROITE ===== -->
-        <layout:VerticalLayout width="260px">
-          
-          <Panel headerText="Experts à découvrir" class="aymaxSidePanel">
-            <List items="{/UserProfiles}" showSeparators="None">
-              <CustomListItem>
-                <HBox alignItems="Center" class="sapUiTinyMarginBottom">
-                  <Avatar src="{avatarUrl}" displaySize="S" class="sapUiTinyMarginEnd"/>
-                  <VBox>
-                    <Title text="{displayName}" level="H6"/>
-                    <Text text="{jobTitle}" class="aymaxMetaText"/>
-                  </VBox>
-                  <ToolbarSpacer/>
-                  <Button text="Suivre" type="Transparent"/>
-                </HBox>
-              </CustomListItem>
-            </List>
-          </Panel>
-
-          <Panel headerText="Tags tendance" class="sapUiMediumMarginTop aymaxSidePanel">
-            <HBox wrap="Wrap">
-              <Token text="Java" class="aymaxTrendTag"/>
-              <Token text="Spring Boot" class="aymaxTrendTag"/>
-              <Token text="SAP BTP" class="aymaxTrendTag"/>
-              <Token text="Angular" class="aymaxTrendTag"/>
-              <Token text="Docker" class="aymaxTrendTag"/>
-              <Token text="OAuth" class="aymaxTrendTag"/>
-              <Token text="JWT" class="aymaxTrendTag"/>
-              <Token text="CI/CD" class="aymaxTrendTag"/>
-              <Token text="CAP" class="aymaxTrendTag"/>
-              <Token text="HANA" class="aymaxTrendTag"/>
-            </HBox>
-          </Panel>
-
-        </layout:VerticalLayout>
-
-      </layout:HorizontalLayout>
-    </f:content>
-  </f:DynamicPage>
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout" controllerName="aymax.feed.controller.Feed" displayBlock="true">
+<Page showHeader="false" class="aymaxPage">
+<content>
+<layout:HorizontalLayout id="mainLayout" allowWrapping="false" class="sapUiContentPadding">
+<layout:VerticalLayout width="280px" class="sapUiMediumMarginEnd">
+<Panel class="aymaxCard">
+<VBox alignItems="Center" class="sapUiMediumMarginBottom">
+<Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" displaySize="XL" class="sapUiMediumMarginBottom"/>
+<Title text="{view>/currentUser/displayName}" level="H3"/>
+<Text text="{view>/currentUser/jobTitle} · {view>/currentUser/department}"/>
+<HBox class="sapUiMediumMarginTop">
+<VBox alignItems="Center" width="80px">
+<Title text="{view>/currentUser/reputation}" level="H2"/>
+<Text text="Réputation"/>
+</VBox>
+<VBox alignItems="Center" width="80px">
+<Title text="{view>/currentUser/badgesCount}" level="H2"/>
+<Text text="Badges"/>
+</VBox>
+</HBox>
+</VBox>
+</Panel>
+<Panel headerText="Raccourcis" class="sapUiMediumMarginTop aymaxCard">
+<List showSeparators="None">
+<StandardListItem title="Mes publications" type="Navigation" icon="sap-icon://document-text"/>
+<StandardListItem title="Mes questions" type="Navigation" icon="sap-icon://question-mark"/>
+<StandardListItem title="Rooms favoris" type="Navigation" icon="sap-icon://favorite" press=".onNavToRooms"/>
+<StandardListItem title="Contenus sauvegardés" type="Navigation" icon="sap-icon://save"/>
+</List>
+</Panel>
+<Panel headerText="Sujets suivis" class="sapUiMediumMarginTop aymaxCard">
+<List items="{/Rooms}" showSeparators="None">
+<StandardListItem title="{name}" info="{memberCount}" infoState="Success" type="Active" press=".onRoomPress"/>
+</List>
+</Panel>
+</layout:VerticalLayout>
+<layout:VerticalLayout width="640px" class="sapUiMediumMarginEnd">
+<Panel class="aymaxCard">
+<HBox alignItems="Start">
+<Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" displaySize="S" class="sapUiSmallMarginEnd"/>
+<VBox width="100%">
+<TextArea value="{view>/postText}" placeholder="Partagez une connaissance, posez une question, publiez une annonce..." growing="true" growingMaxLines="4" width="100%"/>
+<HBox justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
+<HBox>
+<Button icon="sap-icon://attachment" type="Transparent"/>
+<Button icon="sap-icon://tag" type="Transparent"/>
+</HBox>
+<Button text="Publier" type="Emphasized" press=".onPublishPost"/>
+</HBox>
+</VBox>
+</HBox>
+</Panel>
+<OverflowToolbar class="sapUiMediumMarginTopBottom">
+<SegmentedButton selectedKey="{view>/selectedFilter}" selectionChange=".onFilterChange">
+<items>
+<SegmentedButtonItem text="Tout" key="all"/>
+<SegmentedButtonItem text="Abonnements" key="subscriptions"/>
+<SegmentedButtonItem text="Mon département" key="department"/>
+<SegmentedButtonItem text="Mes rooms" key="rooms"/>
+</items>
+</SegmentedButton>
+</OverflowToolbar>
+<List id="feedList" items="{path:'/Posts', parameters:{$expand:'author,tags,comments,documents'}}" growing="true" growingThreshold="10">
+<CustomListItem>
+<VBox class="aymaxPostCard sapUiMediumMargin">
+<HBox alignItems="Center" class="sapUiSmallMarginBottom">
+<Avatar src="{parts:[{path:'author/avatarUrl'},{path:'author/displayName'}], formatter:'.formatAvatar'}" displaySize="S" class="sapUiSmallMarginEnd"/>
+<VBox>
+<Title text="{author/displayName}" level="H5"/>
+<Text text="{author/jobTitle}" class="sapUiTinyMarginBegin"/>
+<Text text="{path:'createdAt', formatter:'.formatDate'}" class="aymaxMeta"/>
+</VBox>
+<ToolbarSpacer/>
+<Button icon="sap-icon://overflow" type="Transparent"/>
+</HBox>
+<Text text="{content}" class="sapUiSmallMarginBottom" wrapping="true"/>
+<HBox wrap="Wrap" visible="{= ${tags}.length > 0}" class="sapUiTinyMarginBottom">
+<Tokenizer tokens="{path:'tags', templateShareable:'false'}">
+<Token text="{tag/name}" class="aymaxTag"/>
+</Tokenizer>
+</HBox>
+<List items="{path:'documents', templateShareable:'false'}" visible="{= ${documents}.length > 0}" showSeparators="None" class="sapUiTinyMarginBottom">
+<StandardListItem title="{fileName}" description="{path:'fileSize', formatter:'.formatFileSize'}" icon="{path:'fileType', formatter:'.formatFileIcon'}" type="Active"/>
+</List>
+<HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxPostActions">
+<HBox>
+<ToggleButton text="{likeCount}" icon="sap-icon://thumb-up" pressed="{isLikedByMe}" press=".onLikePress"/>
+<Button text="{commentCount}" icon="sap-icon://comment" type="Transparent"/>
+<Button text="{shareCount}" icon="sap-icon://share-2" type="Transparent" press=".onShare"/>
+</HBox>
+</HBox>
+</VBox>
+</CustomListItem>
+</List>
+</layout:VerticalLayout>
+<layout:VerticalLayout width="260px">
+<Panel headerText="Experts à découvrir" class="aymaxCard">
+<List items="{/UserProfiles}" showSeparators="None">
+<CustomListItem>
+<HBox alignItems="Center" class="sapUiTinyMarginBottom">
+<Avatar src="{parts:[{path:'avatarUrl'},{path:'displayName'}], formatter:'.formatAvatar'}" displaySize="S" class="sapUiTinyMarginEnd"/>
+<VBox>
+<Title text="{displayName}" level="H6"/>
+<Text text="{jobTitle}" class="aymaxMeta"/>
+</VBox>
+<ToolbarSpacer/>
+<Button text="Suivre" type="Transparent"/>
+</HBox>
+</CustomListItem>
+</List>
+</Panel>
+<Panel headerText="Tags tendance" class="sapUiMediumMarginTop aymaxCard">
+<HBox wrap="Wrap">
+<Token text="Java" class="aymaxTrendTag"/>
+<Token text="Spring Boot" class="aymaxTrendTag"/>
+<Token text="SAP BTP" class="aymaxTrendTag"/>
+<Token text="Angular" class="aymaxTrendTag"/>
+<Token text="Docker" class="aymaxTrendTag"/>
+<Token text="OAuth" class="aymaxTrendTag"/>
+<Token text="JWT" class="aymaxTrendTag"/>
+<Token text="CI/CD" class="aymaxTrendTag"/>
+<Token text="CAP" class="aymaxTrendTag"/>
+<Token text="HANA" class="aymaxTrendTag"/>
+</HBox>
+</Panel>
+</layout:VerticalLayout>
+</layout:HorizontalLayout>
+</content>
+</Page>
 </mvc:View>
