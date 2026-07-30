@@ -1,0 +1,13 @@
+{
+  "name": "aymax.validation",
+  "version": "0.0.1",
+  "private": true,
+  "description": "AYMAX Knowledge Hub — Validation",
+  "keywords": [],
+  "main": "webapp/index.html",
+  "scripts": {
+    "start": "fiori run --open 'index.html'"
+  },
+  "devDependencies": {},
+  "sapux": true
+}

@@ -1,0 +1,160 @@
+<mvc:View
+  controllerName="aymax.certifications.controller.Certifications"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <f:DynamicPage id="certsPage" headerExpanded="true">
+
+    <!-- ===== HEADER ===== -->
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:heading>
+          <HBox alignItems="Center">
+            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
+            <MenuButton text="Certifications" type="Transparent">
+              <menu>
+                <Menu xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+                  <MenuItem text="Tableau de bord" press=".onNavToApp" customData:targetApp="dashboard"/>
+                  <MenuItem text="Fil d'actualité" press=".onNavToApp" customData:targetApp="feed"/>
+                  <MenuItem text="Questions" press=".onNavToApp" customData:targetApp="questions"/>
+                  <MenuItem text="Centre de connaissances" press=".onNavToApp" customData:targetApp="knowledge"/>
+                  <MenuItem text="Rooms" press=".onNavToApp" customData:targetApp="rooms"/>
+                  <MenuItem text="Experts" press=".onNavToApp" customData:targetApp="experts"/>
+                  <MenuItem text="Profil" press=".onNavToApp" customData:targetApp="profile"/>
+                </Menu>
+              </menu>
+            </MenuButton>
+          </HBox>
+        </f:heading>
+        <f:actions>
+          <SearchField width="280px" placeholder="Rechercher une certification..." class="aymaxSearchField"/>
+          <Button icon="sap-icon://bell" type="Transparent"/>
+          <Avatar initials="SB" displaySize="S" class="aymaxAvatar"/>
+        </f:actions>
+      </f:DynamicPageTitle>
+    </f:title>
+
+    <!-- ===== CONTENT ===== -->
+    <f:content>
+      <VBox class="sapUiResponsivePadding--header sapUiResponsivePadding--content aymaxPageContent">
+
+        <!-- Page Title -->
+        <Title text="Certifications" level="H1" class="aymaxPageTitle sapUiMediumMarginBottom"/>
+
+        <!-- ═══════ SECTION: OBTENUES ═══════ -->
+        <VBox class="sapUiLargeMarginBottom">
+          <Title text="Obtenues" level="H3" class="aymaxSectionTitle sapUiSmallMarginBottom"/>
+
+          <!-- Earned cert cards using List for proper binding -->
+          <List items="{view>/earned}" showSeparators="None" class="aymaxCertList">
+            <CustomListItem class="aymaxCertCardEarned sapUiSmallMarginBottom">
+              <VBox class="sapUiSmallMargin aymaxCertCardInner">
+                <HBox justifyContent="SpaceBetween" alignItems="Start" class="sapUiTinyMarginBottom">
+                  <Title text="{view>name}" level="H4" class="aymaxCertName"/>
+                  <core:Icon src="sap-icon://accept" color="#16a34a" size="1.2rem" class="aymaxCheckIcon"/>
+                </HBox>
+                <Text text="{view>description}" class="aymaxCertDesc sapUiTinyMarginBottom" wrapping="true"/>
+                <Text text="{view>date}" class="aymaxCertDate"/>
+                <HBox wrap="Wrap" class="sapUiSmallMarginTop">
+                  <Token text="{view>skills/0}" editable="false" class="aymaxSkillTag" visible="{= !!${view>skills/0} }"/>
+                  <Token text="{view>skills/1}" editable="false" class="aymaxSkillTag" visible="{= !!${view>skills/1} }"/>
+                  <Token text="{view>skills/2}" editable="false" class="aymaxSkillTag" visible="{= !!${view>skills/2} }"/>
+                </HBox>
+              </VBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+        <!-- ═══════ SECTION: EN COURS ═══════ -->
+        <VBox class="sapUiLargeMarginBottom">
+          <Title text="En cours" level="H3" class="aymaxSectionTitle sapUiSmallMarginBottom"/>
+
+          <List items="{view>/inProgress}" showSeparators="None" class="aymaxCertList">
+            <CustomListItem class="aymaxCertCardProgress sapUiSmallMarginBottom">
+              <VBox class="sapUiSmallMargin aymaxCertCardInner">
+                <HBox justifyContent="SpaceBetween" alignItems="Start" class="sapUiTinyMarginBottom">
+                  <Title text="{view>name}" level="H4" class="aymaxCertName"/>
+                  <ObjectStatus text="En cours" state="Information" inverted="true" class="aymaxStatusBadge"/>
+                </HBox>
+                <Text text="{view>description}" class="aymaxCertDesc sapUiTinyMarginBottom" wrapping="true"/>
+
+                <HBox class="sapUiTinyMarginBottom">
+                  <Text text="Organisme : " class="aymaxCertMeta"/>
+                  <Text text="{view>provider}" class="aymaxCertMetaValue"/>
+                </HBox>
+                <HBox class="sapUiTinyMarginBottom">
+                  <Text text="Débutée le " class="aymaxCertMeta"/>
+                  <Text text="{view>startDate}" class="aymaxCertMetaValue"/>
+                </HBox>
+
+                <!-- Progress bar -->
+                <VBox class="sapUiSmallMarginTop sapUiTinyMarginBottom">
+                  <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+                    <Text text="Progression" class="aymaxCertMeta"/>
+                    <Text text="{= ${view>progress} + '%' }" class="aymaxProgressLabel"/>
+                  </HBox>
+                  <layout:HorizontalLayout class="aymaxProgressBarOuter">
+                    <layout:HorizontalLayout
+                      class="aymaxProgressBarInner"
+                      width="{= ${view>progress} + '%' }">
+                    </layout:HorizontalLayout>
+                  </layout:HorizontalLayout>
+                </VBox>
+
+                <!-- Skill tags -->
+                <HBox wrap="Wrap" class="sapUiSmallMarginTop">
+                  <Token text="{view>skills/0}" editable="false" class="aymaxSkillTag"/>
+                  <Token text="{view>skills/1}" editable="false" class="aymaxSkillTag"/>
+                </HBox>
+
+                <Button
+                  text="Continuer"
+                  type="Transparent"
+                  icon="sap-icon://forward"
+                  press=".onContinueCertification"
+                  class="sapUiSmallMarginTop aymaxContinueBtn"/>
+              </VBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+        <!-- ═══════ SECTION: RECOMMANDEES ═══════ -->
+        <VBox>
+          <Title text="Recommandées pour vous" level="H3" class="aymaxSectionTitle sapUiSmallMarginBottom"/>
+
+          <List items="{view>/recommended}" showSeparators="None" class="aymaxCertList">
+            <CustomListItem class="aymaxCertCardRecommended sapUiSmallMarginBottom">
+              <VBox class="sapUiSmallMargin aymaxCertCardInner">
+                <Title text="{view>name}" level="H4" class="aymaxCertName sapUiTinyMarginBottom"/>
+                <Text text="{view>description}" class="aymaxCertDesc sapUiTinyMarginBottom" wrapping="true"/>
+
+                <VBox class="sapUiTinyMarginBottom">
+                  <Text text="{= 'Articles recommandés : ' + ${view>recArticles} }" class="aymaxCertMeta"/>
+                  <Text text="{= 'Questions liées : ' + ${view>recQuestions} }" class="aymaxCertMeta"/>
+                </VBox>
+
+                <!-- Skill tags -->
+                <HBox wrap="Wrap" class="sapUiSmallMarginTop sapUiTinyMarginBottom">
+                  <Token text="{view>skills/0}" editable="false" class="aymaxSkillTag"/>
+                  <Token text="{view>skills/1}" editable="false" class="aymaxSkillTag"/>
+                  <Token text="{view>skills/2}" editable="false" class="aymaxSkillTag" visible="{= !!${view>skills/2} }"/>
+                </HBox>
+
+                <Button
+                  text="Commencer"
+                  type="Emphasized"
+                  press=".onStartCertification"
+                  class="sapUiSmallMarginTop aymaxStartBtn"/>
+              </VBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+      </VBox>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>

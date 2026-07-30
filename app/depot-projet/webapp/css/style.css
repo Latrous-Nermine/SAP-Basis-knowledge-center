@@ -1,0 +1,91 @@
+/* ════════════════════════════════════════════════
+   AYMAX Knowledge Hub — Dépôt de Projet Styles
+   ════════════════════════════════════════════════ */
+
+.aymaxPageContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+#depotPage .sapFDynamicPageTitle {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.aymaxPageTitle {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+.aymaxSubtitle {
+  font-size: 14px !important;
+  color: #6b7280 !important;
+  line-height: 1.5;
+}
+
+.aymaxAvatar .sapFAvatarInitialsHolder {
+  background: linear-gradient(135deg, #6366f1, #4338ca) !important;
+  color: #ffffff !important;
+}
+
+.aymaxCard {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+  border: 1px solid #e5e7eb !important;
+  padding: 8px;
+}
+
+/* Drop Zone */
+.aymaxDropZone {
+  background: #f9fafb !important;
+  border: 2px dashed #d1d5db !important;
+  border-radius: 16px !important;
+  padding: 48px 24px !important;
+  transition: all 0.2s ease;
+}
+
+.aymaxDropZone:hover {
+  background: #f3f4f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+.aymaxBrowseBtn .sapMBtnInner {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+}
+
+/* File List */
+.aymaxFileList {
+  background: transparent !important;
+}
+
+.aymaxFileItem {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+
+.aymaxFileItem:hover {
+  background: #f9fafb !important;
+}
+
+.aymaxFileName {
+  color: #1f2937 !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+.aymaxMetaText {
+  color: #6b7280 !important;
+  font-size: 12px !important;
+}
+
+.aymaxDeleteBtn .sapMBtnInner {
+  color: #ef4444 !important;
+}
+
+.aymaxDeleteBtn .sapMBtnInner:hover {
+  background: #fef2f2 !important;
+}

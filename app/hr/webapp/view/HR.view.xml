@@ -1,0 +1,257 @@
+<mvc:View
+  controllerName="aymax.hr.controller.HR"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  xmlns:form="sap.ui.layout.form"
+  displayBlock="true">
+
+  <f:DynamicPage id="hrPage" headerExpanded="true">
+
+    <!-- ===== HEADER ===== -->
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:heading>
+          <HBox alignItems="Center">
+            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
+            <Title text="Analytique employés" level="H2"/>
+          </HBox>
+        </f:heading>
+        <f:actions>
+          <Button icon="sap-icon://bell" type="Transparent"/>
+          <Avatar initials="RH" displaySize="S" class="aymaxAvatar"/>
+        </f:actions>
+      </f:DynamicPageTitle>
+    </f:title>
+
+    <!-- ===== NAVIGATION BAR ===== -->
+    <f:header>
+      <f:DynamicPageHeader>
+        <OverflowToolbar class="aymaxSubNav" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+          <Button text="Employés" type="{= ${view>/activeTab} === 'employes' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="employes" class="aymaxNavBtn"/>
+          <Button text="Compétences" type="{= ${view>/activeTab} === 'competences' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="competences" class="aymaxNavBtn"/>
+          <Button text="Objectifs" type="{= ${view>/activeTab} === 'objectifs' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="objectifs" class="aymaxNavBtn"/>
+          <ToolbarSpacer/>
+          <Button text="Récompenses" type="Transparent" icon="sap-icon://gift" press=".onNavToApp" customData:targetApp="rewards"/>
+          <Button text="Rapports" type="Transparent" icon="sap-icon://bar-chart" press=".onNavToApp" customData:targetApp="rapports"/>
+        </OverflowToolbar>
+      </f:DynamicPageHeader>
+    </f:header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <f:content>
+      <VBox class="sapUiResponsivePadding--header sapUiResponsivePadding--content aymaxPageContent">
+
+        <!-- ═══════ TAB: EMPLOYES ═══════ -->
+        <VBox visible="{= ${view>/activeTab} === 'employes'}">
+
+          <!-- —— Employee List View —— -->
+          <VBox visible="{= !${view>/activeEmployeeId}}">
+            <Panel class="aymaxCard" headerText="">
+              <Table
+                id="employeeTable"
+                items="{view>/employees}"
+                growing="true"
+                growingThreshold="10"
+                class="aymaxTable"
+                mode="SingleSelectMaster"
+                selectionChange=".onEmployeePress">
+                <columns>
+                  <Column width="25%"><Text text="Employé"/></Column>
+                  <Column width="20%"><Text text="Département"/></Column>
+                  <Column width="15%"><Text text="Niveau"/></Column>
+                  <Column width="15%" hAlign="Center"><Text text="Réputation"/></Column>
+                  <Column width="25%"><Text text="Objectifs"/></Column>
+                </columns>
+                <items>
+                  <ColumnListItem type="Active" press=".onEmployeePress">
+                    <cells>
+                      <HBox alignItems="Center">
+                        <Avatar initials="{view>initials}" displaySize="XS" class="sapUiSmallMarginEnd aymaxAvatarAccent"/>
+                        <Text text="{view>name}" class="aymaxEmployeeName"/>
+                      </HBox>
+                      <Text text="{view>dept}" class="aymaxMetaText"/>
+                      <ObjectStatus text="{view>level}" state="Information" inverted="true" class="aymaxLevelBadge"/>
+                      <ObjectNumber number="{view>reputation}" class="aymaxRepNumber"/>
+                      <ObjectStatus
+                        text="{path:'view>objStatus', formatter:'.formatObjStatusText'}"
+                        state="{path:'view>objStatus', formatter:'.formatObjStatusState'}"
+                        inverted="true"/>
+                    </cells>
+                  </ColumnListItem>
+                </items>
+              </Table>
+            </Panel>
+          </VBox>
+
+          <!-- —— Employee Detail View —— -->
+          <VBox visible="{= !!${view>/activeEmployeeId}}" class="aymaxDetailView">
+
+            <Button
+              text="← Retour aux employés"
+              type="Transparent"
+              press=".onBackToList"
+              class="sapUiSmallMarginBottom aymaxBackBtn"/>
+
+            <layout:HorizontalLayout allowWrapping="true" class="aymaxDetailLayout">
+
+              <!-- Profile Card -->
+              <VBox width="280px" class="sapUiMediumMarginEnd">
+                <Panel class="aymaxProfileDetailCard">
+                  <VBox alignItems="Center" class="sapUiMediumMargin">
+                    <Avatar
+                      initials="{view>/activeEmployee/initials}"
+                      displaySize="XL"
+                      class="sapUiSmallMarginBottom aymaxAvatarAccent"/>
+                    <Title
+                      text="{view>/activeEmployee/name}"
+                      level="H3"/>
+                    <Text
+                      text="{view>/activeEmployee/dept}"
+                      class="aymaxMetaText sapUiTinyMarginBottom"/>
+                    <ObjectStatus
+                      text="{view>/activeEmployee/level}"
+                      state="Information"
+                      inverted="true"
+                      class="sapUiSmallMarginBottom"/>
+                    <VBox alignItems="Center" class="sapUiSmallMarginTop aymaxStatDivider" width="100%">
+                      <Title
+                        text="{view>/activeEmployee/reputation}"
+                        level="H2" class="aymaxRepTitle"/>
+                      <Text text="Réputation" class="aymaxMetaText"/>
+                    </VBox>
+                  </VBox>
+                </Panel>
+              </VBox>
+
+              <!-- Right Detail Cards -->
+              <VBox class="aymaxDetailRight">
+
+                <!-- Skills -->
+                <Panel headerText="Compétences" class="aymaxCard sapUiSmallMarginBottom">
+                  <List
+                    items="{view>/activeEmployee/skills}"
+                    showSeparators="None"
+                    class="aymaxSkillList">
+                    <CustomListItem>
+                      <VBox class="sapUiSmallMargin">
+                        <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+                          <Text text="{view>name}" class="aymaxSkillName"/>
+                          <Text text="{view>stars}" class="aymaxSkillStars"/>
+                        </HBox>
+                        <layout:HorizontalLayout class="aymaxProgressBarOuter">
+                          <layout:HorizontalLayout
+                            class="aymaxProgressBarInner"
+                            width="{= ${view>percent} + '%' }">
+                          </layout:HorizontalLayout>
+                        </layout:HorizontalLayout>
+                      </VBox>
+                    </CustomListItem>
+                  </List>
+                </Panel>
+
+                <!-- Objective -->
+                <Panel headerText="Objectifs" class="aymaxCard sapUiSmallMarginBottom">
+                  <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMargin">
+                    <Text
+                      text="{view>/activeEmployee/objectiveTitle}"
+                      class="aymaxObjTitle"/>
+                    <ObjectStatus
+                      text="{path:'view>/activeEmployee/objStatus', formatter:'.formatObjStatusText'}"
+                      state="{path:'view>/activeEmployee/objStatus', formatter:'.formatObjStatusState'}"
+                      inverted="true"/>
+                  </HBox>
+                </Panel>
+
+                <!-- Certifications -->
+                <Panel headerText="Certifications" class="aymaxCard">
+                  <HBox class="sapUiSmallMargin" justifyContent="Start">
+                    <VBox class="sapUiMediumMarginEnd">
+                      <ObjectStatus
+                        text="{view>/activeEmployee/certsEarnedCount} obtenues"
+                        state="Success"
+                        inverted="false"/>
+                    </VBox>
+                    <VBox>
+                      <ObjectStatus
+                        text="{view>/activeEmployee/certsProgressCount} en cours"
+                        state="Information"
+                        inverted="false"/>
+                    </VBox>
+                  </HBox>
+                </Panel>
+              </VBox>
+            </layout:HorizontalLayout>
+          </VBox>
+        </VBox>
+
+        <!-- ═══════ TAB: COMPETENCES ═══════ -->
+        <VBox visible="{= ${view>/activeTab} === 'competences'}">
+          <layout:HorizontalLayout allowWrapping="true" class="aymaxSkillGapGrid">
+            <Panel headerText="" class="aymaxCard aymaxSkillGapCard" width="280px">
+              <VBox class="sapUiSmallMargin">
+                <Title text="SAP BTP" level="H5"/>
+                <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
+                <layout:HorizontalLayout class="aymaxProgressBarOuter">
+                  <layout:HorizontalLayout class="aymaxProgressBarInner" width="78%"/>
+                </layout:HorizontalLayout>
+                <Text text="78% · 12 employés" class="aymaxMetaText sapUiTinyMarginTop"/>
+              </VBox>
+            </Panel>
+            <Panel headerText="" class="aymaxCard aymaxSkillGapCard" width="280px">
+              <VBox class="sapUiSmallMargin">
+                <Title text="Java / Spring Boot" level="H5"/>
+                <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
+                <layout:HorizontalLayout class="aymaxProgressBarOuter">
+                  <layout:HorizontalLayout class="aymaxProgressBarInner" width="64%"/>
+                </layout:HorizontalLayout>
+                <Text text="64% · 9 employés" class="aymaxMetaText sapUiTinyMarginTop"/>
+              </VBox>
+            </Panel>
+            <Panel headerText="" class="aymaxCard aymaxSkillGapCard" width="280px">
+              <VBox class="sapUiSmallMargin">
+                <Title text="Cloud Foundry" level="H5"/>
+                <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
+                <layout:HorizontalLayout class="aymaxProgressBarOuter">
+                  <layout:HorizontalLayout class="aymaxProgressBarInner" width="52%"/>
+                </layout:HorizontalLayout>
+                <Text text="52% · 7 employés" class="aymaxMetaText sapUiTinyMarginTop"/>
+              </VBox>
+            </Panel>
+            <Panel headerText="" class="aymaxCard aymaxSkillGapCard" width="280px">
+              <VBox class="sapUiSmallMargin">
+                <Title text="Docker / CI-CD" level="H5"/>
+                <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
+                <layout:HorizontalLayout class="aymaxProgressBarOuter">
+                  <layout:HorizontalLayout class="aymaxProgressBarInner" width="41%"/>
+                </layout:HorizontalLayout>
+                <Text text="41% · 6 employés" class="aymaxMetaText sapUiTinyMarginTop"/>
+              </VBox>
+            </Panel>
+          </layout:HorizontalLayout>
+        </VBox>
+
+        <!-- ═══════ TAB: OBJECTIFS ═══════ -->
+        <VBox visible="{= ${view>/activeTab} === 'objectifs'}">
+          <List items="{view>/objectives}" class="aymaxObjectiveList">
+            <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
+              <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiSmallMargin">
+                <VBox class="aymaxObjInfo">
+                  <Text text="{view>title}" class="aymaxObjTitle"/>
+                  <Text text="{view>owner} · échéance {view>due}" class="aymaxMetaText"/>
+                </VBox>
+                <ObjectStatus
+                  text="{path:'view>status', formatter:'.formatObjStatusText'}"
+                  state="{path:'view>status', formatter:'.formatObjStatusState'}"
+                  inverted="true"/>
+              </HBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+      </VBox>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>

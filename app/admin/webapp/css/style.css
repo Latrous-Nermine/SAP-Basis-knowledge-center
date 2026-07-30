@@ -1,0 +1,47 @@
+/* ════════════════════════════════════════════════
+   AYMAX Knowledge Hub — Admin Styles
+   ════════════════════════════════════════════════ */
+
+.aymaxPageContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+#adminPage .sapFDynamicPageTitle {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.aymaxPageTitle {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+.aymaxAvatar .sapFAvatarInitialsHolder {
+  background: linear-gradient(135deg, #6366f1, #4338ca) !important;
+  color: #ffffff !important;
+}
+
+.aymaxCard {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.aymaxBoldText {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+.aymaxMetaText {
+  color: #6b7280 !important;
+  font-size: 13px !important;
+}
+
+.aymaxLabel {
+  font-weight: 600 !important;
+  color: #374151 !important;
+}

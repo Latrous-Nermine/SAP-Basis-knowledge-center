@@ -1,0 +1,84 @@
+<mvc:View
+  controllerName="aymax.rapports.dash.controller.RapportsDash"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <f:DynamicPage id="rapportsDashPage" headerExpanded="true">
+
+    <!-- ===== HEADER ===== -->
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:heading>
+          <HBox alignItems="Center">
+            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
+            <Title text="Rapports &amp; Statistiques" level="H2"/>
+          </HBox>
+        </f:heading>
+        <f:actions>
+          <Button icon="sap-icon://bell" type="Transparent"/>
+          <Avatar initials="RH" displaySize="S" class="aymaxAvatar"/>
+        </f:actions>
+      </f:DynamicPageTitle>
+    </f:title>
+
+    <!-- ===== NAVIGATION BAR ===== -->
+    <f:header>
+      <f:DynamicPageHeader>
+        <OverflowToolbar class="aymaxSubNav" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+          <Button text="Employés" type="Transparent" press=".onNavToApp" customData:targetApp="hr"/>
+          <Button text="Compétences" type="Transparent" press=".onNavToApp" customData:targetApp="hr"/>
+          <Button text="Objectifs" type="Transparent" press=".onNavToApp" customData:targetApp="hr"/>
+          <ToolbarSpacer/>
+          <Button text="Récompenses" type="Transparent" press=".onNavToApp" customData:targetApp="rewards"/>
+          <Button text="Rapports" type="Emphasized"/>
+        </OverflowToolbar>
+      </f:DynamicPageHeader>
+    </f:header>
+
+    <!-- ===== CONTENT ===== -->
+    <f:content>
+      <VBox class="sapUiResponsivePadding--header sapUiResponsivePadding--content aymaxPageContent">
+
+        <Title text="Vue d'ensemble" level="H1" class="aymaxPageTitle sapUiMediumMarginBottom"/>
+
+        <!-- KPIs GRID -->
+        <HBox items="{view>/kpis}" wrap="Wrap" class="sapUiMediumMarginBottom aymaxKpiGrid">
+          <Panel class="aymaxCard aymaxKpiCard sapUiSmallMarginEnd sapUiSmallMarginBottom" width="260px">
+            <VBox class="sapUiSmallMargin">
+              <Text text="{view>label}" class="aymaxMetaText sapUiTinyMarginBottom"/>
+              <Title text="{view>value}" level="H2" class="aymaxKpiValue"/>
+              <ObjectStatus text="{view>delta}" state="{view>state}" inverted="false"/>
+            </VBox>
+          </Panel>
+        </HBox>
+
+        <!-- DATA TABLE -->
+        <Panel class="aymaxCard" headerText="Performance par département">
+          <Table items="{view>/deptRows}" class="aymaxTable">
+            <columns>
+              <Column><Text text="Département"/></Column>
+              <Column hAlign="End"><Text text="Publications"/></Column>
+              <Column hAlign="End"><Text text="Questions résolues"/></Column>
+              <Column hAlign="End"><Text text="Réputation moyenne"/></Column>
+            </columns>
+            <items>
+              <ColumnListItem>
+                <cells>
+                  <Text text="{view>dept}" class="aymaxDeptName"/>
+                  <Text text="{view>pubs}"/>
+                  <Text text="{view>solved}"/>
+                  <Text text="{view>avgRep}"/>
+                </cells>
+              </ColumnListItem>
+            </items>
+          </Table>
+        </Panel>
+
+      </VBox>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>

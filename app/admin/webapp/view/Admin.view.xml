@@ -1,0 +1,154 @@
+<mvc:View
+  controllerName="aymax.admin.controller.Admin"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  xmlns:form="sap.ui.layout.form"
+  xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+  displayBlock="true">
+
+  <f:DynamicPage id="adminPage" headerExpanded="true">
+
+    <!-- ===== HEADER ===== -->
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:heading>
+          <HBox alignItems="Center">
+            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
+            <Title text="Administration technique" level="H2"/>
+          </HBox>
+        </f:heading>
+        <f:actions>
+          <Button icon="sap-icon://bell" type="Transparent"/>
+          <Avatar initials="AD" displaySize="S" class="aymaxAvatar"/>
+        </f:actions>
+      </f:DynamicPageTitle>
+    </f:title>
+
+    <!-- ===== NAVIGATION BAR ===== -->
+    <f:header>
+      <f:DynamicPageHeader>
+        <OverflowToolbar class="aymaxSubNav" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+          <Button text="Utilisateurs" type="Transparent" press=".onNavToApp" customData:targetApp="hr"/>
+          <Button text="Rôles" type="Emphasized"/>
+          <Button text="Permissions" type="Transparent"/>
+          <Button text="Paramètres système" type="Transparent"/>
+          <Button text="Configuration" type="Transparent"/>
+        </OverflowToolbar>
+      </f:DynamicPageHeader>
+    </f:header>
+
+    <!-- ===== CONTENT ===== -->
+    <f:content>
+      <VBox class="sapUiResponsivePadding--header sapUiResponsivePadding--content aymaxPageContent">
+
+        <Title text="Administration technique" level="H1" class="aymaxPageTitle sapUiMediumMarginBottom"/>
+
+        <!-- TABS -->
+        <HBox class="sapUiMediumMarginBottom" wrap="Wrap">
+          <Button text="Rôles" type="{= ${view>/activeTab} === 'roles' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="roles" class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
+          <Button text="Permissions" type="{= ${view>/activeTab} === 'permissions' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="permissions" class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
+          <Button text="Paramètres système" type="{= ${view>/activeTab} === 'settings' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="settings" class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
+          <Button text="Configuration" type="{= ${view>/activeTab} === 'config' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="config" class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
+        </HBox>
+
+        <!-- TAB: ROLES -->
+        <VBox visible="{= ${view>/activeTab} === 'roles'}">
+          <Panel class="aymaxCard">
+            <Table items="{view>/roles}" class="aymaxTable">
+              <columns>
+                <Column><Text text="Rôle"/></Column>
+                <Column><Text text="Description"/></Column>
+                <Column hAlign="End"><Text text="Utilisateurs"/></Column>
+              </columns>
+              <items>
+                <ColumnListItem>
+                  <cells>
+                    <Text text="{view>name}" class="aymaxBoldText"/>
+                    <Text text="{view>desc}" class="aymaxMetaText"/>
+                    <Text text="{view>count}"/>
+                  </cells>
+                </ColumnListItem>
+              </items>
+            </Table>
+          </Panel>
+        </VBox>
+
+        <!-- TAB: PERMISSIONS -->
+        <VBox visible="{= ${view>/activeTab} === 'permissions'}">
+          <Panel class="aymaxCard">
+            <Table items="{view>/permissions}" class="aymaxTable">
+              <columns>
+                <Column width="25%"><Text text="Permission"/></Column>
+                <Column hAlign="Center"><Text text="Admin"/></Column>
+                <Column hAlign="Center"><Text text="Manager"/></Column>
+                <Column hAlign="Center"><Text text="RH"/></Column>
+                <Column hAlign="Center"><Text text="Employé"/></Column>
+                <Column hAlign="Center"><Text text="Stagiaire"/></Column>
+              </columns>
+              <items>
+                <ColumnListItem>
+                  <cells>
+                    <Text text="{view>name}" class="aymaxBoldText"/>
+                    <Text text="{view>admin}"/>
+                    <Text text="{view>manager}"/>
+                    <Text text="{view>hr}"/>
+                    <Text text="{view>employee}"/>
+                    <Text text="{view>intern}"/>
+                  </cells>
+                </ColumnListItem>
+              </items>
+            </Table>
+          </Panel>
+        </VBox>
+
+        <!-- TAB: SETTINGS -->
+        <VBox visible="{= ${view>/activeTab} === 'settings'}">
+          <Panel class="aymaxCard" width="520px">
+            <VBox class="sapUiMediumMargin">
+              <Label text="Nom de la plateforme" class="aymaxLabel sapUiTinyMarginBottom"/>
+              <Input value="AYMAX Knowledge Hub" class="sapUiSmallMarginBottom"/>
+
+              <Label text="Langue par défaut" class="aymaxLabel sapUiTinyMarginBottom"/>
+              <ComboBox selectedKey="fr" class="sapUiSmallMarginBottom" width="100%">
+                <core:Item key="fr" text="Français"/>
+                <core:Item key="en" text="English"/>
+              </ComboBox>
+
+              <Label text="Durée de session (minutes)" class="aymaxLabel sapUiTinyMarginBottom"/>
+              <Input value="120" type="Number" class="sapUiMediumMarginBottom"/>
+
+              <Button text="Enregistrer" type="Emphasized" press=".onSaveSettings"/>
+            </VBox>
+          </Panel>
+        </VBox>
+
+        <!-- TAB: CONFIG -->
+        <VBox visible="{= ${view>/activeTab} === 'config'}">
+          <Panel class="aymaxCard" width="520px">
+            <VBox class="sapUiMediumMargin">
+              <Label text="Environnement SAP BTP" class="aymaxLabel sapUiTinyMarginBottom"/>
+              <ComboBox selectedKey="prod" class="sapUiSmallMarginBottom" width="100%">
+                <core:Item key="prod" text="Production"/>
+                <core:Item key="rec" text="Recette"/>
+              </ComboBox>
+
+              <Label text="Authentification" class="aymaxLabel sapUiTinyMarginBottom"/>
+              <ComboBox selectedKey="ias" class="sapUiSmallMarginBottom" width="100%">
+                <core:Item key="ias" text="SAP IAS / SSO"/>
+              </ComboBox>
+
+              <Label text="Rétention des données (mois)" class="aymaxLabel sapUiTinyMarginBottom"/>
+              <Input value="36" type="Number" class="sapUiMediumMarginBottom"/>
+
+              <Button text="Enregistrer" type="Emphasized" press=".onSaveSettings"/>
+            </VBox>
+          </Panel>
+        </VBox>
+
+      </VBox>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>

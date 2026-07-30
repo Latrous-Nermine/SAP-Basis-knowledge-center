@@ -1,0 +1,101 @@
+<mvc:View
+  controllerName="aymax.rapports.controller.Rapports"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <f:DynamicPage id="rapportsPage" headerExpanded="true">
+
+    <!-- ===== HEADER ===== -->
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:heading>
+          <HBox alignItems="Center">
+            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
+            <MenuButton text="Rapports de stage" type="Transparent">
+              <menu>
+                <Menu xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+                  <MenuItem text="Tableau de bord" press=".onNavToApp" customData:targetApp="dashboard"/>
+                  <MenuItem text="Fil d'actualité" press=".onNavToApp" customData:targetApp="feed"/>
+                  <MenuItem text="Questions" press=".onNavToApp" customData:targetApp="questions"/>
+                  <MenuItem text="Room Stage" press=".onNavToApp" customData:targetApp="room-stage"/>
+                  <MenuItem text="Dépôt de projet" press=".onNavToApp" customData:targetApp="depot-projet"/>
+                  <MenuItem text="Profil" press=".onNavToApp" customData:targetApp="profile"/>
+                </Menu>
+              </menu>
+            </MenuButton>
+          </HBox>
+        </f:heading>
+        <f:actions>
+          <Button icon="sap-icon://bell" type="Transparent"/>
+          <Avatar initials="YM" displaySize="S" class="aymaxAvatar"/>
+        </f:actions>
+      </f:DynamicPageTitle>
+    </f:title>
+
+    <!-- ===== CONTENT ===== -->
+    <f:content>
+      <VBox class="sapUiResponsivePadding--header sapUiResponsivePadding--content aymaxPageContent">
+
+        <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+          <Title text="Rapport de stage" level="H1" class="aymaxPageTitle sapUiSmallMarginEnd"/>
+          <ObjectStatus 
+            text="{path: 'view>/status', formatter: '.formatStatusText'}" 
+            state="{path: 'view>/status', formatter: '.formatStatusState'}" 
+            inverted="true" 
+            class="aymaxStatusBadge"/>
+        </HBox>
+        <Text text="Un seul rapport par stage — modifiez-le et soumettez-le à votre tuteur au fur et à mesure de votre progression." class="aymaxSubtitle sapUiMediumMarginBottom"/>
+
+        <!-- MAIN EDITOR CARD -->
+        <Panel class="aymaxCard sapUiMediumMarginBottom aymaxEditorPanel">
+          <VBox class="sapUiSmallMargin">
+            <Label text="Titre du rapport" class="aymaxLabel sapUiTinyMarginBottom" required="true"/>
+            <Input value="{view>/draftTitle}" class="sapUiSmallMarginBottom"/>
+
+            <Label text="Période couverte" class="aymaxLabel sapUiTinyMarginBottom"/>
+            <Input value="{view>/draftPeriod}" placeholder="ex. Juin – Août 2026" class="sapUiSmallMarginBottom"/>
+
+            <Label text="Contenu" class="aymaxLabel sapUiTinyMarginBottom"/>
+            
+            <!-- Toolbar for rich text simulation -->
+            <OverflowToolbar class="aymaxRTEToolbar">
+              <Button icon="sap-icon://bold" type="Transparent" tooltip="Gras"/>
+              <Button icon="sap-icon://italic" type="Transparent" tooltip="Italique"/>
+              <Button icon="sap-icon://list" type="Transparent" tooltip="Liste"/>
+            </OverflowToolbar>
+            
+            <TextArea 
+              value="{view>/draftBody}" 
+              placeholder="Décrivez les activités, apprentissages et difficultés rencontrées…" 
+              growing="true" 
+              growingMinLines="12"
+              width="100%"
+              class="aymaxTextArea sapUiMediumMarginBottom"/>
+
+            <HBox>
+              <Button text="Enregistrer le brouillon" type="Default" press=".onSaveDraft" class="sapUiSmallMarginEnd aymaxBtnSecondary"/>
+              <Button text="Soumettre à mon tuteur" type="Emphasized" press=".onSubmitReport" enabled="{= ${view>/draftTitle}.length > 0 }"/>
+            </HBox>
+          </VBox>
+        </Panel>
+
+        <!-- HISTORY CARD -->
+        <Panel headerText="Historique des soumissions" class="aymaxCard">
+          <List items="{view>/history}" showSeparators="None" class="aymaxHistoryList">
+            <CustomListItem>
+              <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxHistoryItem">
+                <Text text="{view>text}" class="aymaxHistoryText"/>
+                <Text text="{view>time}" class="aymaxMetaText"/>
+              </HBox>
+            </CustomListItem>
+          </List>
+        </Panel>
+
+      </VBox>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>

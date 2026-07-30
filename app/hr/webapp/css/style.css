@@ -1,0 +1,203 @@
+/* ════════════════════════════════════════════════
+   AYMAX Knowledge Hub — HR Module Styles
+   ════════════════════════════════════════════════ */
+
+/* ── Page Layout ── */
+.aymaxPageContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.aymaxPageTitle {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+/* ── Card base ── */
+.aymaxCard {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+  border: 1px solid #e5e7eb !important;
+}
+.aymaxCard .sapMPanelHdr {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Sub-navigation bar ── */
+.aymaxSubNav {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb;
+}
+.aymaxNavBtn .sapMBtnInner {
+  border-radius: 20px !important;
+  font-size: 13px !important;
+}
+
+/* ── Header ── */
+#hrPage .sapFDynamicPageTitle {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* ── Employee table ── */
+.aymaxTable {
+  border: none !important;
+}
+.aymaxTable .sapMListTblRow {
+  border-bottom: 1px solid #f3f4f6 !important;
+  transition: background 0.15s ease;
+}
+.aymaxTable .sapMListTblRow:hover {
+  background: #f9fafb !important;
+}
+.aymaxTable .sapMListTblCell {
+  padding: 12px 8px !important;
+}
+.aymaxTable .sapMListTblHeaderCell {
+  font-weight: 600;
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.aymaxEmployeeName {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #1f2937 !important;
+}
+
+.aymaxMetaText {
+  color: #6b7280 !important;
+  font-size: 12px !important;
+}
+
+.aymaxLevelBadge .sapMObjStatusText {
+  font-size: 11px !important;
+}
+
+.aymaxRepNumber .sapMObjectNumberText {
+  font-weight: 700 !important;
+  color: #1e3a8a !important;
+}
+
+/* ── Avatar accent ── */
+.aymaxAvatarAccent .sapFAvatarInitialsHolder {
+  background: linear-gradient(135deg, #3b82f6, #1e3a8a) !important;
+  color: #ffffff !important;
+}
+.aymaxAvatar .sapFAvatarInitialsHolder {
+  background: linear-gradient(135deg, #6366f1, #4338ca) !important;
+  color: #ffffff !important;
+}
+
+/* ── Back button ── */
+.aymaxBackBtn .sapMBtnInner {
+  color: #3b82f6 !important;
+  font-weight: 500 !important;
+}
+.aymaxBackBtn .sapMBtnInner:hover {
+  color: #1e40af !important;
+}
+
+/* ── Profile Detail Card ── */
+.aymaxProfileDetailCard {
+  background: #ffffff !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+  border: none !important;
+}
+
+.aymaxStatDivider {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+
+.aymaxRepTitle {
+  color: #1e3a8a !important;
+}
+
+/* ── Detail layout ── */
+.aymaxDetailLayout {
+  gap: 20px;
+}
+.aymaxDetailRight {
+  flex: 1;
+  min-width: 400px;
+}
+
+/* ── Skill bars ── */
+.aymaxSkillList .sapMListUl {
+  background: transparent !important;
+  border: none !important;
+}
+.aymaxSkillName {
+  font-size: 13px !important;
+  color: #374151 !important;
+}
+.aymaxSkillStars {
+  font-size: 13px !important;
+  color: #3b82f6 !important;
+}
+.aymaxProgressBarOuter {
+  width: 100% !important;
+  height: 6px !important;
+  background: #e5e7eb !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+.aymaxProgressBarInner {
+  height: 6px !important;
+  background: linear-gradient(90deg, #3b82f6, #1e3a8a) !important;
+  border-radius: 999px !important;
+  display: block !important;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Skill gap cards ── */
+.aymaxSkillGapGrid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+}
+.aymaxSkillGapCard {
+  min-width: 260px;
+  flex: 1;
+}
+
+/* ── Objectives ── */
+.aymaxObjectiveList .sapMListUl {
+  background: transparent !important;
+  border: none !important;
+}
+.aymaxObjTitle {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #1f2937 !important;
+}
+.aymaxObjInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .aymaxDetailLayout {
+    flex-direction: column !important;
+  }
+  .aymaxDetailRight {
+    min-width: unset !important;
+  }
+  .aymaxSkillGapCard {
+    min-width: 100% !important;
+  }
+}
