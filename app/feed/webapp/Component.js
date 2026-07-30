@@ -3,39 +3,54 @@ sap.ui.define([
   "sap/ui/model/json/JSONModel"
 ], function(UIComponent, JSONModel) {
   "use strict";
-  
+
   return UIComponent.extend("aymax.feed.Component", {
-    metadata: {
-      manifest: "json"
-    },
-    
+    metadata: { manifest: "json" },
+
     init: function() {
+      // 1. Appeler le parent (OBLIGATOIRE)
       UIComponent.prototype.init.apply(this, arguments);
-      
+
+      // 2. Initialiser le router
+      this.getRouter().initialize();
+
+      // 3. Forcer la navigation vers Feed si pas de hash
+      var sHash = window.location.hash;
+      if (!sHash || sHash === "#" || sHash === "") {
+        this.getRouter().navTo("feed", {}, true);
+      }
+
+      // 4. Créer le modèle local (état UI)
       var oViewModel = new JSONModel({
         postText: "",
         selectedFilter: "all",
         busy: false,
+        userRole: "Employé", // ← Sera mis à jour par XSUAA
         currentUser: {
           displayName: "",
           jobTitle: "",
           department: "",
           reputation: 0,
           badgesCount: 0,
-          avatarUrl: ""
+          avatarUrl: "",
+          role: "Employee"
         }
       });
       this.setModel(oViewModel, "view");
-      
-      // Charger le profil utilisateur au démarrage
+
+      // 5. Charger le profil utilisateur depuis le backend
       this._loadCurrentUser();
     },
-    
+
     _loadCurrentUser: function() {
       var oModel = this.getModel();
       var oViewModel = this.getModel("view");
-      
-      // OData V4 : bindContext sur la fonction
+
+      if (!oModel) {
+        console.warn("OData model not ready yet");
+        return;
+      }
+
       var oContext = oModel.bindContext("/getCurrentUserProfile()");
       oContext.requestObject().then(function(oData) {
         if (oData) {
@@ -45,8 +60,18 @@ sap.ui.define([
             department: oData.department || "",
             reputation: oData.reputation || 0,
             badgesCount: oData.badgesCount || 0,
-            avatarUrl: oData.avatarUrl || ""
+            avatarUrl: oData.avatarUrl || "",
+            role: oData.role || "Employee"
           });
+          // Mettre à jour le rôle affiché dans le header
+          var mRoleLabels = {
+            "Admin": "Administrateur",
+            "Manager": "Manager",
+            "Employee": "Employé",
+            "Intern": "Stagiaire",
+            "HR": "RH"
+          };
+          oViewModel.setProperty("/userRole", mRoleLabels[oData.role] || oData.role || "Employé");
         }
       }).catch(function(oError) {
         console.error("Failed to load user profile", oError);
