@@ -69,6 +69,28 @@ sap.ui.define([
       });
     },
 
+    onKnowledgeCenterPress: function() {
+      // Same standalone-app navigation as the notification bell - no shared
+      // shell/router yet (docs/lot2-analysis.md §6.3 still open).
+      window.location.href = "/knowledge/webapp/index.html";
+    },
+
+    onNotificationsPress: function() {
+      // Standalone app-to-app navigation: no shared shell/router exists yet
+      // (docs/lot2-analysis.md §6.3 is still an open team decision), so this
+      // is a full page navigation, same as clicking any other module link.
+      window.location.href = "/notifications/webapp/index.html";
+    },
+
+    onRoomPress: function(oEvent) {
+      var sRoomName = oEvent.getSource().getBindingContext().getProperty("name");
+      MessageToast.show("Room : " + sRoomName);
+    },
+
+    onNavToRooms: function() {
+      MessageToast.show("Rooms - à venir (Lot 3)");
+    },
+
     onShare: function(oEvent) {
       var oContext = oEvent.getSource().getBindingContext();
       var sPostID = oContext.getProperty("ID");
@@ -124,6 +146,11 @@ sap.ui.define([
         "ppt": "sap-icon://ppt-attachment"
       };
       return mIcons[sType] || "sap-icon://attachment";
+    },
+
+    formatAvatar: function(sUrl, sName) {
+      if (sUrl && sUrl !== "null" && sUrl !== "") return sUrl;
+      return "https://ui-avatars.com/api/?name=" + encodeURIComponent(sName || "AYMAX") + "&background=1E3A8A&color=fff&size=128";
     }
   });
 });
