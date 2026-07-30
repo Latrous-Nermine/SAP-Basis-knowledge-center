@@ -1,0 +1,11 @@
+ID,recipient_userID,type,severity,sourceType,sourceId,params,isRead,createdAt,readAt
+3b9f1c2e-0001-4000-8000-000000000001,sami,COMMENT,INFO,POST,3b9f1c2e-0000-4000-8000-000000000001,"{""actorName"":""Karim Trabelsi"",""title"":""Migration HANA Cloud""}",false,2026-07-30T00:40:00Z,
+3b9f1c2e-0001-4000-8000-000000000002,sami,ANSWER_ACCEPTED,INFO,POST,3b9f1c2e-0000-4000-8000-000000000002,"{""title"":""Erreur de déploiement CAP sur Cloud Foundry""}",false,2026-07-30T00:00:00Z,
+3b9f1c2e-0001-4000-8000-000000000003,sami,MENTION,INFO,POST,3b9f1c2e-0000-4000-8000-000000000003,"{""actorName"":""Ines Chaabane""}",false,2026-07-29T23:00:00Z,
+3b9f1c2e-0001-4000-8000-000000000004,sami,SECURITY_EVENT,CRITICAL,SYSTEM,,"{""detail"":""Accès sensible détecté sur un document confidentiel""}",false,2026-07-30T00:50:00Z,
+3b9f1c2e-0001-4000-8000-000000000005,sami,DOC_PUBLISHED,INFO,,,"{""topic"":""SAP BTP""}",true,2026-07-29T21:00:00Z,2026-07-29T22:00:00Z
+3b9f1c2e-0001-4000-8000-000000000006,sami,BADGE_EARNED,INFO,BADGE,,"{""badgeName"":""Contributeur Expert""}",true,2026-07-29T02:00:00Z,2026-07-29T09:00:00Z
+3b9f1c2e-0001-4000-8000-000000000007,sami,ROOM_POST,INFO,ROOM,,"{""actorName"":""Nadia Ferchichi"",""roomName"":""Migration HANA Cloud""}",true,2026-07-29T01:00:00Z,2026-07-29T09:00:00Z
+3b9f1c2e-0001-4000-8000-000000000008,sami,CERTIFICATION_COMPLETED,INFO,,,"{""certificationName"":""SAP BTP Associate""}",true,2026-07-27T10:00:00Z,2026-07-27T18:00:00Z
+3b9f1c2e-0001-4000-8000-000000000009,sami,RECOMMENDATION,INFO,,,"{""title"":""Bonnes pratiques CI/CD""}",true,2026-07-25T08:00:00Z,2026-07-25T20:00:00Z
+3b9f1c2e-0001-4000-8000-00000000000a,nadia,VALIDATION_REQUESTED,WARNING,,,"{""title"":""Guide de paramétrage des vues CDS pour la migration HANA Cloud""}",false,2026-07-30T00:20:00Z,

@@ -25,6 +25,7 @@ EMIT=$(curl -s -u admin: -X POST "$BASE/raise" \
       }')
 echo "$EMIT"
 echo "$EMIT" | grep -q '"value"' && pass "emit returned an ID" || fail "emit failed"
+SAMI_NOTIF_ID=$(echo "$EMIT" | sed -n 's/.*"value":"\([^"]*\)".*/\1/p')
 
 echo
 echo "── 2. and a SECURITY_EVENT (should come back CRITICAL) ─────"
@@ -40,15 +41,18 @@ curl -s -u sami: "$BASE/Notifications?\$orderby=createdAt%20desc" | head -c 900
 echo
 
 echo
-echo "── 4. SECURITY: nadia must see NOTHING ───────────────────"
+echo "── 4. SECURITY: nadia must not see sami's notification ────"
+# Not asserting an empty array: nadia legitimately has her own seed-data
+# notifications (db/data/aymax.knowledgehub-Notifications.csv). The real
+# check is that SAMI's specific notification ID never appears for her.
 YAS=$(curl -s -u nadia: "$BASE/Notifications")
 echo "$YAS"
-echo "$YAS" | grep -q '"value":\[\]' \
-  && pass "row-level restriction works" \
-  || fail "LEAK — nadia can see sami's notifications, stop and fix @restrict"
+echo "$YAS" | grep -q "$SAMI_NOTIF_ID" \
+  && fail "LEAK — nadia can see sami's notification, stop and fix @restrict" \
+  || pass "row-level restriction works"
 
 echo
-echo "── 5. sami's unread count (expect 2) ───────────────────────"
+echo "── 5. sami's unread count (varies with seed data - just showing it) ───────"
 curl -s -u sami: "$BASE/unreadCount()"
 echo
 
