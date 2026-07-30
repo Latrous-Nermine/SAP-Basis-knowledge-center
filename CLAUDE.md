@@ -103,13 +103,19 @@ app/{knowledge,experts,notifications,profile,search,dashboard}/**
 app/shared/**   test/**   docs/**   TODO-INTEGRATION.md
 ```
 
-### ⛔ Never edit — belongs to another developer
-```
-db/schema.cds                  ← Lot 1. Use CDS `extend` in MY file instead.
-srv/feed-service.{cds,js}      ← Lot 1
-srv/handlers/FeedHandler.js    ← Lot 1
-app/feed/**                    ← Lot 1
-```
+### ⛔Not allowed
+
+Do not redesign or reimplement another developer's module.
+
+Do not:
+
+rewrite Feed features
+refactor Feed architecture
+rename Feed APIs
+change Feed business rules
+remove existing functionality
+
+If a modification exceeds normal integration work, stop and show me the exact change and tell me it needs team agreement first.
 
 ### ⚠️ Shared — propose a diff, never edit silently
 ```
@@ -294,6 +300,31 @@ i18n + OData binding where a mistake costs an hour, not a week.
 ---
 
 ## 11. How I want you to work with me
+## Integration authority
+
+For Lot 2 implementation, you are explicitly authorized to modify existing application files across other lots when those changes are strictly necessary for integration.
+
+Examples include:
+
+- routing
+- dashboard navigation
+- notification bell
+- shared header
+- shell
+- layout
+- manifest.json route registration
+- shared components
+
+Do not refuse these changes solely because another developer originally created the file.
+
+Instead:
+
+1. explain why the modification is required,
+2. keep it as small as possible,
+3. preserve existing functionality,
+4. clearly identify every modified file.
+
+Only refuse if the requested change would redesign, replace, or break another developer's feature rather than integrate with it.
 
 I am an **intern and a beginner in SAP**. Act as a senior mentor, not a code generator.
 

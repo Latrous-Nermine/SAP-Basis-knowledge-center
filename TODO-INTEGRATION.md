@@ -14,12 +14,13 @@ demo.** Add a row the moment you write a mock — not later, because later never
 | I-07 | `promoteQuestion()` — reads a Question to create a KC item | `srv/domain/KnowledgeWorkflow.js` | Lot 3 | Questions entity + `kind` discriminator (C3) agreed | ⬜ Open |
 | I-08 | HR dashboard rewards catalogue | `srv/domain/dashboard/providers/RewardProvider.js` | Lot 3 (Rewards) | Rewards entity exists | ⬜ Open |
 | I-09 | Intern dashboard: reports + project deposit counts | `srv/domain/dashboard/providers/InternProvider.js` | Lot 3 (intern pages) | Those entities exist | ⬜ Open |
-| I-10 | `Topics` entity created in Lot 2's file; Lot 1's `Rooms` still doubles as Topics | `db/knowledge.cds` | Team (C1) | Data migration agreed at merge | ⬜ Open |
-| I-11 | `extend kh.Comments with { knowledgeItem }` — needs Lot 1's agreement (Contract B) | `db/knowledge.cds` | Lot 1 | He confirms | ⬜ Open |
-| I-12 | `srv/lib/notify.js` — Lots 1 and 3 must adopt it (Contract C) | `srv/lib/notify.js` | Lots 1 & 3 | Both call it instead of INSERTing | ⬜ Open |
+| I-10 | `Topics` entity created in Lot 2's file; Lot 1's `Rooms` still doubles as Topics | `db/lot2.cds` | Team (C1) | Data migration agreed at merge | ⬜ Open |
+| I-11 | `extend Comments with { knowledgeItem }` — implemented, needs Lot 1's sign-off (Contract B) | `db/lot2.cds` | Lot 1 | He confirms | ⬜ Open |
+| I-12 | `srv/lib/notify.js` — Lots 1 and 3 must adopt it (Contract C); `submitForReview` doesn't notify managers yet either | `srv/lib/notify.js` | Lots 1 & 3 | Both call it instead of INSERTing | ⬜ Open |
 | I-13 | `xs-security.json` scopes not yet agreed by the team (T2) | `xs-security.json` | Team | PR merged | ⬜ Open |
 | I-14 | Semantic/vector search — phase 2 behind `SearchStrategy` (C4) | `srv/domain/search/strategies/` | Me, later | If it becomes a deliverable | ⬜ Open |
 | I-15 | No approuter / html5-apps-repo in `mta.yaml` — UI5 apps not deployable (T7) | `mta.yaml` | Team | Before first UI deploy | ⬜ Open |
+| I-16 | Knowledge Center "Contribuer" button can't be role-aware client-side (no current-user/role endpoint) — always enabled, server enforces the real 403 | `app/knowledge/webapp/view/KnowledgeList.view.xml` | Me (Profile/People service) | `getMyProfile()` exists (build order step 5) | ⬜ Open |
 
 ## How to use this file
 
