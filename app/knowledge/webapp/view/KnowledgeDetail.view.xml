@@ -1,0 +1,93 @@
+<mvc:View
+  controllerName="aymax.knowledge.controller.KnowledgeDetail"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page
+    showNavButton="true"
+    navButtonPress=".onNavBack"
+    class="sapUiResponsiveContentPadding">
+
+    <content>
+      <ObjectHeader
+        title="{title}"
+        intro="{parts: [{path:'contributorsLabel', model:'view'}, {path:'createdAt'}], formatter:'.formatter.byLine'}"
+        responsive="true"
+        class="sapUiSmallMarginBottom">
+        <statuses>
+          <ObjectStatus text="{path:'category', formatter:'.formatter.categoryLabel'}" state="Information"/>
+          <ObjectStatus
+            visible="{path:'status', formatter:'.formatter.isNotApproved'}"
+            text="{path:'status', formatter:'.formatter.statusLabel'}"
+            state="{path:'status', formatter:'.formatter.statusState'}"/>
+        </statuses>
+      </ObjectHeader>
+
+      <Toolbar visible="{path:'status', formatter:'.formatter.canSubmitForReview'}" class="sapUiSmallMarginBottom">
+        <ToolbarSpacer/>
+        <Button text="{i18n>submitForReview}" type="Emphasized" press=".onSubmitForReview"/>
+      </Toolbar>
+
+      <HBox wrap="Wrap">
+
+        <!-- Main column -->
+        <VBox width="65%" class="sapUiResponsiveMargin">
+
+          <Panel class="sapUiResponsiveMargin">
+            <Text text="{content}"/>
+          </Panel>
+
+          <List
+            headerText="{i18n>attachmentsTitle}"
+            items="{attachments}"
+            class="sapUiResponsiveMargin sapUiNoMarginBegin">
+            <StandardListItem
+              icon="sap-icon://attachment"
+              title="{fileName}"
+              description="{path:'fileSize', formatter:'.formatter.fileSize'}"
+              type="Active"
+              press=".onAttachmentPress"/>
+          </List>
+
+          <Panel
+            headerText="{i18n>commentsTitle}"
+            visible="{path:'status', formatter:'.formatter.canShowComments'}"
+            class="sapUiResponsiveMargin sapUiNoMarginBegin">
+            <List items="{comments}" noDataText=" ">
+              <StandardListItem
+                icon="sap-icon://person-placeholder"
+                title="{author_userID}"
+                description="{content}"
+                info="{path:'createdAt', formatter:'.formatter.relativeDateTime'}"/>
+            </List>
+            <Toolbar>
+              <Input
+                placeholder="{i18n>addCommentPlaceholder}"
+                value="{view>/newCommentText}"
+                width="100%"/>
+              <Button text="{i18n>send}" type="Emphasized" press=".onSubmitComment"/>
+            </Toolbar>
+          </Panel>
+        </VBox>
+
+        <!-- Sidebar -->
+        <VBox width="30%" class="sapUiResponsiveMargin">
+
+          <Panel headerText="{i18n>contributorsTitle}" class="sapUiTinyMarginBottom">
+            <List items="{contributors}" noDataText=" ">
+              <StandardListItem icon="sap-icon://person-placeholder" title="{user_userID}" description="{role}"/>
+            </List>
+          </Panel>
+
+          <Panel headerText="{i18n>relatedDocsTitle}" visible="{view>/hasRelatedItems}">
+            <List items="{view>/relatedItems}" noDataText=" ">
+              <StandardListItem type="Active" icon="sap-icon://document-text" title="{view>title}" press=".onRelatedItemPress"/>
+            </List>
+          </Panel>
+        </VBox>
+      </HBox>
+    </content>
+  </Page>
+</mvc:View>

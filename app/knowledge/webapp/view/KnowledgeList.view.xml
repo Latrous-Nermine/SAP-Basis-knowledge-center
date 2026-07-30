@@ -1,0 +1,59 @@
+<mvc:View
+  controllerName="aymax.knowledge.controller.KnowledgeList"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page title="{i18n>pageTitle}" showNavButton="false">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <!-- Interns are blocked server-side (@restrict on CREATE) - there is
+             no Profile/People service yet to know the caller's role here, so
+             this button stays enabled for everyone; onContribute shows the
+             real 403 if it happens. TODO-INTEGRATION.md I-16. -->
+        <Toolbar>
+          <ToolbarSpacer/>
+          <Button
+            text="{i18n>contribute}"
+            type="Emphasized"
+            press=".onContribute"/>
+        </Toolbar>
+
+        <SearchField
+          placeholder="{i18n>searchPlaceholder}"
+          liveChange=".onSearch"
+          class="sapUiSmallMarginBottom"/>
+
+        <HBox wrap="Wrap" items="{view>/categoryTabs}" class="sapUiSmallMarginBottom">
+          <Button
+            text="{view>label}"
+            type="{path:'view>active', formatter:'.formatter.tabButtonType'}"
+            press=".onCategoryTabPress"
+            class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+        </HBox>
+
+        <List
+          id="knowledgeList"
+          items="{ path: '/KnowledgeItems', sorter: { path: 'createdAt', descending: true } }"
+          noDataText="{i18n>noItems}">
+          <CustomListItem type="Navigation" press=".onItemPress">
+            <VBox class="sapUiSmallMargin">
+              <HBox justifyContent="SpaceBetween">
+                <ObjectStatus text="{path:'category', formatter:'.formatter.categoryLabel'}" state="Information"/>
+                <ObjectStatus
+                  visible="{path:'status', formatter:'.formatter.isNotApproved'}"
+                  text="{path:'status', formatter:'.formatter.statusLabel'}"
+                  state="{path:'status', formatter:'.formatter.statusState'}"/>
+              </HBox>
+              <Title text="{title}" wrapping="true" class="sapUiTinyMarginTop"/>
+              <Text text="{excerpt}" maxLines="3" class="sapUiTinyMarginTop"/>
+              <Text text="{ path: 'createdAt', formatter: '.formatter.relativeDateTime' }" class="sapUiTinyMarginTop"/>
+            </VBox>
+          </CustomListItem>
+        </List>
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>
