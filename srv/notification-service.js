@@ -3,7 +3,7 @@ import {
   validateEmitPayload,
   serializeParams,
   severityFor,
-} from '../lib/notifications/notification-rules.js';
+} from './lib/notifications/notification-rules.js';
 
 /**
  * Handler for NotificationService.
@@ -75,9 +75,9 @@ export default class NotificationService extends cds.ApplicationService {
     });
 
     // ────────────────────────────────────────────────────────────
-    // POST /emit          (Contract A — called by other lots)
+    // POST /raise         (Contract A — called by other lots)
     // ────────────────────────────────────────────────────────────
-    this.on('emit', async (req) => {
+    this.on('raise', async (req) => {
       const { recipientID, type, sourceType, sourceId, params } = req.data;
 
       const errors = validateEmitPayload(req.data);

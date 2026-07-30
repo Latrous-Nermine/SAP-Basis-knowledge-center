@@ -19,6 +19,18 @@
   "private": true,
   "cds": {
     "requires": {
+      "[development]": {
+        "auth": {
+          "kind": "mocked",
+          "users": {
+            "sami":      { "roles": ["Employee"] },
+            "nadia":     { "roles": ["DepartmentManager"] },
+            "rh":        { "roles": ["HR"] },
+            "admin":     { "roles": ["Admin"] },
+            "stagiaire": { "roles": ["Intern"] }
+          }
+        }
+      },
       "[production]": {
         "auth": "xsuaa"
       }

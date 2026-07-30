@@ -1,4 +1,4 @@
-using { aymax.knowledgehub as kh } from '../../db/lot2';
+using { aymax.knowledgehub as kh } from '../db/lot2';
 
 /**
  * ============================================================
@@ -9,7 +9,7 @@ using { aymax.knowledgehub as kh } from '../../db/lot2';
  *  Consumed by:
  *    - the Fiori shell bell  (unreadCount, top 5)
  *    - the Notifications page (list, markRead, markAllRead)
- *    - EVERY other lot, through `emit` (Contract A)
+ *    - EVERY other lot, through `raise` (Contract A)
  * ============================================================
  */
 @path    : '/odata/v4/notification'
@@ -53,7 +53,7 @@ service NotificationService {
    *
    *   Preferred (in-process, same transaction, no network):
    *     const notify = await cds.connect.to('NotificationService');
-   *     await notify.send('emit', {
+   *     await notify.send('raise', {
    *       recipientID: post.author_userID,
    *       type: 'COMMENT',
    *       sourceType: 'POST',
@@ -61,13 +61,17 @@ service NotificationService {
    *       params: JSON.stringify({ actorName, title })
    *     });
    *
+   * Named `raise`, not `emit` — `emit` collides with a built-in method
+   * on cds.ApplicationService and CAP refuses to generate a typed method
+   * for it (warning at boot, `cds watch` never actually clean).
+   *
    * `internal-user` allows exactly that in-process call while
    * refusing it over HTTP. `Admin` is added so we can test it with
    * curl during development — remove it once the other lots are
    * calling it in-process.
    */
   @requires: ['internal-user', 'Admin']
-  action emit(
+  action raise(
     recipientID : String(255) @mandatory,
     type        : String(30)  @mandatory,
     sourceType  : String(20),

@@ -1,6 +1,25 @@
 {
-  "scopes": [],
+  "xsappname": "aymax-knowledge-hub",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    { "name": "$XSAPPNAME.Knowledge.Read",     "description": "Read knowledge content" },
+    { "name": "$XSAPPNAME.Knowledge.Write",    "description": "Create and edit knowledge content" },
+    { "name": "$XSAPPNAME.Knowledge.Approve",  "description": "Approve or reject content" },
+    { "name": "$XSAPPNAME.People.Read",        "description": "Browse the expert directory" },
+    { "name": "$XSAPPNAME.People.Admin",       "description": "Administer user profiles" },
+    { "name": "$XSAPPNAME.Dashboard.Employee", "description": "Employee dashboard" },
+    { "name": "$XSAPPNAME.Dashboard.Manager",  "description": "Manager dashboard" },
+    { "name": "$XSAPPNAME.Dashboard.HR",       "description": "HR dashboard" },
+    { "name": "$XSAPPNAME.Dashboard.Admin",    "description": "Admin dashboard" },
+    { "name": "$XSAPPNAME.Dashboard.Intern",   "description": "Intern dashboard" }
+  ],
   "attributes": [],
-  "role-templates": [],
+  "role-templates": [
+    { "name": "Employee",          "scope-references": ["$XSAPPNAME.Knowledge.Read","$XSAPPNAME.Knowledge.Write","$XSAPPNAME.People.Read","$XSAPPNAME.Dashboard.Employee"] },
+    { "name": "Intern",            "scope-references": ["$XSAPPNAME.Knowledge.Read","$XSAPPNAME.People.Read","$XSAPPNAME.Dashboard.Intern"] },
+    { "name": "DepartmentManager", "scope-references": ["$XSAPPNAME.Knowledge.Read","$XSAPPNAME.Knowledge.Write","$XSAPPNAME.Knowledge.Approve","$XSAPPNAME.People.Read","$XSAPPNAME.Dashboard.Manager"] },
+    { "name": "HR",                "scope-references": ["$XSAPPNAME.People.Read","$XSAPPNAME.Dashboard.HR"] },
+    { "name": "Admin",             "scope-references": ["$XSAPPNAME.Knowledge.Read","$XSAPPNAME.Knowledge.Write","$XSAPPNAME.Knowledge.Approve","$XSAPPNAME.People.Read","$XSAPPNAME.People.Admin","$XSAPPNAME.Dashboard.Admin"] }
+  ],
   "authorities-inheritance": false
 }

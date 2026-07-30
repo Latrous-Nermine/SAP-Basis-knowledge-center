@@ -40,12 +40,12 @@ curl -s -u sami: "$BASE/Notifications?\$orderby=createdAt%20desc" | head -c 900
 echo
 
 echo
-echo "── 4. SECURITY: yasmine must see NOTHING ───────────────────"
-YAS=$(curl -s -u yasmine: "$BASE/Notifications")
+echo "── 4. SECURITY: nadia must see NOTHING ───────────────────"
+YAS=$(curl -s -u nadia: "$BASE/Notifications")
 echo "$YAS"
 echo "$YAS" | grep -q '"value":\[\]' \
   && pass "row-level restriction works" \
-  || fail "LEAK — yasmine can see sami's notifications, stop and fix @restrict"
+  || fail "LEAK — nadia can see sami's notifications, stop and fix @restrict"
 
 echo
 echo "── 5. sami's unread count (expect 2) ───────────────────────"
@@ -62,11 +62,11 @@ echo "$BAD" | grep -q 'type must be one of' \
   && pass "invalid type rejected" || fail "validation did not fire"
 
 echo
-echo "── 7. SECURITY: yasmine tries to mark sami's notif read ────"
+echo "── 7. SECURITY: nadia tries to mark sami's notif read ────"
 NOTIF_ID=$(curl -s -u sami: "$BASE/Notifications?\$top=1" \
   | sed -n 's/.*"ID":"\([^"]*\)".*/\1/p')
 echo "   target notification: $NOTIF_ID"
-STEAL=$(curl -s -u yasmine: -X POST "$BASE/markRead" \
+STEAL=$(curl -s -u nadia: -X POST "$BASE/markRead" \
   -H "Content-Type: application/json" -d "{\"notificationID\":\"$NOTIF_ID\"}")
 echo "$STEAL"
 echo "$STEAL" | grep -q 'false' \
