@@ -12,6 +12,11 @@ sap.ui.define([
     init: function() {
       UIComponent.prototype.init.apply(this, arguments);
 
+      // 1. Initialiser le router
+      if (this.getRouter()) {
+        this.getRouter().initialize();
+      }
+
       // ── View Model (mock data for UI-only mode) ──
       var oViewModel = new JSONModel({
         busy: false,

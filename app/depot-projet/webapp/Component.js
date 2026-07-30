@@ -12,6 +12,11 @@ sap.ui.define([
     init: function() {
       UIComponent.prototype.init.apply(this, arguments);
 
+      // 1. Initialiser le router
+      if (this.getRouter()) {
+        this.getRouter().initialize();
+      }
+
       var oViewModel = new JSONModel({
         files: [
           { name: "Cahier_des_charges_v2.pdf", size: "2.4 MB", type: "pdf", date: "Aujourd'hui, 10:23" },

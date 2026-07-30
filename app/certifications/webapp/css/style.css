@@ -1,46 +1,112 @@
-/* ════════════════════════════════════════════════
-   AYMAX Knowledge Hub — Certifications Module Styles
-   ════════════════════════════════════════════════ */
+:root {
+  --aymax-primary: #293681;
+  --aymax-secondary: #4274D9;
+  --aymax-accent: #4274D9;
+  --aymax-bg: #F6F8FC;
+  --aymax-surface: #FFFFFF;
+  --aymax-text: #1A2138;
+  --aymax-text-secondary: #4F5C7C;
+  --aymax-text-muted: #6D7A9C;
+  --aymax-border: #E5E7EB;
+  --aymax-border-subtle: #F3F4F6;
+  
+  --aymax-neutral-100: #F6F8FB;
+  --aymax-neutral-200: #EAEEF5;
+  --aymax-neutral-300: #D7DEEB;
+  --aymax-neutral-400: #B7C1D6;
+  --aymax-neutral-500: #93A0BC;
+  --aymax-neutral-600: #6D7A9C;
+  
+  --aymax-radius-sm: 8px;
+  --aymax-radius-md: 12px;
+  --aymax-radius-lg: 16px;
+  
+  --aymax-shadow-sm: 0 1px 3px rgba(41, 54, 129, 0.08);
+  --aymax-shadow-md: 0 6px 20px rgba(41, 54, 129, 0.10);
+}
 
-/* ── Page Layout ── */
+[data-theme="sap_horizon_dark"] {
+  --aymax-bg: #0F1526;
+  --aymax-surface: #171E33;
+  --aymax-text: #E8ECF7;
+  --aymax-text-secondary: #ADB6D1;
+  --aymax-text-muted: #8B96B8;
+  --aymax-border: #2A3355;
+  --aymax-border-subtle: #212A45;
+  --aymax-neutral-100: #212A45;
+  --aymax-primary: #6FA0E8;
+  --aymax-accent: #6FA0E8;
+}
+
+/* ===== PAGE CONTAINER ===== */
+.aymaxPage {
+  background: var(--aymax-bg);
+}
+
+/* ===== CARDS ===== */
+.aymaxCard {
+  background: var(--aymax-surface) !important;
+  border-radius: var(--aymax-radius-md) !important;
+  border: 1px solid var(--aymax-border) !important;
+  box-shadow: var(--aymax-shadow-sm) !important;
+}
+
+.aymaxCard .sapMPanelHdr {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--aymax-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ===== TAGS ===== */
+.aymaxTag {
+  background: color-mix(in srgb, var(--aymax-primary) 10%, transparent) !important;
+  color: var(--aymax-primary) !important;
+  border: 1px solid color-mix(in srgb, var(--aymax-primary) 25%, transparent) !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  padding: 4px 10px;
+}
+
+.aymaxTagAccent {
+  background: color-mix(in srgb, var(--aymax-accent) 10%, transparent) !important;
+  color: var(--aymax-accent) !important;
+  border: 1px solid color-mix(in srgb, var(--aymax-accent) 25%, transparent) !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 600;
+  padding: 2px 10px;
+}
+
+/* ===== META TEXT ===== */
+.aymaxMeta {
+  color: var(--aymax-text-muted);
+  font-size: 12px;
+}
+
+/* ===== SPECIFIC CERTIFICATIONS STYLES ===== */
 .aymaxPageContent {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
 }
 
-/* ── Header ── */
-#certsPage .sapFDynamicPageTitle {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-}
-
 .aymaxPageTitle {
   font-size: 24px !important;
   font-weight: 700 !important;
-  color: #111827 !important;
+  color: var(--aymax-text) !important;
 }
 
 .aymaxSectionTitle {
   font-weight: 600 !important;
   font-size: 16px !important;
-  color: #3b82f6 !important;
+  color: var(--aymax-primary) !important;
 }
 
-/* ── Avatar ── */
-.aymaxAvatar .sapFAvatarInitialsHolder {
-  background: linear-gradient(135deg, #6366f1, #4338ca) !important;
-  color: #ffffff !important;
-}
-
-/* ── Search ── */
-.aymaxSearchField .sapMSFI {
-  border-radius: 20px !important;
-  background: #f3f4f6 !important;
-  border: 1px solid #e5e7eb !important;
-}
-
-/* ── Cert list (remove default list styling) ── */
 .aymaxCertList .sapMListUl {
   background: transparent !important;
   border: none !important;
@@ -49,7 +115,6 @@
   padding: 0 !important;
 }
 
-/* ── Cert grid layout ── */
 .aymaxCertList {
   display: block;
 }
@@ -59,28 +124,28 @@
   gap: 16px !important;
 }
 
-/* ── Base cert card ── */
 .aymaxCertCardInner {
   padding: 4px;
 }
+
 .aymaxCertCardEarned,
 .aymaxCertCardProgress,
 .aymaxCertCardRecommended {
-  background: #ffffff !important;
-  border-radius: 12px !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
-  border: 1px solid #e5e7eb !important;
+  background: var(--aymax-surface) !important;
+  border-radius: var(--aymax-radius-md) !important;
+  box-shadow: var(--aymax-shadow-sm) !important;
+  border: 1px solid var(--aymax-border) !important;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
   overflow: hidden;
 }
+
 .aymaxCertCardEarned:hover,
 .aymaxCertCardProgress:hover,
 .aymaxCertCardRecommended:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
+  box-shadow: var(--aymax-shadow-md) !important;
   transform: translateY(-2px);
 }
 
-/* ── Earned cards — subtle green left accent ── */
 .aymaxCertCardEarned {
   border-left: 4px solid #16a34a !important;
 }
@@ -88,102 +153,69 @@
   flex-shrink: 0;
 }
 
-/* ── In-progress cards — blue left accent ── */
 .aymaxCertCardProgress {
-  border-left: 4px solid #3b82f6 !important;
+  border-left: 4px solid var(--aymax-secondary) !important;
 }
 
-/* ── Recommended cards — purple left accent ── */
 .aymaxCertCardRecommended {
   border-left: 4px solid #8b5cf6 !important;
 }
 
-/* ── Card text ── */
 .aymaxCertName {
   font-weight: 600 !important;
   font-size: 16px !important;
-  color: #1f2937 !important;
+  color: var(--aymax-text) !important;
 }
-.aymaxCertDesc {
-  font-size: 13px !important;
-  line-height: 1.5 !important;
-  color: #4b5563 !important;
-}
+
 .aymaxCertDate {
   font-size: 11px !important;
-  color: #9ca3af !important;
+  color: var(--aymax-text-muted) !important;
 }
-.aymaxCertMeta {
-  font-size: 12px !important;
-  color: #6b7280 !important;
-}
+
 .aymaxCertMetaValue {
   font-size: 12px !important;
-  color: #374151 !important;
+  color: var(--aymax-text) !important;
   font-weight: 500 !important;
 }
 
-/* ── Status badge ── */
 .aymaxStatusBadge .sapMObjStatusText {
   font-size: 11px !important;
 }
 
-/* ── Progress bar ── */
 .aymaxProgressLabel {
   font-size: 12px !important;
   font-weight: 600 !important;
-  color: #3b82f6 !important;
+  color: var(--aymax-primary) !important;
 }
 .aymaxProgressBarOuter {
   width: 100% !important;
   height: 6px !important;
-  background: #e5e7eb !important;
+  background: var(--aymax-border) !important;
   border-radius: 999px !important;
   overflow: hidden !important;
   display: block !important;
 }
 .aymaxProgressBarInner {
   height: 6px !important;
-  background: linear-gradient(90deg, #3b82f6, #1e3a8a) !important;
+  background: linear-gradient(90deg, var(--aymax-accent), var(--aymax-primary)) !important;
   border-radius: 999px !important;
   display: block !important;
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Skill tags ── */
-.aymaxSkillTag {
-  background: #f3f4f6 !important;
-  color: #4b5563 !important;
-  border: none !important;
-  border-radius: 16px !important;
-  font-size: 11px !important;
-  margin: 2px 4px 2px 0 !important;
-  padding: 2px 10px !important;
-}
-.aymaxSkillTag .sapMTokenText {
-  font-size: 11px !important;
-  color: #4b5563 !important;
-}
-.aymaxSkillTag .sapMTokenIcon {
-  display: none !important;  /* hide the X delete icon */
-}
-
-/* ── Buttons ── */
 .aymaxStartBtn .sapMBtnInner {
   border-radius: 8px !important;
   font-size: 13px !important;
   font-weight: 500 !important;
 }
 .aymaxContinueBtn .sapMBtnInner {
-  color: #3b82f6 !important;
+  color: var(--aymax-primary) !important;
   font-weight: 500 !important;
 }
 .aymaxContinueBtn .sapMBtnInner:hover {
-  color: #1e40af !important;
-  background: #eff6ff !important;
+  background: var(--aymax-neutral-100) !important;
 }
 
-/* ── Responsive ── */
 @media (max-width: 768px) {
   .aymaxCertList .sapMListItems {
     grid-template-columns: 1fr !important;

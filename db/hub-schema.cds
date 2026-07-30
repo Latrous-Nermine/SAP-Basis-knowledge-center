@@ -8,7 +8,7 @@ entity Employees : cuid, managed {
   name               : String(120);
   initials           : String(4);
   dept               : String(80);
-  level              : String(40);   // Contributeur, Expert...
+  level              : String(40);
   reputation         : Integer default 0;
   objStatus          : String(20) enum { ontrack; atrisk; done; };
   objectiveTitle     : String(200);
@@ -26,14 +26,14 @@ entity Employees : cuid, managed {
 entity Skills : cuid {
   employee : Association to Employees;
   name     : String(80);
-  stars    : String(10);   // display glyphs, e.g. "★★★★☆"
+  stars    : String(10);
   percent  : Integer;
 }
 
 entity Objectives : cuid {
   title  : String(200);
-  owner  : String(80);     // department
-  due    : String(40);     // free text, e.g. "Sept. 2026"
+  owner  : String(80);
+  due    : String(40);
   status : String(20) enum { ontrack; atrisk; done; };
 }
 
@@ -61,8 +61,6 @@ entity CertificationSkills : cuid {
   tag           : String(60);
 }
 
-// Bridge entity: tracks each employee's status per certification
-// (recommended / inProgress / earned) instead of duplicating rows.
 entity EmployeeCertifications : cuid {
   employee      : Association to Employees;
   certification : Association to Certifications;
@@ -72,7 +70,7 @@ entity EmployeeCertifications : cuid {
   earnedDate    : Date;
 }
 
-/* ──────────────── Validation (content review queue) ──────────────── */
+/* ──────────────── Validation ──────────────── */
 
 entity ValidationItems : cuid {
   title     : String(250);
@@ -109,15 +107,13 @@ entity RapportHistory : cuid {
   time    : Timestamp @cds.on.insert: $now;
 }
 
-/* ──────────────── Rapports dashboard (aggregates) ──────────────── */
-// Kept as plain tables for now; in production these would be
-// CDS analytic views computed from ValidationItems/Rapports/Employees.
+/* ──────────────── Rapports dashboard ──────────────── */
 
 entity DashboardKPIs : cuid {
   label : String(80);
   value : String(20);
   delta : String(80);
-  state : String(20);   // Success / Warning / Information / Error
+  state : String(20);
 }
 
 entity DepartmentStats : cuid {
@@ -127,12 +123,12 @@ entity DepartmentStats : cuid {
   avgRep : Integer;
 }
 
-/* ──────────────── Dépôt de projet (file manager) ──────────────── */
+/* ──────────────── Dépôt de projet ──────────────── */
 
 entity DepotFiles : cuid {
   name       : String(200);
-  size       : String(20);   // display string, e.g. "2.4 MB"
-  type       : String(10);   // pdf, zip, doc, docx, png, jpg...
+  size       : String(20);
+  type       : String(10);
   uploadedBy : Association to Employees;
   uploadedAt : Timestamp @cds.on.insert: $now;
 }
@@ -145,7 +141,6 @@ entity Roles : cuid {
   count : Integer;
 }
 
-// Flat model matching the permission-matrix UI directly.
 entity Permissions : cuid {
   name     : String(120);
   admin    : Boolean default false;

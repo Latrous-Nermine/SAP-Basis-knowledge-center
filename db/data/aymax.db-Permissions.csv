@@ -1,0 +1,7 @@
+ID;name;admin;manager;hr;employee;intern
+1fe00d50-8779-4722-a332-461821f7014d;Publier un article;false;true;false;true;false
+9e181c18-c0f9-4899-8803-30a7bba462c6;Valider le contenu;false;true;false;false;false
+c649732e-fba5-471c-9ea6-241a48220b34;Voter (upvote/downvote);false;true;false;true;false
+2a4ea0ce-9c49-4c4f-bed7-cf407e1aac67;Gérer les récompenses;false;false;true;false;false
+a43992ab-a836-4b3d-8282-706b33ba083f;Gérer les rôles;true;false;false;false;false
+d79f9b31-2ab4-4358-b11a-11e6440f832a;Créer une question;false;true;false;true;true

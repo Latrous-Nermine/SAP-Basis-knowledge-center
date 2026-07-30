@@ -1,0 +1,6 @@
+ID;title;category;author_ID;dept;excerpt;status
+8056c927-484e-4428-a9ea-2a47119091a8;Guide de paramétrage des vues CDS pour la migration HANA Cloud;Documentation;b3494d32-704e-4bda-b3b7-50169e77705d;Solutions SAP;Pièges à éviter et check-list de paramétrage rassemblés après le retour d'expérience de la migration HANA Cloud.;pending
+8c28a948-397e-4a5b-9d24-33b839e5a784;Réduire le poids des images Docker de build en pipeline CI/CD;Bonnes pratiques;d733ace2-e2d1-4828-98db-30a3fc65361b;Développement Digital;Retour d'expérience sur l'optimisation multi-stage et le nettoyage des couches intermédiaires.;pending
+15f4eefb-ef7e-44f2-9ce2-1af5e2756f58;Rapport de fin de stage — intégration API Portail Client;Rapport de stage;21336068-8f0d-4281-b8ba-ff1a6b6a67cf;Gestion des données;Synthèse des travaux réalisés durant le stage sur l'intégration des flux de données.;pending
+943adb94-bd1a-4140-b871-edbc1b85f584;Gabarit Fiori Elements — liste analytique + carte de synthèse;Modèles;7f40bd13-49ae-465b-9123-6e45a13aff5a;Solutions SAP;Modèle prêt à l'emploi pour accélérer les écrans de reporting finance et logistique.;approved
+cabea690-2e97-4ec4-b884-29e0a4c9c3cc;Comparatif interne des frameworks front (brouillon incomplet);Article;53e87c61-c776-4b02-874d-a8992d9ef1a5;Solutions SAP;Ébauche non aboutie, manque de sources et de structure.;rejected

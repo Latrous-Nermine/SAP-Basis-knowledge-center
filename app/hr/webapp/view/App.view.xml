@@ -1,0 +1,50 @@
+<mvc:View
+  controllerName="aymax.hr.controller.App"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <VBox fitContainer="true">
+    <HBox class="aymaxHeader" alignItems="Center" justifyContent="SpaceBetween">
+      
+      <HBox alignItems="Center">
+        <HBox class="aymaxLogo" alignItems="Center">
+          <Avatar displaySize="XS" initials="A" class="sapUiTinyMarginEnd aymaxLogoAvatar"/>
+          <VBox>
+            <Title text="AYMAX" titleStyle="H5"/>
+            <Text text="knowledge hub" class="aymaxLogoSub"/>
+          </VBox>
+        </HBox>
+
+        <HBox class="aymaxNavLinks sapUiSmallMarginBegin">
+          <Button text="Employés" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="employes"/></customData>
+          </Button>
+          <Button text="Compétences" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="competences"/></customData>
+          </Button>
+          <Button text="Objectifs" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="objectifs"/></customData>
+          </Button>
+          <Button text="Récompenses" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="rewards"/></customData>
+          </Button>
+          <Button text="Rapports" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="rapports"/></customData>
+          </Button>
+        </HBox>
+      </HBox>
+
+      <HBox alignItems="Center">
+        <Text text="{view>/userRole}" class="aymaxRoleBadge sapUiTinyMarginEnd"/>
+        <SearchField width="260px" placeholder="Rechercher..." search=".onGlobalSearch" class="sapUiSmallMarginEnd"/>
+        <Button icon="sap-icon://light-mode" type="Transparent" press=".onToggleTheme" class="sapUiTinyMarginEnd"/>
+        <Button icon="sap-icon://bell" type="Transparent" class="sapUiTinyMarginEnd"/>
+        <Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" initials="RH" displaySize="S"/>
+      </HBox>
+    </HBox>
+
+    <App id="app" defaultTransitionName="slide"/>
+  </VBox>
+</mvc:View>

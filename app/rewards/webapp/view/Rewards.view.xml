@@ -2,74 +2,41 @@
   controllerName="aymax.rewards.controller.Rewards"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
-  xmlns:f="sap.f"
   xmlns:layout="sap.ui.layout"
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
-  <f:DynamicPage id="rewardsPage" headerExpanded="true">
-
-    <!-- ===== HEADER ===== -->
-    <f:title>
-      <f:DynamicPageTitle>
-        <f:heading>
-          <HBox alignItems="Center">
-            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
-            <Title text="Catalogue de récompenses" level="H2"/>
-          </HBox>
-        </f:heading>
-        <f:actions>
-          <Button icon="sap-icon://bell" type="Transparent"/>
-          <Avatar initials="RH" displaySize="S" class="aymaxAvatar"/>
-        </f:actions>
-      </f:DynamicPageTitle>
-    </f:title>
-
-    <!-- ===== NAVIGATION BAR ===== -->
-    <f:header>
-      <f:DynamicPageHeader>
-        <OverflowToolbar class="aymaxSubNav" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-          <Button text="Employés" type="Transparent" press=".onNavToApp" customData:targetApp="hr"/>
-          <Button text="Compétences" type="Transparent" press=".onNavToApp" customData:targetApp="hr"/>
-          <Button text="Objectifs" type="Transparent" press=".onNavToApp" customData:targetApp="hr"/>
-          <ToolbarSpacer/>
-          <Button text="Récompenses" type="Emphasized"/>
-          <Button text="Rapports" type="Transparent" press=".onNavToApp" customData:targetApp="rapports"/>
-        </OverflowToolbar>
-      </f:DynamicPageHeader>
-    </f:header>
-
-    <!-- ===== CONTENT ===== -->
-    <f:content>
-      <VBox class="sapUiResponsivePadding--header sapUiResponsivePadding--content aymaxPageContent">
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
 
         <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
           <VBox>
             <Title text="Catalogue de récompenses" level="H1" class="aymaxPageTitle"/>
-            <Text text="Les employés convertissent leurs points de réputation en cadeaux." class="aymaxSubtitle sapUiTinyMarginTop"/>
+            <Text text="Les employés convertissent leurs points de réputation en cadeaux." class="aymaxMeta sapUiTinyMarginTop"/>
           </VBox>
           <Button text="+ Ajouter une récompense" type="Emphasized" press=".onAddReward"/>
         </HBox>
 
         <!-- REWARDS GRID -->
-        <HBox items="{view>/rewards}" wrap="Wrap" class="aymaxRewardGrid">
+        <HBox items="{/Rewards}" wrap="Wrap" class="aymaxRewardGrid">
           <Panel class="aymaxCard aymaxRewardCard sapUiSmallMarginEnd sapUiSmallMarginBottom" width="280px">
             <VBox alignItems="Center" justifyContent="Center" class="sapUiMediumMargin">
               
               <VBox class="aymaxRewardIconWrapper sapUiSmallMarginBottom" alignItems="Center" justifyContent="Center">
-                <core:Icon src="sap-icon://gift" size="1.8rem" color="#3b82f6"/>
+                <core:Icon src="sap-icon://gift" size="1.8rem" color="var(--aymax-primary)"/>
               </VBox>
               
-              <Title text="{view>name}" level="H4" class="aymaxRewardTitle sapUiTinyMarginBottom" textAlign="Center"/>
-              <Text text="{path: 'view>points', formatter: '.formatPointsLabel'}" class="aymaxRewardPoints sapUiMediumMarginBottom"/>
+              <Title text="{name}" level="H4" class="aymaxRewardTitle sapUiTinyMarginBottom" textAlign="Center"/>
+<Text text="{path: 'points', formatter: '.formatPointsLabel'}" class="aymaxRewardPoints sapUiMediumMarginBottom"/>
               
-              <Button text="Modifier" type="Default" width="100%" press=".onEditReward"/>
+              <Button text="Modifier" type="Default" width="100%" press=".onEditReward" class="aymaxBtnSecondary"/>
               
             </VBox>
           </Panel>
         </HBox>
 
       </VBox>
-    </f:content>
-  </f:DynamicPage>
+    </content>
+  </Page>
 </mvc:View>

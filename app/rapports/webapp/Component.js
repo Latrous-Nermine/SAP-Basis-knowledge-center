@@ -12,6 +12,11 @@ sap.ui.define([
     init: function() {
       UIComponent.prototype.init.apply(this, arguments);
 
+      // 1. Initialiser le router
+      if (this.getRouter()) {
+        this.getRouter().initialize();
+      }
+
       var oViewModel = new JSONModel({
         kpis: [
           { label: 'Publications ce mois', value: '86', delta: '+12% vs mois dernier', state: 'Success' },

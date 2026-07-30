@@ -1,0 +1,86 @@
+/* ===== HEADER AYMAX — 1 LIGNE ===== */
+.aymaxHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--aymax-surface);
+  border-bottom: 1px solid var(--aymax-border);
+  padding: 0 20px;
+  height: 52px;
+  white-space: nowrap;
+  flex-wrap: nowrap !important;
+}
+
+.aymaxHeader > div {
+  flex-wrap: nowrap !important;
+}
+
+/* ===== LOGO BLEU ===== */
+.aymaxLogoAvatar {
+  background-color: #1E3A8A !important;
+  color: #FFFFFF !important;
+  border: none !important;
+}
+
+.aymaxLogo {
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.aymaxLogoSub {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aymax-primary);
+  font-weight: 600;
+}
+
+/* ===== NAV LINKS ===== */
+.aymaxNavLinks {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex-wrap: nowrap !important;
+}
+
+.aymaxNavLink {
+  color: var(--aymax-text-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 5px 8px !important;
+  border-radius: 6px !important;
+  transition: color 0.2s ease, background 0.2s ease !important;
+  white-space: nowrap;
+}
+
+.aymaxNavLink:hover {
+  color: var(--aymax-text) !important;
+  background: var(--aymax-neutral-100) !important;
+}
+
+.aymaxNavActive {
+  color: var(--aymax-primary) !important;
+  background: color-mix(in srgb, var(--aymax-primary) 8%, transparent) !important;
+  font-weight: 600 !important;
+}
+
+/* ===== RÔLE XSUAA (texte, pas menu) ===== */
+.aymaxRoleBadge {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--aymax-text-secondary) !important;
+  background: var(--aymax-neutral-100);
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+  .aymaxNavLink { font-size: 11.5px !important; padding: 4px 6px !important; }
+  .aymaxHeader { padding: 0 12px; }
+}
+
+@media (max-width: 1024px) {
+  .aymaxNavLinks { display: none !important; }
+}

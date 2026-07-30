@@ -56,17 +56,45 @@
       }
     },
     "rootView": {
-      "viewName": "aymax.depot.view.Depot",
+      "viewName": "aymax.depot.view.App",
       "type": "XML",
       "async": true,
-      "id": "depotView"
+      "id": "app"
     },
     "resources": {
       "css": [
         {
           "uri": "css/style.css"
+        },
+        {
+          "uri": "css/header.css"
         }
       ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "aymax.depot.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "depot",
+          "target": "depot"
+        }
+      ],
+      "targets": {
+        "depot": {
+          "viewName": "Depot",
+          "viewId": "depot",
+          "viewLevel": 1
+        }
+      }
     }
   }
 }

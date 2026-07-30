@@ -11,7 +11,7 @@
     "description": "{{appDescription}}",
     "dataSources": {
       "mainService": {
-        "uri": "/odata/v4/hr/",
+        "uri": "/odata/v4/rewards/",
         "type": "OData",
         "settings": {
           "odataVersion": "4.0"
@@ -55,17 +55,45 @@
       }
     },
     "rootView": {
-      "viewName": "aymax.rewards.view.Rewards",
+      "viewName": "aymax.rewards.view.App",
       "type": "XML",
       "async": true,
-      "id": "rewardsView"
+      "id": "app"
     },
     "resources": {
       "css": [
         {
           "uri": "css/style.css"
+        },
+        {
+          "uri": "css/header.css"
         }
       ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "aymax.rewards.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "rewards",
+          "target": "rewards"
+        }
+      ],
+      "targets": {
+        "rewards": {
+          "viewName": "Rewards",
+          "viewId": "rewards",
+          "viewLevel": 1
+        }
+      }
     }
   }
 }

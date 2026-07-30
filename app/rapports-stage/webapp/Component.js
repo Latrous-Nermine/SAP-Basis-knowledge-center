@@ -12,6 +12,11 @@ sap.ui.define([
     init: function() {
       UIComponent.prototype.init.apply(this, arguments);
 
+      // 1. Initialiser le router
+      if (this.getRouter()) {
+        this.getRouter().initialize();
+      }
+
       var oViewModel = new JSONModel({
         draftTitle: "Rapport de stage — Migration HANA Cloud",
         draftPeriod: "Juin – Août 2026",

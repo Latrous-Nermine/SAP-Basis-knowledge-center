@@ -2,43 +2,13 @@
   controllerName="aymax.rapports.controller.Rapports"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
-  xmlns:f="sap.f"
   xmlns:layout="sap.ui.layout"
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
-  <f:DynamicPage id="rapportsPage" headerExpanded="true">
-
-    <!-- ===== HEADER ===== -->
-    <f:title>
-      <f:DynamicPageTitle>
-        <f:heading>
-          <HBox alignItems="Center">
-            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
-            <MenuButton text="Rapports de stage" type="Transparent">
-              <menu>
-                <Menu xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-                  <MenuItem text="Tableau de bord" press=".onNavToApp" customData:targetApp="dashboard"/>
-                  <MenuItem text="Fil d'actualité" press=".onNavToApp" customData:targetApp="feed"/>
-                  <MenuItem text="Questions" press=".onNavToApp" customData:targetApp="questions"/>
-                  <MenuItem text="Room Stage" press=".onNavToApp" customData:targetApp="room-stage"/>
-                  <MenuItem text="Dépôt de projet" press=".onNavToApp" customData:targetApp="depot-projet"/>
-                  <MenuItem text="Profil" press=".onNavToApp" customData:targetApp="profile"/>
-                </Menu>
-              </menu>
-            </MenuButton>
-          </HBox>
-        </f:heading>
-        <f:actions>
-          <Button icon="sap-icon://bell" type="Transparent"/>
-          <Avatar initials="YM" displaySize="S" class="aymaxAvatar"/>
-        </f:actions>
-      </f:DynamicPageTitle>
-    </f:title>
-
-    <!-- ===== CONTENT ===== -->
-    <f:content>
-      <VBox class="sapUiResponsivePadding--header sapUiResponsivePadding--content aymaxPageContent">
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
 
         <HBox alignItems="Center" class="sapUiSmallMarginBottom">
           <Title text="Rapport de stage" level="H1" class="aymaxPageTitle sapUiSmallMarginEnd"/>
@@ -48,7 +18,7 @@
             inverted="true" 
             class="aymaxStatusBadge"/>
         </HBox>
-        <Text text="Un seul rapport par stage — modifiez-le et soumettez-le à votre tuteur au fur et à mesure de votre progression." class="aymaxSubtitle sapUiMediumMarginBottom"/>
+        <Text text="Un seul rapport par stage — modifiez-le et soumettez-le à votre tuteur au fur et à mesure de votre progression." class="aymaxMeta sapUiMediumMarginBottom"/>
 
         <!-- MAIN EDITOR CARD -->
         <Panel class="aymaxCard sapUiMediumMarginBottom aymaxEditorPanel">
@@ -84,18 +54,21 @@
         </Panel>
 
         <!-- HISTORY CARD -->
-        <Panel headerText="Historique des soumissions" class="aymaxCard">
+        <Panel class="aymaxCard">
+          <headerToolbar>
+            <Toolbar style="Clear"><Title level="H5" text="Historique des soumissions"/></Toolbar>
+          </headerToolbar>
           <List items="{view>/history}" showSeparators="None" class="aymaxHistoryList">
             <CustomListItem>
               <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxHistoryItem">
                 <Text text="{view>text}" class="aymaxHistoryText"/>
-                <Text text="{view>time}" class="aymaxMetaText"/>
+                <Text text="{view>time}" class="aymaxMeta"/>
               </HBox>
             </CustomListItem>
           </List>
         </Panel>
 
       </VBox>
-    </f:content>
-  </f:DynamicPage>
+    </content>
+  </Page>
 </mvc:View>

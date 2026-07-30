@@ -55,17 +55,45 @@
       }
     },
     "rootView": {
-      "viewName": "aymax.rapports.dash.view.RapportsDash",
+      "viewName": "aymax.rapports.dash.view.App",
       "type": "XML",
       "async": true,
-      "id": "rapportsDashView"
+      "id": "app"
     },
     "resources": {
       "css": [
         {
           "uri": "css/style.css"
+        },
+        {
+          "uri": "css/header.css"
         }
       ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "aymax.rapports.dash.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "rapportsDash",
+          "target": "rapportsDash"
+        }
+      ],
+      "targets": {
+        "rapportsDash": {
+          "viewName": "RapportsDash",
+          "viewId": "rapportsDash",
+          "viewLevel": 1
+        }
+      }
     }
   }
 }

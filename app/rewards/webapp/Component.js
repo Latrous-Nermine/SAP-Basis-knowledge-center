@@ -12,14 +12,13 @@ sap.ui.define([
     init: function() {
       UIComponent.prototype.init.apply(this, arguments);
 
-      var oViewModel = new JSONModel({
-        rewards: [
-          { name: 'Sac pour ordinateur portable', points: 5000 },
-          { name: 'Ordinateur portable', points: 10000 },
-          { name: 'Smartphone', points: 20000 }
-        ]
-      });
-      this.setModel(oViewModel, "view");
+      // 1. Initialiser le router
+      if (this.getRouter()) {
+        this.getRouter().initialize();
+      }
+
+      var oViewModel = new JSONModel({});
+this.setModel(oViewModel, "view");
     }
   });
 });

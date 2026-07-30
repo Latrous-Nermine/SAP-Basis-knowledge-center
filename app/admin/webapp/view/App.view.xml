@@ -1,0 +1,53 @@
+<mvc:View
+  controllerName="aymax.admin.controller.App"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <VBox fitContainer="true">
+    <HBox class="aymaxHeader" alignItems="Center" justifyContent="SpaceBetween">
+      
+      <HBox alignItems="Center">
+        <HBox class="aymaxLogo" alignItems="Center">
+          <Avatar displaySize="XS" initials="A" class="sapUiTinyMarginEnd aymaxLogoAvatar"/>
+          <VBox>
+            <Title text="AYMAX" titleStyle="H5"/>
+            <Text text="knowledge hub" class="aymaxLogoSub"/>
+          </VBox>
+        </HBox>
+
+        <HBox class="aymaxNavLinks sapUiSmallMarginBegin">
+          <Button text="Tableau de bord" type="Transparent" press=".onNavTo" class="aymaxNavActive">
+            <customData><core:CustomData key="navKey" value="admin"/></customData>
+          </Button>
+          <Button text="Fil d'actualité" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="feed"/></customData>
+          </Button>
+          <Button text="Questions" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="questions"/></customData>
+          </Button>
+          <Button text="Room Stage" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="rooms"/></customData>
+          </Button>
+          <Button text="Rapports de stage" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="rapports-stage"/></customData>
+          </Button>
+          <Button text="Profil" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="profile"/></customData>
+          </Button>
+        </HBox>
+      </HBox>
+
+      <HBox alignItems="Center">
+        <Text text="{view>/userRole}" class="aymaxRoleBadge sapUiTinyMarginEnd"/>
+        <SearchField width="260px" placeholder="Rechercher..." search=".onGlobalSearch" class="sapUiSmallMarginEnd"/>
+        <Button icon="sap-icon://light-mode" type="Transparent" press=".onToggleTheme" class="sapUiTinyMarginEnd"/>
+        <Button icon="sap-icon://bell" type="Transparent" class="sapUiTinyMarginEnd"/>
+        <Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" initials="AD" displaySize="S"/>
+      </HBox>
+    </HBox>
+
+    <App id="app" defaultTransitionName="slide"/>
+  </VBox>
+</mvc:View>

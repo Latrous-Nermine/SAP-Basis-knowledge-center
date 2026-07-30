@@ -55,17 +55,45 @@
       }
     },
     "rootView": {
-      "viewName": "aymax.certifications.view.Certifications",
+      "viewName": "aymax.certifications.view.App",
       "type": "XML",
       "async": true,
-      "id": "certsView"
+      "id": "app"
     },
     "resources": {
       "css": [
         {
           "uri": "css/style.css"
+        },
+        {
+          "uri": "css/header.css"
         }
       ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "aymax.certifications.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "certifications",
+          "target": "certifications"
+        }
+      ],
+      "targets": {
+        "certifications": {
+          "viewName": "Certifications",
+          "viewId": "certifications",
+          "viewLevel": 1
+        }
+      }
     }
   }
 }

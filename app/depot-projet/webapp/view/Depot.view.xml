@@ -2,53 +2,23 @@
   controllerName="aymax.depot.controller.Depot"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
-  xmlns:f="sap.f"
   xmlns:layout="sap.ui.layout"
   xmlns:u="sap.ui.unified"
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
-  <f:DynamicPage id="depotPage" headerExpanded="true">
-
-    <!-- ===== HEADER ===== -->
-    <f:title>
-      <f:DynamicPageTitle>
-        <f:heading>
-          <HBox alignItems="Center">
-            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
-            <MenuButton text="Dépôt de projet" type="Transparent">
-              <menu>
-                  <Menu xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-                  <MenuItem text="Tableau de bord" press=".onNavToApp" customData:targetApp="dashboard"/>
-                  <MenuItem text="Fil d'actualité" press=".onNavToApp" customData:targetApp="feed"/>
-                  <MenuItem text="Questions" press=".onNavToApp" customData:targetApp="questions"/>
-                  <MenuItem text="Room Stage" press=".onNavToApp" customData:targetApp="room-stage"/>
-                  <MenuItem text="Rapports de stage" press=".onNavToApp" customData:targetApp="rapports-stage"/>
-                  <MenuItem text="Profil" press=".onNavToApp" customData:targetApp="profile"/>
-                </Menu>
-              </menu>
-            </MenuButton>
-          </HBox>
-        </f:heading>
-        <f:actions>
-          <Button icon="sap-icon://bell" type="Transparent"/>
-          <Avatar initials="YM" displaySize="S" class="aymaxAvatar"/>
-        </f:actions>
-      </f:DynamicPageTitle>
-    </f:title>
-
-    <!-- ===== CONTENT ===== -->
-    <f:content>
-      <VBox class="sapUiResponsivePadding--header sapUiResponsivePadding--content aymaxPageContent">
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
 
         <Title text="Dépôt de livrables projet" level="H1" class="aymaxPageTitle sapUiSmallMarginBottom"/>
-        <Text text="Déposez ici vos livrables finaux. Les fichiers seront automatiquement rattachés à votre profil et consultables par votre tuteur et l'administration." class="aymaxSubtitle sapUiMediumMarginBottom" wrapping="true"/>
+        <Text text="Déposez ici vos livrables finaux. Les fichiers seront automatiquement rattachés à votre profil et consultables par votre tuteur et l'administration." class="aymaxMeta sapUiMediumMarginBottom" wrapping="true"/>
 
         <!-- DROP ZONE -->
-        <VBox class="aymaxDropZone sapUiMediumMarginBottom" alignItems="Center" justifyContent="Center">
-          <core:Icon src="sap-icon://upload-to-cloud" size="3rem" color="#9ca3af" class="sapUiSmallMarginBottom"/>
+        <VBox class="aymaxCard aymaxDropZone sapUiMediumMarginBottom" alignItems="Center" justifyContent="Center">
+          <core:Icon src="sap-icon://upload-to-cloud" size="3rem" color="var(--aymax-neutral-400)" class="sapUiSmallMarginBottom"/>
           <Title text="Glissez-déposez vos fichiers ici" level="H3" class="sapUiTinyMarginBottom"/>
-          <Text text="ou" class="aymaxMetaText sapUiSmallMarginBottom"/>
+          <Text text="ou" class="aymaxMeta sapUiSmallMarginBottom"/>
           
           <u:FileUploader 
             id="fileUploader"
@@ -62,11 +32,14 @@
             style="Emphasized"
             class="aymaxBrowseBtn"/>
           
-          <Text text="Formats acceptés : PDF, ZIP, DOCX, PPTX (Max: 50MB)" class="aymaxMetaText sapUiSmallMarginTop"/>
+          <Text text="Formats acceptés : PDF, ZIP, DOCX, PPTX (Max: 50MB)" class="aymaxMeta sapUiSmallMarginTop"/>
         </VBox>
 
         <!-- FILE LIST -->
-        <Panel headerText="Fichiers déposés" class="aymaxCard">
+        <Panel class="aymaxCard">
+          <headerToolbar>
+            <Toolbar style="Clear"><Title level="H5" text="Fichiers déposés"/></Toolbar>
+          </headerToolbar>
           <List items="{view>/files}" showSeparators="None" class="aymaxFileList">
             <CustomListItem>
               <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxFileItem">
@@ -74,11 +47,11 @@
                   <core:Icon 
                     src="{path: 'view>type', formatter: '.formatIcon'}" 
                     size="1.5rem" 
-                    color="#3b82f6" 
+                    color="var(--aymax-primary)" 
                     class="sapUiSmallMarginEnd"/>
                   <VBox>
                     <Text text="{view>name}" class="aymaxFileName"/>
-                    <Text text="{view>size} · Ajouté {view>date}" class="aymaxMetaText"/>
+                    <Text text="{view>size} · Ajouté {view>date}" class="aymaxMeta"/>
                   </VBox>
                 </HBox>
                 <Button 
@@ -93,6 +66,6 @@
         </Panel>
 
       </VBox>
-    </f:content>
-  </f:DynamicPage>
+    </content>
+  </Page>
 </mvc:View>

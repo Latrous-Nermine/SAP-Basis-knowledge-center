@@ -29,10 +29,10 @@ sap.ui.define([
     },
     
     onEditReward: function(oEvent) {
-      var oContext = oEvent.getSource().getBindingContext("view");
-      var sName = oContext.getProperty("name");
-      MessageToast.show("Édition de : " + sName);
-    },
+  var oContext = oEvent.getSource().getBindingContext();
+  var sName = oContext.getProperty("name");
+  MessageToast.show("Édition de : " + sName);
+},
     
     formatPointsLabel: function(iPoints) {
       return iPoints.toLocaleString("fr-FR") + " points";
