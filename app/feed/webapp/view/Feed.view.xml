@@ -11,7 +11,7 @@
         <layout:VerticalLayout width="280px" class="sapUiMediumMarginEnd">
           <Panel class="aymaxCard">
             <VBox alignItems="Center" class="sapUiMediumMarginBottom">
-              <Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" displaySize="XL" class="sapUiMediumMarginBottom"/>
+              <Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" displaySize="XL" interactive="true" press=".onProfilePress" class="sapUiMediumMarginBottom"/>
               <Title text="{view>/currentUser/displayName}" level="H3"/>
               <Text text="{view>/currentUser/jobTitle} · {view>/currentUser/department}"/>
               <HBox class="sapUiMediumMarginTop">
@@ -104,7 +104,7 @@
             <List items="{/UserProfiles}" showSeparators="None">
               <CustomListItem>
                 <HBox alignItems="Center" class="sapUiTinyMarginBottom">
-                  <Avatar src="{parts:[{path:'avatarUrl'},{path:'displayName'}], formatter:'.formatAvatar'}" displaySize="S" class="sapUiTinyMarginEnd"/>
+                  <Avatar src="{parts:[{path:'avatarUrl'},{path:'displayName'}], formatter:'.formatAvatar'}" displaySize="S" interactive="true" press=".onProfilePress" class="sapUiTinyMarginEnd"/>
                   <VBox>
                     <Title text="{displayName}" level="H6"/>
                     <Text text="{jobTitle}" class="aymaxMeta"/>

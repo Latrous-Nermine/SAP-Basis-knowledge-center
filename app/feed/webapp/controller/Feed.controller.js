@@ -75,6 +75,20 @@ sap.ui.define([
       window.location.href = "/knowledge/webapp/index.html";
     },
 
+    onProfilePress: function(oEvent) {
+      // Two callers share this handler: the own-avatar panel (no binding
+      // context - reads the view model instead) and each Experts-to-découvrir
+      // list item (has its own UserProfiles binding context). Read the ID
+      // from whichever is actually present - never assume "current user".
+      var oContext = oEvent.getSource().getBindingContext();
+      var sUserID = oContext
+        ? oContext.getProperty("userID")
+        : this.oViewModel.getProperty("/currentUser/userID");
+
+      if (!sUserID) return;
+      window.location.href = "/profile/webapp/index.html#/profile/" + encodeURIComponent(sUserID);
+    },
+
     onNotificationsPress: function() {
       // Standalone app-to-app navigation: no shared shell/router exists yet
       // (docs/lot2-analysis.md §6.3 is still an open team decision), so this

@@ -79,7 +79,15 @@ sap.ui.define([
         return;
       }
 
-      if (sKey === "dashboard" || sKey === "experts" || sKey === "profile") {
+      if (sKey === "profile") {
+        var sUserID = this.getOwnerComponent().getModel("view").getProperty("/currentUser/userID");
+        if (sUserID) {
+          window.location.href = "/profile/webapp/index.html#/profile/" + encodeURIComponent(sUserID);
+        }
+        return;
+      }
+
+      if (sKey === "dashboard" || sKey === "experts") {
         MessageToast.show("Page en cours de développement (Lot 2)");
         return;
       }

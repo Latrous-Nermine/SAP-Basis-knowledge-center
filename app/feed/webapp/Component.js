@@ -17,6 +17,7 @@ sap.ui.define([
         selectedFilter: "all",
         busy: false,
         currentUser: {
+          userID: "",
           displayName: "",
           jobTitle: "",
           department: "",
@@ -40,6 +41,7 @@ sap.ui.define([
       oContext.requestObject().then(function(oData) {
         if (oData) {
           oViewModel.setProperty("/currentUser", {
+            userID: oData.userID || "",
             displayName: oData.displayName || "",
             jobTitle: oData.jobTitle || "",
             department: oData.department || "",
