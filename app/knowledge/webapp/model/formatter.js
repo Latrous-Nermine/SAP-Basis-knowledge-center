@@ -24,6 +24,12 @@ sap.ui.define([
     rejected: { key: "status.rejected", state: "Error" }
   };
 
+  var ROLE_KEYS = {
+    author: "roleLabel.author",
+    contributor: "roleLabel.contributor",
+    reviewer: "roleLabel.reviewer"
+  };
+
   var oResourceBundle = null;
 
   // Plain module-scope functions, not object methods - a formatter invoked
@@ -47,6 +53,17 @@ sap.ui.define([
   // A draft has never been published - nothing to comment on yet.
   function canShowComments(sStatus) {
     return sStatus !== "draft";
+  }
+
+  // Card metadata line ("author · relative date"). No Profile/People service
+  // yet to resolve display names (TODO-INTEGRATION.md I-16), so user IDs are
+  // shown as-is.
+  function metaLine(aContributors, vCreatedAt) {
+    var sAuthor = (aContributors && aContributors.length)
+      ? aContributors.map(function(c) { return c.user_userID; }).join(", ")
+      : "";
+    var sDate = relativeDateTime(vCreatedAt);
+    return sAuthor ? (sAuthor + " · " + sDate) : sDate;
   }
 
   return {
@@ -78,9 +95,23 @@ sap.ui.define([
       return oMeta ? oMeta.state : "None";
     },
 
+    /** No Profile/People service yet (TODO-INTEGRATION.md I-16), so there's
+        no display name or photo - initials derived from the user ID itself. */
+    initials: function(sUserID) {
+      if (!sUserID) return "?";
+      return sUserID.slice(0, 2).toUpperCase();
+    },
+
+    contributorRoleLabel: function(sRole) {
+      if (!sRole || !oResourceBundle) return "";
+      var sKey = ROLE_KEYS[sRole];
+      return sKey ? oResourceBundle.getText(sKey) : sRole;
+    },
+
     isNotApproved: isNotApproved,
     canSubmitForReview: canSubmitForReview,
     canShowComments: canShowComments,
+    metaLine: metaLine,
     relativeDateTime: relativeDateTime,
 
     tabButtonType: function(bActive) {

@@ -24,7 +24,8 @@
         "sap.m": {},
         "sap.f": {},
         "sap.ui.core": {},
-        "sap.ui.layout": {}
+        "sap.ui.layout": {},
+        "sap.uxap": {}
       }
     },
     "rootView": {
@@ -68,6 +69,11 @@
         "settings": { "bundleName": "aymax.knowledge.i18n.i18n" }
       },
       "view": { "type": "sap.ui.model.json.JSONModel" }
+    },
+    "resources": {
+      "css": [
+        { "uri": "css/style.css" }
+      ]
     }
   }
 }

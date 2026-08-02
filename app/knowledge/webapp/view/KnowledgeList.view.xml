@@ -7,40 +7,46 @@
 
   <Page title="{i18n>pageTitle}" showNavButton="false">
     <content>
-      <VBox class="sapUiContentPadding">
+      <!-- Centered, max-width reading column with comfortable margins -
+           per Fiori Horizon guidance, not a full-bleed layout. -->
+      <VBox class="knowledgeContentContainer">
 
-        <!-- Interns are blocked server-side (@restrict on CREATE) - there is
-             no Profile/People service yet to know the caller's role here, so
-             this button stays enabled for everyone; onContribute shows the
-             real 403 if it happens. TODO-INTEGRATION.md I-16. -->
-        <Toolbar>
-          <ToolbarSpacer/>
-          <Button
-            text="{i18n>contribute}"
-            type="Emphasized"
-            press=".onContribute"/>
-        </Toolbar>
+        <VBox class="knowledgeStickyFilters">
+          <!-- Interns are blocked server-side (@restrict on CREATE) - there is
+               no Profile/People service yet to know the caller's role here, so
+               this button stays enabled for everyone; onContribute shows the
+               real 403 if it happens. TODO-INTEGRATION.md I-16. -->
+          <Toolbar>
+            <ToolbarSpacer/>
+            <Button
+              text="{i18n>contribute}"
+              type="Emphasized"
+              press=".onContribute"/>
+          </Toolbar>
 
-        <SearchField
-          placeholder="{i18n>searchPlaceholder}"
-          liveChange=".onSearch"
-          class="sapUiSmallMarginBottom"/>
+          <SearchField
+            placeholder="{i18n>searchPlaceholder}"
+            liveChange=".onSearch"
+            class="sapUiSmallMarginTop sapUiSmallMarginBottom"/>
 
-        <HBox wrap="Wrap" items="{view>/categoryTabs}" class="sapUiSmallMarginBottom">
-          <Button
-            text="{view>label}"
-            type="{path:'view>active', formatter:'.formatter.tabButtonType'}"
-            press=".onCategoryTabPress"
-            class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
-        </HBox>
+          <HBox wrap="Wrap" items="{view>/categoryTabs}">
+            <Button
+              text="{view>label}"
+              type="{path:'view>active', formatter:'.formatter.tabButtonType'}"
+              press=".onCategoryTabPress"
+              class="knowledgeCategoryChip sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+          </HBox>
+        </VBox>
 
         <List
           id="knowledgeList"
-          items="{ path: '/KnowledgeItems', sorter: { path: 'createdAt', descending: true } }"
-          noDataText="{i18n>noItems}">
-          <CustomListItem type="Navigation" press=".onItemPress">
-            <VBox class="sapUiSmallMargin">
-              <HBox justifyContent="SpaceBetween">
+          items="{ path: '/KnowledgeItems', parameters: { $expand: 'contributors' }, sorter: { path: 'createdAt', descending: true } }"
+          noDataText="{i18n>noItems}"
+          showSeparators="None"
+          class="sapUiNoContentPadding">
+          <CustomListItem type="Navigation" press=".onItemPress" class="knowledgeCard">
+            <VBox>
+              <HBox justifyContent="SpaceBetween" alignItems="Center">
                 <ObjectStatus text="{path:'category', formatter:'.formatter.categoryLabel'}" state="Information"/>
                 <ObjectStatus
                   visible="{path:'status', formatter:'.formatter.isNotApproved'}"
@@ -49,7 +55,9 @@
               </HBox>
               <Title text="{title}" wrapping="true" class="sapUiTinyMarginTop"/>
               <Text text="{excerpt}" maxLines="3" class="sapUiTinyMarginTop"/>
-              <Text text="{ path: 'createdAt', formatter: '.formatter.relativeDateTime' }" class="sapUiTinyMarginTop"/>
+              <Text
+                text="{parts: [{path:'contributors'}, {path:'createdAt'}], formatter:'.formatter.metaLine'}"
+                class="sapUiTinyMarginTop"/>
             </VBox>
           </CustomListItem>
         </List>

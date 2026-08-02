@@ -1,0 +1,117 @@
+/* Knowledge Center - Fiori Horizon layout refinements.
+   Structural only (radius/shadow/spacing/motion) - no color overrides here;
+   semantic colour still comes from ObjectStatus states per CLAUDE.md §10. */
+
+.knowledgeContentContainer {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 32px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Keeps the search + category row visible while the card list scrolls, styled
+   as its own card so it reads as a distinct section instead of bare controls
+   floating on the page background. */
+.knowledgeStickyFilters {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--sapGroup_ContentBackground, #ffffff);
+  border-radius: 12px;
+  padding: 16px 20px 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.knowledgeCard {
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: box-shadow 200ms ease, transform 150ms ease;
+  animation: knowledgeCardFadeIn 400ms ease both;
+}
+
+.knowledgeCard:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  transform: translateY(-2px) scale(1.01);
+}
+
+@keyframes knowledgeCardFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Staggered entrance - explicit per-index delays (no JS/controller change
+   needed); items beyond the 8th all settle at the same last delay. */
+.knowledgeCard:nth-child(1) { animation-delay: 0ms; }
+.knowledgeCard:nth-child(2) { animation-delay: 60ms; }
+.knowledgeCard:nth-child(3) { animation-delay: 120ms; }
+.knowledgeCard:nth-child(4) { animation-delay: 180ms; }
+.knowledgeCard:nth-child(5) { animation-delay: 240ms; }
+.knowledgeCard:nth-child(6) { animation-delay: 300ms; }
+.knowledgeCard:nth-child(7) { animation-delay: 360ms; }
+.knowledgeCard:nth-child(8) { animation-delay: 420ms; }
+.knowledgeCard:nth-child(n+9) { animation-delay: 480ms; }
+
+/* Category filter buttons restyled as pill-shaped chips - same sap.m.Button
+   control and press handler, purely additive shape/spacing. */
+.knowledgeCategoryChip {
+  border-radius: 999px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* ============================================================
+   Detail page
+   ============================================================ */
+
+.knowledgeArticleText {
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.knowledgeSidePanel {
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.knowledgeHeaderMeta {
+  row-gap: 4px;
+}
+
+.knowledgeContributorCard {
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  transition: box-shadow 200ms ease;
+}
+
+.knowledgeContributorCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.knowledgeContributorName {
+  font-weight: 600;
+}
+
+.knowledgeContributorRole {
+  opacity: 0.7;
+  font-size: 0.8rem;
+}
+
+.knowledgeCommentCard {
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* An inline composer reads better anchored with a divider than as a
+   floating card - matches how comment inputs actually look in Fiori apps. */
+.knowledgeCommentComposer {
+  border-top: 1px solid var(--sapList_BorderColor, rgba(0, 0, 0, 0.1));
+  padding-top: 12px;
+}
