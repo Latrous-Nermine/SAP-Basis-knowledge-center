@@ -1,8 +1,8 @@
-userID,email,displayName,department,jobTitle,reputation,badgesCount,isActive
-sami,sami.benyoussef@aymax.tn,Sami Ben Youssef,SAP Basis,Consultant SAP BTP,1200,4,true
-nadia,nadia.ferchichi@aymax.tn,Nadia Ferchichi,SAP Technical,Consultante SAP HANA,2140,9,true
-karim,karim.trabelsi@aymax.tn,Karim Trabelsi,SAP Technical,Developpeur Cloud Foundry,1875,7,true
-manon,manon.jelassi@aymax.tn,Manon Jelassi,SAP Basis,Department Manager,980,3,true
-yasmine,yasmine.gharbi@aymax.tn,Yasmine Gharbi,SAP Basis,Stagiaire,120,1,true
-rania,rania.hammami@aymax.tn,Rania Hammami,RH,Responsable RH,0,0,true
-admin,admin@aymax.tn,Administrateur Plateforme,IT,Administrateur,0,0,true
+userID,email,displayName,department,jobTitle,reputation,badgesCount,isActive,role,bio
+sami,sami.benyoussef@aymax.tn,Sami Ben Youssef,SAP Basis,Consultant SAP BTP,1200,4,true,Employee,"Consultant SAP BTP chez Aymax Tunisie, j'interviens sur des projets de conseil en transformation digitale et d'intégration de solutions SAP pour des clients grands comptes, avec un intérêt particulier pour Cloud Foundry, CAP et Fiori Elements."
+nadia,nadia.ferchichi@aymax.tn,Nadia Ferchichi,SAP Technical,Consultante SAP HANA,2140,9,true,DepartmentManager,"Consultante SAP HANA depuis 7 ans chez Aymax Tunisie, spécialisée en optimisation de performance et migration vers HANA Cloud pour des clients grands comptes."
+karim,karim.trabelsi@aymax.tn,Karim Trabelsi,SAP Technical,Developpeur Cloud Foundry,1875,7,true,Employee,"Développeur full-stack orienté Cloud Foundry et CAP, en charge de l'architecture technique de la plateforme Portail Client."
+manon,manon.jelassi@aymax.tn,Manon Jelassi,SAP Basis,Department Manager,980,3,true,DepartmentManager,"Department Manager SAP Basis chez Aymax Tunisie, supervise la validation des contenus techniques et l'organisation de l'équipe."
+yasmine,yasmine.gharbi@aymax.tn,Yasmine Gharbi,SAP Basis,Stagiaire,120,1,true,Intern,"Stagiaire au sein du département SAP Basis, en apprentissage sur les sujets de gestion de systèmes et de support technique."
+rania,rania.hammami@aymax.tn,Rania Hammami,RH,Responsable RH,0,0,true,HR,"Responsable RH chez Aymax Tunisie, en charge du suivi des collaborateurs et de l'accompagnement des équipes techniques."
+admin,admin@aymax.tn,Administrateur Plateforme,IT,Administrateur,0,0,true,Admin,Administrateur de la plateforme AYMAX Knowledge Hub.

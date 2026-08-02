@@ -1,0 +1,22 @@
+ID,user_userID,points,label,category,sourceType,sourceID,occurredAt
+8a4a0001-0000-4000-8000-000000000001,sami,200,Badge « Contributeur Expert » débloqué,badge,,,2026-06-15T09:00:00Z
+8a4a0001-0000-4000-8000-000000000002,sami,200,Badge « Mentor » débloqué,badge,,,2026-07-01T09:00:00Z
+8a4a0001-0000-4000-8000-000000000003,sami,240,Publication approuvée : retour d'expérience HANA Cloud,publication,,,2026-07-20T09:00:00Z
+8a4a0001-0000-4000-8000-000000000004,sami,240,Publication approuvée : nouveau modèle Fiori Elements,publication,,,2026-07-25T09:00:00Z
+8a4a0001-0000-4000-8000-000000000005,sami,160,Réponse acceptée comme solution,contribution,,,2026-06-01T09:00:00Z
+8a4a0001-0000-4000-8000-000000000006,sami,160,Commentaire utile,contribution,,,2026-07-01T09:00:00Z
+8a4a0001-0000-4000-8000-000000000007,nadia,400,Badge « Contributeur Expert » débloqué,badge,,,2026-04-10T09:00:00Z
+8a4a0001-0000-4000-8000-000000000008,nadia,400,Badge « Mentor » débloqué,badge,,,2026-05-05T09:00:00Z
+8a4a0001-0000-4000-8000-000000000009,nadia,400,Publication approuvée : migration vers SAP HANA Cloud,publication,,,2026-06-25T09:00:00Z
+8a4a0001-0000-4000-8000-000000000010,nadia,400,Publication approuvée : optimisation des vues CDS,publication,,,2026-07-10T09:00:00Z
+8a4a0001-0000-4000-8000-000000000011,nadia,270,Réponse acceptée comme solution,contribution,,,2026-06-05T09:00:00Z
+8a4a0001-0000-4000-8000-000000000012,nadia,270,Commentaire utile,contribution,,,2026-07-15T09:00:00Z
+8a4a0001-0000-4000-8000-000000000013,karim,250,Badge « Mentor » débloqué,badge,,,2026-05-15T09:00:00Z
+8a4a0001-0000-4000-8000-000000000014,karim,250,Badge « Article publié » débloqué,badge,,,2026-06-10T09:00:00Z
+8a4a0001-0000-4000-8000-000000000015,karim,875,Publication approuvée : authentification JWT + OAuth2,publication,,,2026-07-29T09:00:00Z
+8a4a0001-0000-4000-8000-000000000016,karim,500,Réponse acceptée comme solution,contribution,,,2026-06-20T09:00:00Z
+8a4a0001-0000-4000-8000-000000000017,manon,200,Badge « Top réponse » débloqué,badge,,,2026-05-01T09:00:00Z
+8a4a0001-0000-4000-8000-000000000018,manon,280,Publication approuvée : check-list de validation,publication,,,2026-06-15T09:00:00Z
+8a4a0001-0000-4000-8000-000000000019,manon,500,Contenus techniques validés,contribution,,,2026-07-05T09:00:00Z
+8a4a0001-0000-4000-8000-000000000020,yasmine,60,Commentaire utile,contribution,,,2026-07-10T09:00:00Z
+8a4a0001-0000-4000-8000-000000000021,yasmine,60,Commentaire utile,contribution,,,2026-07-20T09:00:00Z

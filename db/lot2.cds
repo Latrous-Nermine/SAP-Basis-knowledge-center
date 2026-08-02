@@ -16,10 +16,9 @@
  *
  *  ROADMAP (added one module at a time, after each is tested)
  *    [x] Notifications
- *    [x] Knowledge Center        <- current step
- *    [ ] ActivityEvents + ReputationRules + Levels
- *    [ ] Skills / UserSkills
- *    [ ] Badges / UserBadges
+ *    [x] Knowledge Center
+ *    [x] Profile / People — role, bio, skills, badges, reputation
+ *        ledger, certifications, Follow (reuses Lot 1's Follows)
  *    [ ] Favorites / RelatedContent / SearchLog
  * ============================================================
  */
@@ -30,7 +29,8 @@ using { cuid, managed } from '@sap/cds/common';
 using {
   aymax.knowledgehub.UserProfiles,
   aymax.knowledgehub.Tags,
-  aymax.knowledgehub.Comments
+  aymax.knowledgehub.Comments,
+  aymax.knowledgehub.Follows
 } from './schema';
 
 
@@ -212,4 +212,96 @@ entity KnowledgeRelations : cuid {
     set, enforced in the domain layer, not here. */
 extend Comments with {
   knowledgeItem : Association to KnowledgeItems;
+}
+
+
+// ============================================================
+// PEOPLE / PROFILE
+// ------------------------------------------------------------
+// Extends Lot 1's UserProfiles (Contract A, docs/lot2-analysis.md
+// §3.3) rather than editing db/schema.cds. `position`/avatar
+// initials/colour are deliberately NOT stored here - `jobTitle`
+// already covers "position", and initials/colour are derived from
+// existing fields (displayName/userID) in the frontend formatter,
+// not persisted state to keep in sync.
+// ============================================================
+
+extend UserProfiles with {
+  /** Application role (Employee/DepartmentManager/HR/Admin/Intern).
+      Distinct from jobTitle ("Consultant SAP BTP") - req.user.is()
+      only resolves the CALLER's role, never an arbitrary viewed
+      user's, so this must be queryable data for anyone's profile. */
+  role             : String(20) enum { Employee; DepartmentManager; HR; Admin; Intern };
+
+  bio              : String(1000);
+
+  skills           : Composition of many UserSkills         on skills.user = $self;
+  userBadges       : Composition of many UserBadges         on userBadges.user = $self;
+  certifications   : Composition of many UserCertifications on certifications.user = $self;
+  reputationEvents : Composition of many ReputationEvents    on reputationEvents.user = $self;
+
+  /** Reverse side of Lot 1's Follows. `userID` there is a plain
+      string column (not an association), so `following` is keyed on
+      it directly; `followers` navigates through the `followedUser`
+      association instead of guessing its flattened FK column name. */
+  followers        : Association to many Follows on followers.followedUser.userID = $self.userID;
+  following        : Association to many Follows on following.userID              = $self.userID;
+}
+
+entity UserSkills : cuid {
+  user      : Association to UserProfiles;
+  skillName : String(100);   // 'SAP HANA'
+  level     : Integer;       // 1..5 -> renders as star string
+  percent   : Integer;       // 0..100 -> progress bar width
+}
+
+entity Badges : cuid {
+  code        : String(50) @assert.unique;   // 'EXPERT_CONTRIBUTOR'
+  name        : String(100);                 // 'Contributeur Expert'
+  description : String(500);
+  points      : Integer default 0;
+}
+
+entity UserBadges : cuid {
+  user     : Association to UserProfiles;
+  badge    : Association to Badges;
+  earnedAt : Timestamp;
+}
+
+/** Append-only reputation ledger. UserProfiles.reputation (Lot 1's
+    column) stays the authoritative total shown everywhere (Experts
+    grid sort, header KPI) - this ledger only backs the score
+    breakdown (badges/publications/contributions) and the timeline
+    dialog. Reconciling the two automatically is a bigger workflow
+    (awarding badges/points) that is out of this module's scope. */
+entity ReputationEvents : cuid {
+  user       : Association to UserProfiles;
+  points     : Integer;
+  label      : String(200);   // exact text shown, e.g. 'Publication approuvée'
+  category   : String(20) enum { badge; publication; contribution };
+  sourceType : String(50);    // 'KnowledgeItem' | 'Post' | 'Question'
+  sourceID   : UUID;
+  occurredAt : Timestamp;
+}
+
+entity Certifications : cuid {
+  name        : String(200);
+  provider    : String(100);
+  relatedSkill: String(100);  // drives "Recommandées"
+}
+
+entity UserCertifications : cuid, managed {
+  user          : Association to UserProfiles;
+  certification : Association to Certifications;
+  status        : String(20) enum { earned; in_progress; recommended };
+  earnedDate    : Date;
+  startDate     : Date;
+  reason        : String(200);   // "Basé sur vos compétences Java"
+}
+
+/** Lot 1's Follows has no timestamp - needed so a "followed X" entry
+    can appear, correctly ordered, in the Activity timeline. Additive
+    only, same pattern as `extend Comments` above. */
+extend Follows with {
+  createdAt : Timestamp @cds.on.insert : $now;
 }

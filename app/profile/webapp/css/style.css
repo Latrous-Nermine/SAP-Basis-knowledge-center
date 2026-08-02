@@ -1,0 +1,50 @@
+/* Profile - Fiori Horizon layout refinements. Structural only
+   (radius/shadow/spacing) - no color overrides; semantic colour still comes
+   from ObjectStatus states and sap.m.AvatarColor tokens per CLAUDE.md §10. */
+
+.profileKpiCard {
+  min-width: 180px;
+  flex: 1 1 180px;
+}
+
+.profileBioText {
+  max-width: 720px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.profileCard {
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.profileMetaText {
+  opacity: 0.6;
+  font-size: 0.8rem;
+}
+
+.profileActivityEntry {
+  padding: 10px 4px;
+  border-left: 2px solid var(--sapList_BorderColor, rgba(0, 0, 0, 0.1));
+  padding-left: 12px;
+}
+
+.profileTimelineMonthLabel {
+  font-weight: 600;
+  opacity: 0.7;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.profileTimelineEntry {
+  padding: 4px 0;
+}
+
+.profileSkillRow {
+  padding: 8px 4px;
+}
+
+.profileStarText {
+  letter-spacing: 2px;
+}

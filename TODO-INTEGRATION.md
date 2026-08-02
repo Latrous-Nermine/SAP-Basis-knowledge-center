@@ -20,7 +20,9 @@ demo.** Add a row the moment you write a mock — not later, because later never
 | I-13 | `xs-security.json` scopes not yet agreed by the team (T2) | `xs-security.json` | Team | PR merged | ⬜ Open |
 | I-14 | Semantic/vector search — phase 2 behind `SearchStrategy` (C4) | `srv/domain/search/strategies/` | Me, later | If it becomes a deliverable | ⬜ Open |
 | I-15 | No approuter / html5-apps-repo in `mta.yaml` — UI5 apps not deployable (T7) | `mta.yaml` | Team | Before first UI deploy | ⬜ Open |
-| I-16 | Knowledge Center "Contribuer" button can't be role-aware client-side (no current-user/role endpoint) — always enabled, server enforces the real 403 | `app/knowledge/webapp/view/KnowledgeList.view.xml` | Me (Profile/People service) | `getMyProfile()` exists (build order step 5) | ⬜ Open |
+| I-16 | Knowledge Center "Contribuer" button can't be role-aware client-side — always enabled, server enforces the real 403. `PeopleService` (`GET /People('{userID}')`, `role` field) now exists, so this is unblocked; the Knowledge Center view itself hasn't been wired to consume it yet | `app/knowledge/webapp/view/KnowledgeList.view.xml` | Me | Someone wires the client-side check | 🟡 Unblocked |
+| I-17 | Profile "Activité" feed has no "answered question" entry — assembled from KnowledgeContributors/Comments/KnowledgeAttachments/Follows only | `srv/people-service.js` (`getActivity`) | Lot 3 (Questions) | Questions entity exists | ⬜ Open |
+| I-18 | `ReputationEvents` ledger is seed data only — no awarding workflow writes to it yet, so it can drift from `UserProfiles.reputation` (which stays authoritative for the total shown) | `db/lot2.cds`, `db/data/aymax.knowledgehub-ReputationEvents.csv` | Me, later | A badge/point-awarding workflow is built | ⬜ Open |
 
 ## How to use this file
 

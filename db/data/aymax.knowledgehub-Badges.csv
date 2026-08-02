@@ -1,0 +1,7 @@
+ID,code,name,description,points
+8a2a0001-0000-4000-8000-000000000001,EXPERT_CONTRIBUTOR,Contributeur Expert,Contributions techniques régulières et de haute qualité,200
+8a2a0001-0000-4000-8000-000000000002,MENTOR,Mentor,A accompagné plusieurs collègues sur des sujets techniques,200
+8a2a0001-0000-4000-8000-000000000003,TOP_ANSWER,Top réponse,Réponse mise en avant par la communauté,150
+8a2a0001-0000-4000-8000-000000000004,ACCEPTED_ANSWER_X8,Réponse acceptée x8,8 réponses acceptées comme solution,150
+8a2a0001-0000-4000-8000-000000000005,PUBLISHED_ARTICLE,Article publié,Premier article approuvé dans le Centre de connaissances,100
+8a2a0001-0000-4000-8000-000000000006,WELL_ASKED_QUESTION,Question bien posée,Question claire ayant obtenu une réponse rapide,50

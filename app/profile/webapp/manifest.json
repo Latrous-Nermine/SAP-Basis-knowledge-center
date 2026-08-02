@@ -1,0 +1,86 @@
+{
+  "_version": "1.32.0",
+  "sap.app": {
+    "id": "aymax.profile",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "applicationVersion": { "version": "1.0.0" },
+    "dataSources": {
+      "peopleService": {
+        "uri": "/odata/v4/people/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "feedService": {
+        "uri": "/odata/v4/feed/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      }
+    }
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.f": {},
+        "sap.ui.core": {},
+        "sap.ui.layout": {},
+        "sap.uxap": {}
+      }
+    },
+    "rootView": {
+      "viewName": "aymax.profile.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "aymax.profile.view",
+        "controlId": "appNavContainer",
+        "controlAggregation": "pages",
+        "transition": "slide",
+        "async": true
+      },
+      "routes": [
+        { "pattern": "profile/{userID}", "name": "profile", "target": "profile" }
+      ],
+      "targets": {
+        "profile": { "viewName": "Profile", "viewLevel": 1 }
+      }
+    },
+    "models": {
+      "": {
+        "dataSource": "peopleService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "feed": {
+        "dataSource": "feedService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.profile.i18n.i18n" }
+      },
+      "view": { "type": "sap.ui.model.json.JSONModel" }
+    },
+    "resources": {
+      "css": [
+        { "uri": "css/style.css" }
+      ]
+    }
+  }
+}
