@@ -182,6 +182,11 @@ export default class PeopleService extends cds.ApplicationService {
         }));
     });
 
+    // ────────────────────────────────────────────────────────────
+    // "Am I viewing my own profile?" - trivial from req.user, no query.
+    // ────────────────────────────────────────────────────────────
+    this.on('getMyUserID', (req) => req.user.id);
+
     return super.init();
   }
 }

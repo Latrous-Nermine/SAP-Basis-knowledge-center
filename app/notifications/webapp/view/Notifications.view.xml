@@ -6,6 +6,13 @@
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
+  <!-- sap.f.DynamicPage needs a height:100% ancestor to size itself against -
+       UI5's own theme CSS provides that chain starting from sap.m.App, not
+       from DynamicPage itself. Without this wrapper the page silently
+       collapses to its intrinsic header height and clips everything below
+       it - this was the real cause behind this app's long-standing
+       "renders once then goes blank" issue. -->
+  <App>
   <f:DynamicPage id="notificationsPage" headerExpanded="false">
 
     <f:title>
@@ -35,7 +42,7 @@
            reading column, not a full width list. HBox plus justifyContent
            reproduces that with layout properties only, no inline style. -->
       <HBox justifyContent="Center" class="sapUiContentPadding">
-        <VBox width="760px" class="sapUiResponsiveMargin">
+        <VBox width="760px" class="sapUiResponsiveMargin notificationsCard">
 
           <Toolbar>
             <Title text="{i18n>pageTitle}" level="H2"/>
@@ -48,14 +55,15 @@
 
           <List
             id="notificationList"
+            class="notificationsList"
             items="{ path: '/Notifications', sorter: { path: 'createdAt', descending: true } }"
             growing="true"
             growingThreshold="20"
             noDataText="{i18n>noNotifications}">
             <NotificationListItem
               title="{ parts: [{ path: 'type' }, { path: 'params' }], formatter: '.formatter.notificationText' }"
-              description="{ path: 'type', formatter: '.formatter.notificationCategory' }"
-              datetime="{ path: 'createdAt', formatter: '.formatter.relativeDateTime' }"
+              description="{ parts: [{ path: 'type' }, { path: 'createdAt', targetType: 'any' }], formatter: '.formatter.notificationMeta' }"
+              authorPicture="{ path: 'type', formatter: '.formatter.notificationIcon' }"
               priority="{ path: 'severity', formatter: '.formatter.notificationPriority' }"
               unread="{= !${isRead} }"
               press=".onNotificationPress"/>
@@ -64,4 +72,5 @@
       </HBox>
     </f:content>
   </f:DynamicPage>
+  </App>
 </mvc:View>

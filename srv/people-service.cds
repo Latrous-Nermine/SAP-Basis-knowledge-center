@@ -75,4 +75,9 @@ service PeopleService {
 
   action followUser(userID : String) returns Boolean;
   action unfollowUser(userID : String) returns Boolean;
+
+  /** The caller's own userID - lets the Profile app answer "am I viewing my
+      own profile?" without a cross-service call to Lot 1's FeedService for
+      something this service can answer trivially from req.user itself. */
+  function getMyUserID() returns String;
 }

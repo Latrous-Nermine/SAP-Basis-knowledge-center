@@ -34,11 +34,13 @@ sap.ui.define([
     return oFormatter.format(new Date(vDate));
   }
 
+  // First + second word (design reference: "Sami Ben Youssef" -> "SB", not
+  // first+last - "Sami Ben Youssef" would otherwise give "SY").
   function initials(sDisplayName) {
     if (!sDisplayName) return "?";
     var aParts = sDisplayName.trim().split(/\s+/);
     var sFirst = aParts[0] ? aParts[0].charAt(0) : "";
-    var sSecond = aParts.length > 1 ? aParts[aParts.length - 1].charAt(0) : "";
+    var sSecond = aParts.length > 1 ? aParts[1].charAt(0) : "";
     return (sFirst + sSecond).toUpperCase();
   }
 
@@ -74,6 +76,22 @@ sap.ui.define([
 
     followButtonType: function(bIsFollowedByMe) {
       return bIsFollowedByMe ? "Default" : "Emphasized";
+    },
+
+    followButtonIcon: function(bIsFollowedByMe) {
+      return bIsFollowedByMe ? "sap-icon://less" : "sap-icon://add-employee";
+    },
+
+    // getActivity() (srv/people-service.js) returns plain {text, occurredAt}
+    // rows assembled from several entities with no type discriminator - the
+    // icon is inferred from the fixed French verb prefix each source uses.
+    activityIcon: function(sText) {
+      if (!sText) return "sap-icon://activity-items";
+      if (sText.indexOf("A publié") === 0) return "sap-icon://document-text";
+      if (sText.indexOf("A commenté") === 0) return "sap-icon://comment";
+      if (sText.indexOf("A déposé") === 0) return "sap-icon://attachment";
+      if (sText.indexOf("A suivi") === 0) return "sap-icon://person-placeholder";
+      return "sap-icon://activity-items";
     },
 
     badgeProgressPercent: function(iBadgePoints, iBadgeGoal) {

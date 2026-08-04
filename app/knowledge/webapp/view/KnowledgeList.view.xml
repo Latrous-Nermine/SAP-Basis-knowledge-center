@@ -56,7 +56,7 @@
               <Title text="{title}" wrapping="true" class="sapUiTinyMarginTop"/>
               <Text text="{excerpt}" maxLines="3" class="sapUiTinyMarginTop"/>
               <Text
-                text="{parts: [{path:'contributors'}, {path:'createdAt'}], formatter:'.formatter.metaLine'}"
+                text="{parts: [{path:'contributors'}, {path:'createdAt', targetType:'any'}], formatter:'.formatter.metaLine'}"
                 class="sapUiTinyMarginTop"/>
             </VBox>
           </CustomListItem>

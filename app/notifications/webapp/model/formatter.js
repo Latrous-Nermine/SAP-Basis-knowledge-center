@@ -42,6 +42,12 @@ sap.ui.define([
   // component, which a plain formatter module has no access to).
   var oResourceBundle = null;
 
+  function relativeDateTime(vDate) {
+    if (!vDate) return "";
+    var oFormatter = DateFormat.getDateTimeInstance({ relative: true });
+    return oFormatter.format(new Date(vDate));
+  }
+
   return {
 
     setResourceBundle: function(oBundle) {
@@ -71,9 +77,16 @@ sap.ui.define([
       return oResourceBundle.getText("notif." + sType, aArgs);
     },
 
-    notificationCategory: function(sType) {
-      if (!sType || !oResourceBundle) return "";
-      return oResourceBundle.getText("notif.category." + sType);
+    // NotificationListItem's own `datetime` property renders an empty
+    // footer slot in practice (confirmed via inspection - the footer items
+    // exist in the DOM but stay empty without an `authorName` set too), so
+    // the relative time is folded into the description line instead of
+    // relying on it.
+    notificationMeta: function(sType, vCreatedAt) {
+      if (!oResourceBundle) return "";
+      var sCategory = sType ? oResourceBundle.getText("notif.category." + sType) : "";
+      var sRelative = relativeDateTime(vCreatedAt);
+      return sRelative ? (sCategory + " · " + sRelative) : sCategory;
     },
 
     notificationIcon: function(sType) {
@@ -89,10 +102,6 @@ sap.ui.define([
       }
     },
 
-    relativeDateTime: function(vDate) {
-      if (!vDate) return "";
-      var oFormatter = DateFormat.getDateTimeInstance({ relative: true });
-      return oFormatter.format(new Date(vDate));
-    }
+    relativeDateTime: relativeDateTime
   };
 });

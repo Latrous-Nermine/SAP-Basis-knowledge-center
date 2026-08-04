@@ -12,30 +12,34 @@
   <Page showNavButton="true" navButtonPress=".onNavBack" busy="{view>/busy}">
     <content>
 
-      <uxap:ObjectPageLayout id="profileObjectPage" showTitleInHeaderContent="true">
+      <uxap:ObjectPageLayout id="profileObjectPage" showTitleInHeaderContent="true" class="profilePageContainer">
 
         <uxap:headerTitle>
           <uxap:ObjectPageDynamicHeaderTitle>
             <uxap:heading>
-              <HBox alignItems="Center" class="sapUiSmallGap">
+              <HBox alignItems="Center" class="profileGap16">
                 <Avatar
-                  displaySize="L"
+                  class="profileHeaderAvatar"
+                  displaySize="XL"
                   initials="{path:'displayName', formatter:'.formatter.initials'}"
-                  backgroundColor="{path:'userID', formatter:'.formatter.avatarColorFromID'}"/>
-                <VBox>
-                  <Title text="{displayName}" wrapping="true"/>
-                  <HBox alignItems="Center" class="sapUiTinyMarginTop sapUiSmallGap">
+                  backgroundColor="{path:'userID', formatter:'.formatter.avatarColorFromID'}"
+                  tooltip="{displayName}"/>
+                <VBox class="profileGap4">
+                  <Title text="{displayName}" level="H2" wrapping="true"/>
+                  <HBox alignItems="Center" class="profileGap8">
+                    <ObjectStatus text="{path:'role', formatter:'.formatter.roleLabel'}" state="Information"/>
                     <ObjectStatus text="{expertiseLevel}" state="Success"/>
-                    <Text text="{jobTitle} · {department}"/>
                   </HBox>
+                  <ObjectAttribute text="{jobTitle} · {department}" class="sapUiTinyMarginTop"/>
                 </VBox>
               </HBox>
             </uxap:heading>
             <uxap:actions>
-              <Button text="{i18n>viewTimeline}" press=".onOpenTimeline"/>
+              <Button text="{i18n>viewTimeline}" icon="sap-icon://history" press=".onOpenTimeline"/>
               <Button
-                text="{path:'isFollowedByMe', formatter:'.formatter.followButtonText'}"
-                type="{path:'isFollowedByMe', formatter:'.formatter.followButtonType'}"
+                text="{path:'view>/isFollowedByMe', formatter:'.formatter.followButtonText'}"
+                icon="{path:'view>/isFollowedByMe', formatter:'.formatter.followButtonIcon'}"
+                type="{path:'view>/isFollowedByMe', formatter:'.formatter.followButtonType'}"
                 visible="{= !${view>/isOwnProfile} }"
                 press=".onToggleFollow"/>
             </uxap:actions>
@@ -43,19 +47,19 @@
         </uxap:headerTitle>
 
         <uxap:headerContent>
-          <VBox class="sapUiSmallGap">
-            <HBox class="sapUiMediumGap">
+          <VBox class="profileGap16">
+            <HBox class="profileGap24">
               <VBox alignItems="Center" width="90px">
-                <Title text="{followersCount}" level="H3"/>
-                <Text text="{i18n>followers}"/>
+                <Text text="{followersCount}" class="profileStatNumber"/>
+                <Text text="{i18n>followers}" class="profileStatLabel"/>
               </VBox>
               <VBox alignItems="Center" width="90px">
-                <Title text="{followingCount}" level="H3"/>
-                <Text text="{i18n>following}"/>
+                <Text text="{followingCount}" class="profileStatNumber"/>
+                <Text text="{i18n>following}" class="profileStatLabel"/>
               </VBox>
             </HBox>
             <Text text="{bio}" class="profileBioText"/>
-            <HBox wrap="Wrap" class="sapUiSmallGap">
+            <HBox class="profileKpiGrid">
               <f:Card class="profileKpiCard">
                 <f:header>
                   <card:NumericHeader
@@ -76,6 +80,7 @@
                   <ProgressIndicator
                     class="sapUiSmallMargin"
                     displayValue=" "
+                    tooltip="{i18n>badgeProgressTooltip}"
                     percentValue="{parts:[{path:'view>/scoreBreakdown/badges'},{path:'view>/badgeGoal'}], formatter:'.formatter.badgeProgressPercent'}"/>
                 </f:content>
               </f:Card>
@@ -110,7 +115,12 @@
             <uxap:subSections>
               <uxap:ObjectPageSubSection>
                 <uxap:blocks>
-                  <form:SimpleForm editable="false" layout="ResponsiveGridLayout">
+                  <form:SimpleForm
+                    editable="false"
+                    layout="ResponsiveGridLayout"
+                    columnsM="2" columnsL="2" columnsXL="2"
+                    labelSpanM="5" labelSpanL="4" labelSpanXL="4"
+                    class="profilePersonalInfoForm">
                     <Label text="{i18n>fieldFullName}"/>
                     <Text text="{displayName}"/>
                     <Label text="{i18n>fieldRole}"/>
@@ -135,10 +145,8 @@
                     <CustomListItem>
                       <VBox class="profileCard">
                         <Text text="{view>content}" wrapping="true"/>
-                        <HBox wrap="Wrap" class="sapUiTinyMarginTop">
-                          <Tokenizer tokens="{path:'view>tags', templateShareable:'false'}">
-                            <Token text="{view>tag/name}"/>
-                          </Tokenizer>
+                        <HBox wrap="Wrap" items="{path:'view>tags', templateShareable:'false'}" class="sapUiTinyMarginTop">
+                          <Text text="{view>tag/name}" class="profileTagChip"/>
                         </HBox>
                         <Text
                           text="{parts:[{path:'view>createdAt'},{path:'view>likeCount'}], formatter:'.formatter.postMetaLine'}"
@@ -157,10 +165,13 @@
                 <uxap:blocks>
                   <List items="{view>/activity}" noDataText="{i18n>noActivity}" showSeparators="None">
                     <CustomListItem>
-                      <VBox class="profileActivityEntry">
-                        <Text text="{view>text}"/>
-                        <Text text="{path:'view>occurredAt', formatter:'.formatter.relativeDateTime'}" class="profileMetaText"/>
-                      </VBox>
+                      <HBox class="profileActivityEntry" alignItems="Start">
+                        <core:Icon src="{path:'view>text', formatter:'.formatter.activityIcon'}" class="profileActivityIcon sapUiTinyMarginEnd"/>
+                        <VBox>
+                          <Text text="{view>text}"/>
+                          <Text text="{path:'view>occurredAt', formatter:'.formatter.relativeDateTime'}" class="profileMetaText"/>
+                        </VBox>
+                      </HBox>
                     </CustomListItem>
                   </List>
                 </uxap:blocks>
@@ -172,7 +183,7 @@
             <uxap:subSections>
               <uxap:ObjectPageSubSection>
                 <uxap:blocks>
-                  <VBox class="sapUiSmallGap">
+                  <VBox class="profileGap16">
                     <Panel headerText="{i18n>certEarned}" class="profileCard">
                       <List items="{view>/certsEarned}" noDataText="{i18n>noCertEarned}" showSeparators="None">
                         <StandardListItem
@@ -227,10 +238,10 @@
                 <uxap:blocks>
                   <List items="{userBadges}" noDataText="{i18n>noBadges}" showSeparators="None">
                     <StandardListItem
-                      icon="sap-icon://workflow-tasks"
+                      icon="sap-icon://favorite"
                       title="{badge/name}"
                       description="{badge/description}"
-                      info="{path:'earnedAt', formatter:'.formatter.relativeDateTime'}"/>
+                      info="{path:'earnedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
                   </List>
                 </uxap:blocks>
               </uxap:ObjectPageSubSection>

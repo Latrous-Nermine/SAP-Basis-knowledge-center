@@ -13,6 +13,7 @@ sap.ui.define([
     onInit: function() {
       this.oModel = this.getOwnerComponent().getModel();
       formatter.setResourceBundle(this.getResourceBundle());
+      this._refreshUnreadCount();
     },
 
     onHomePress: function() {
@@ -61,8 +62,11 @@ sap.ui.define([
     _refreshUnreadCount: function() {
       var oViewModel = this.getViewModel();
       var oContext = this.oModel.bindContext("/unreadCount()");
-      oContext.requestObject().then(function(iCount) {
-        oViewModel.setProperty("/unreadCount", iCount || 0);
+      oContext.requestObject().then(function(oData) {
+        // A scalar-returning unbound function's requestObject() gives back
+        // the raw OData wrapper ({"@odata.context":..., value: N}), not the
+        // bare number - unwrap .value or the bell shows "[object Object]".
+        oViewModel.setProperty("/unreadCount", (oData && oData.value) || 0);
       });
     }
   });

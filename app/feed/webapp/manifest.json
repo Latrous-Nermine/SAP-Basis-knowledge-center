@@ -28,10 +28,26 @@
       }
     },
     "rootView": {
-      "viewName": "aymax.feed.view.Feed",
+      "viewName": "aymax.feed.view.App",
       "type": "XML",
       "async": true,
       "id": "app"
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "aymax.feed.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        { "pattern": "", "name": "feed", "target": "feed" }
+      ],
+      "targets": {
+        "feed": { "viewName": "Feed", "viewLevel": 1 }
+      }
     },
     "models": {
       "": {

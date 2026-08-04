@@ -20,6 +20,23 @@ sap.ui.define([
 
     _onRouteMatched: function(oEvent) {
       var sUserID = oEvent.getParameter("arguments").userID;
+
+      // Bare "#/profile" (no {userID} segment) - resolve to the caller's own
+      // profile via the same PeopleService function _loadCurrentUserID already
+      // calls, then continue exactly as if that ID had been in the URL.
+      if (!sUserID) {
+        this.oPeopleModel.bindContext("/getMyUserID()").requestObject().then(function(oData) {
+          this._loadProfile(oData && oData.value);
+        }.bind(this)).catch(function() {
+          MessageBox.error(this.getText("errorUserNotFound"));
+        }.bind(this));
+        return;
+      }
+
+      this._loadProfile(sUserID);
+    },
+
+    _loadProfile: function(sUserID) {
       this._sUserID = sUserID;
 
       this.getViewModel().setProperty("/busy", true);
@@ -54,6 +71,14 @@ sap.ui.define([
     // The People OData response already carries skills/userBadges/certifications
     // via $expand - splitting certifications by status happens here once, not
     // via a fragile inline $filter binding string.
+    //
+    // isFollowedByMe is also copied into the view model here rather than
+    // bound to the entity directly: a formatter on that virtual field proved
+    // unreliable at reflecting updates (verified via headless testing - the
+    // bound value was correctly false, the formatter returns the correct
+    // text when called directly with false, yet the rendered button text
+    // stayed on the "true" branch). Owning this value in the view model
+    // sidesteps whatever that binding-refresh gap is.
     _onProfileDataReceived: function() {
       var oData = this.getView().getBindingContext().getObject();
       var aCerts = oData.certifications || [];
@@ -61,14 +86,20 @@ sap.ui.define([
       this.getViewModel().setProperty("/certsEarned", aCerts.filter(function(c) { return c.status === "earned"; }));
       this.getViewModel().setProperty("/certsInProgress", aCerts.filter(function(c) { return c.status === "in_progress"; }));
       this.getViewModel().setProperty("/certsRecommended", aCerts.filter(function(c) { return c.status === "recommended"; }));
+      this.getViewModel().setProperty("/isFollowedByMe", !!oData.isFollowedByMe);
     },
 
+    // Own PeopleService, not Lot 1's FeedService - avoids a cross-service
+    // call for something req.user already answers directly, and sidesteps
+    // a real, never-fully-explained bug where getCurrentUserProfile()
+    // returned 204/null specifically when batched alongside the Publications
+    // list request on the feed model.
     _loadCurrentUserID: function() {
-      var oContext = this.oFeedModel.bindContext("/getCurrentUserProfile()");
+      var oContext = this.oPeopleModel.bindContext("/getMyUserID()");
       oContext.requestObject().then(function(oData) {
-        var bIsOwnProfile = !!(oData && oData.userID === this._sUserID);
-        this.getViewModel().setProperty("/currentUserID", oData ? oData.userID : "");
-        this.getViewModel().setProperty("/isOwnProfile", bIsOwnProfile);
+        var sMyUserID = oData && oData.value;
+        this.getViewModel().setProperty("/currentUserID", sMyUserID || "");
+        this.getViewModel().setProperty("/isOwnProfile", sMyUserID === this._sUserID);
       }.bind(this)).catch(function() {
         this.getViewModel().setProperty("/isOwnProfile", false);
       }.bind(this));
@@ -85,8 +116,13 @@ sap.ui.define([
 
     _loadActivity: function(sUserID) {
       var oContext = this.oPeopleModel.bindContext("/getActivity(userID='" + sUserID + "',limit=10)");
-      oContext.requestObject().then(function(aData) {
-        this.getViewModel().setProperty("/activity", aData || []);
+      oContext.requestObject().then(function(oData) {
+        // A collection-returning unbound function's requestObject() gives back
+        // the raw OData wrapper ({"@odata.context":..., value:[...]}), unlike
+        // a plain complex-type function (getScoreBreakdown) which resolves
+        // directly - unwrap .value or the list binding silently iterates the
+        // wrapper's own two keys instead of the actual rows.
+        this.getViewModel().setProperty("/activity", (oData && oData.value) || []);
       }.bind(this)).catch(function() {
         this.getViewModel().setProperty("/activity", []);
       }.bind(this));
@@ -109,13 +145,17 @@ sap.ui.define([
 
     onToggleFollow: function() {
       var oContext = this.getView().getBindingContext();
-      var bIsFollowedByMe = oContext.getProperty("isFollowedByMe");
+      var bIsFollowedByMe = this.getViewModel().getProperty("/isFollowedByMe");
       var sAction = bIsFollowedByMe ? "unfollowUser" : "followUser";
       var sErrorKey = bIsFollowedByMe ? "errorUnfollow" : "errorFollow";
 
       var oActionContext = this.oPeopleModel.bindContext("/" + sAction)({ userID: this._sUserID });
       oActionContext.execute().then(function() {
-        oContext.refresh();
+        // The action just succeeded, so the new state is known with
+        // certainty - set it directly instead of re-deriving it from the
+        // entity binding's virtual field (see _onProfileDataReceived).
+        this.getViewModel().setProperty("/isFollowedByMe", !bIsFollowedByMe);
+        oContext.refresh(); // keeps followersCount/followingCount in sync
       }.bind(this)).catch(function(oError) {
         MessageBox.error(oError.message || this.getText(sErrorKey));
       }.bind(this));
@@ -139,8 +179,9 @@ sap.ui.define([
 
     _loadTimelineAndOpen: function() {
       var oContext = this.oPeopleModel.bindContext("/getContributionTimeline(userID='" + this._sUserID + "',months=6)");
-      oContext.requestObject().then(function(aData) {
-        this.getViewModel().setProperty("/timelineGroups", this._groupByMonth(aData || []));
+      oContext.requestObject().then(function(oData) {
+        // Same collection-wrapper unwrapping as _loadActivity above.
+        this.getViewModel().setProperty("/timelineGroups", this._groupByMonth((oData && oData.value) || []));
         this._oTimelineDialog.open();
       }.bind(this)).catch(function() {
         this.getViewModel().setProperty("/timelineGroups", []);

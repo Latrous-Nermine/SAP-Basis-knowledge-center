@@ -32,15 +32,15 @@
         </uxap:headerTitle>
 
         <uxap:headerContent>
-          <HBox wrap="Wrap" class="sapUiSmallGap knowledgeHeaderMeta" alignItems="Center">
+          <HBox wrap="Wrap" class="knowledgeHeaderMeta" alignItems="Center">
             <ObjectStatus text="{path:'category', formatter:'.formatter.categoryLabel'}" state="Information"/>
             <ObjectStatus
               visible="{path:'status', formatter:'.formatter.isNotApproved'}"
               text="{path:'status', formatter:'.formatter.statusLabel'}"
               state="{path:'status', formatter:'.formatter.statusState'}"/>
             <ObjectAttribute title="{i18n>attrAuthor}" text="{view>/contributorsLabel}"/>
-            <ObjectAttribute title="{i18n>attrPublished}" text="{path:'publishedAt', formatter:'.formatter.relativeDateTime'}"/>
-            <ObjectAttribute title="{i18n>attrUpdated}" text="{path:'modifiedAt', formatter:'.formatter.relativeDateTime'}"/>
+            <ObjectAttribute title="{i18n>attrPublished}" text="{path:'publishedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
+            <ObjectAttribute title="{i18n>attrUpdated}" text="{path:'modifiedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
           </HBox>
         </uxap:headerContent>
 
@@ -71,7 +71,7 @@
                     <StandardListItem
                       icon="sap-icon://attachment"
                       title="{fileName}"
-                      description="{path:'fileSize', formatter:'.formatter.fileSize'}"
+                      description="{path:'fileSize', targetType:'any', formatter:'.formatter.fileSize'}"
                       type="Active"
                       press=".onAttachmentPress"/>
                   </List>
@@ -89,7 +89,7 @@
                       icon="sap-icon://person-placeholder"
                       title="{author_userID}"
                       description="{content}"
-                      info="{path:'createdAt', formatter:'.formatter.relativeDateTime'}"
+                      info="{path:'createdAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"
                       class="knowledgeCommentCard"/>
                   </List>
                   <HBox class="knowledgeCommentComposer sapUiTinyMarginTop" alignItems="Center">

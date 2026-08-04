@@ -48,7 +48,7 @@
         "async": true
       },
       "routes": [
-        { "pattern": "profile/{userID}", "name": "profile", "target": "profile" }
+        { "pattern": ["", "profile/{userID}"], "name": "profile", "target": "profile" }
       ],
       "targets": {
         "profile": { "viewName": "Profile", "viewLevel": 1 }

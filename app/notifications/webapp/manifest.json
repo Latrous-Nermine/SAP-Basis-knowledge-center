@@ -49,6 +49,11 @@
         "settings": { "bundleName": "aymax.notifications.i18n.i18n" }
       },
       "view": { "type": "sap.ui.model.json.JSONModel" }
+    },
+    "resources": {
+      "css": [
+        { "uri": "css/style.css" }
+      ]
     }
   }
 }

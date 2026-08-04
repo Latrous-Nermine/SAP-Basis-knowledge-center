@@ -6,7 +6,17 @@
     <title>AYMAX Knowledge Hub — Profil</title>
     <style>
       html, body { height: 100%; margin: 0; padding: 0; }
-      #content, #content > div[data-sap-ui-component] { height: 100%; }
+      /* Targeting [data-sap-ui-component] never matches at runtime -
+         UI5's ComponentSupport strips that attribute once it processes
+         the div and assigns its own auto-generated id instead, so this
+         rule silently matched nothing. Fixing that alone isn't enough
+         either: CSS percentage heights need an explicit (non-auto) height
+         at EVERY ancestor level, and UI5 inserts its own unstyled wrapper
+         divs (.sapUiComponentContainer and its child) below this point,
+         breaking the chain for anything relying on inheriting a real
+         height. */
+      #content, #content > div { height: 100%; }
+      .sapUiComponentContainer, .sapUiComponentContainer > div { height: 100%; }
     </style>
     <script id="sap-ui-bootstrap"
         src="https://sapui5.hana.ondemand.com/1.120.0/resources/sap-ui-core.js"

@@ -27,9 +27,11 @@ sap.ui.define([
         }
       });
       this.setModel(oViewModel, "view");
-      
+
       // Charger le profil utilisateur au démarrage
       this._loadCurrentUser();
+
+      this.getRouter().initialize();
     },
     
     _loadCurrentUser: function() {
