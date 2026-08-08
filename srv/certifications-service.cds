@@ -1,4 +1,4 @@
-using { aymax.db as db } from '../db/hub-schema';
+using { aymax.db as db } from '../db/schema';
 
 service CertificationsService @(path: '/odata/v4/certifications') {
   entity Certifications          as projection on db.Certifications;

@@ -55,10 +55,10 @@
       }
     },
     "rootView": {
-      "viewName": "aymax.admin.view.Admin",
+      "viewName": "aymax.admin.view.App",
       "type": "XML",
       "async": true,
-      "id": "adminView"
+      "id": "app"
     },
     "resources": {
       "css": [
@@ -66,6 +66,31 @@
           "uri": "css/style.css"
         }
       ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "aymax.admin.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "admin",
+          "target": "admin"
+        }
+      ],
+      "targets": {
+        "admin": {
+          "viewName": "Admin",
+          "viewId": "admin",
+          "viewLevel": 1
+        }
+      }
     }
   }
 }

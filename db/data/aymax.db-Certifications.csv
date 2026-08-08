@@ -1,7 +1,7 @@
 ID;name;description;provider;recArticles;recQuestions
-08bb3e49-b14b-460c-8202-e0802a6d86c1;SAP BTP Associate;Fondamentaux de la plateforme cloud SAP BTP.;SAP Learning;0;0
-636f3f25-65d6-4be3-941f-10ef6c07e9a2;SAP Fiori Elements Developer;Développement d'applications SAP Fiori Elements.;SAP Learning;0;0
-59a8ae7d-d968-4239-a8e1-d264e359a378;Cloud Foundry Advanced;Déploiement et exploitation avancée sur Cloud Foundry.;SAP Learning;0;0
-70019a89-78a0-420a-aa34-06f9de721de1;SAP HANA Cloud Specialist;Optimisation et migration vers SAP HANA Cloud.;SAP Learning;0;0
-6b4ad5d0-704b-43e4-8568-de9d3dd5f74f;Spring Boot Professional;Certification avancée sur l'écosystème Spring Boot.;;4;6
-038dbd99-c11e-41b6-9396-53805d935783;SAP Integration Suite;Intégration de flux de données entre systèmes SAP et tiers.;;3;2
+e0a80001-0000-4000-8000-000000000001;SAP BTP Associate;Fondamentaux de la plateforme cloud SAP BTP.;SAP Learning;6;8
+e0a80001-0000-4000-8000-000000000002;SAP Fiori Elements Developer;Développement d'applications SAP Fiori Elements.;SAP Learning;4;5
+e0a80001-0000-4000-8000-000000000003;Cloud Foundry Advanced;Déploiement et exploitation avancée sur Cloud Foundry.;SAP Learning;5;7
+e0a80001-0000-4000-8000-000000000004;SAP HANA Cloud Specialist;Optimisation et migration vers SAP HANA Cloud.;SAP Learning;7;9
+e0a80001-0000-4000-8000-000000000005;Spring Boot Professional;Certification avancée sur l'écosystème Spring Boot.;VMware Tanzu;4;6
+e0a80001-0000-4000-8000-000000000006;SAP Integration Suite;Intégration de flux de données entre systèmes SAP et tiers.;SAP Learning;3;2

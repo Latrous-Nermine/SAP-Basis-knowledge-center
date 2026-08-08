@@ -1,4 +1,4 @@
-using { aymax.db as db } from '../db/hub-schema';
+using { aymax.db as db } from '../db/schema';
 
 service RapportsDashService @(path: '/odata/v4/rapports') {
   @readonly entity KPIs             as projection on db.DashboardKPIs;

@@ -58,7 +58,8 @@
   background: var(--aymax-neutral-100) !important;
 }
 
-.aymaxNavActive {
+.aymaxNavActive,
+button[data-active="true"] {
   color: var(--aymax-primary) !important;
   background: color-mix(in srgb, var(--aymax-primary) 8%, transparent) !important;
   font-weight: 600 !important;

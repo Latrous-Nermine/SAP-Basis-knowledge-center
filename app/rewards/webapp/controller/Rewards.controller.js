@@ -6,6 +6,7 @@ sap.ui.define([
 
   return Controller.extend("aymax.rewards.controller.Rewards", {
     onInit: function() {
+      // Controller ready — model initialized in Component.js
     },
 
     onNavToApp: function(oEvent) {
@@ -23,19 +24,32 @@ sap.ui.define([
       }
     },
 
-    
     onAddReward: function() {
-      MessageToast.show("Ouverture du formulaire d'ajout (simulation)");
+      MessageToast.show("Ouverture du formulaire d'ajout de récompense...");
     },
-    
+
     onEditReward: function(oEvent) {
-  var oContext = oEvent.getSource().getBindingContext();
-  var sName = oContext.getProperty("name");
-  MessageToast.show("Édition de : " + sName);
-},
-    
+      var oContext = oEvent.getSource().getBindingContext("view");
+      var sName = oContext.getProperty("name");
+      MessageToast.show("Édition de : " + sName);
+    },
+
+    onDeleteReward: function(oEvent) {
+      var oContext = oEvent.getSource().getBindingContext("view");
+      var sName = oContext.getProperty("name");
+      MessageToast.show("Suppression de : " + sName + " (simulation)");
+    },
+
+    /* ── Formatters ── */
+
     formatPointsLabel: function(iPoints) {
-      return iPoints.toLocaleString("fr-FR") + " points";
+      if (!iPoints && iPoints !== 0) return "";
+      return iPoints.toLocaleString("fr-FR") + " pts";
+    },
+
+    formatRewardIcon: function(sIcon) {
+      // If item has an explicit icon key, use it; otherwise default to gift
+      return sIcon || "sap-icon://gift";
     }
   });
 });

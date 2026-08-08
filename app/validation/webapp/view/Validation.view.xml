@@ -8,84 +8,116 @@
   xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
   displayBlock="true">
 
-  <f:DynamicPage id="validationPage" headerExpanded="true">
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
 
-    <!-- ===== HEADER ===== -->
-    <f:title>
-      <f:DynamicPageTitle>
-        <f:heading>
-          <HBox alignItems="Center">
-            <Image src="https://via.placeholder.com/120x40/1E3A8A/FFFFFF?text=AYMAX" height="32px" class="sapUiSmallMarginEnd"/>
-            <Title text="Validation" level="H2"/>
-          </HBox>
-        </f:heading>
-        <f:actions>
-          <Button icon="sap-icon://bell" type="Transparent"/>
-          <Avatar initials="MJ" displaySize="S" class="aymaxAvatar"/>
-        </f:actions>
-      </f:DynamicPageTitle>
-    </f:title>
-
-    <!-- ===== NAVIGATION BAR ===== -->
-    <f:header>
-      <f:DynamicPageHeader>
-        <OverflowToolbar class="aymaxSubNav" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-          <Button text="Fil d'actualité" type="Transparent" press=".onNavToApp" customData:targetApp="feed"/>
-          <Button text="Questions" type="Transparent" press=".onNavToApp" customData:targetApp="questions"/>
-          <Button text="Centre de connaissances" type="Transparent" press=".onNavToApp" customData:targetApp="knowledge"/>
-          <Button text="Validation" type="Emphasized"/>
-          <Button text="Rooms" type="Transparent" press=".onNavToApp" customData:targetApp="rooms"/>
-          <Button text="Utilisateurs" type="Transparent" press=".onNavToApp" customData:targetApp="hr"/>
-          <Button text="Rapports" type="Transparent" press=".onNavToApp" customData:targetApp="rapports"/>
-        </OverflowToolbar>
-      </f:DynamicPageHeader>
-    </f:header>
-
-    <!-- ===== CONTENT ===== -->
-    <f:content>
-      <VBox class="sapUiResponsivePadding--header sapUiResponsivePadding--content aymaxPageContent">
-
+        <!-- Page Header -->
         <VBox class="sapUiMediumMarginBottom">
-          <Title text="Validation du contenu" level="H1" class="aymaxPageTitle"/>
-          <Text text="File d'attente des contenus soumis par les employés pour le Centre de connaissances." class="aymaxSubtitle sapUiTinyMarginTop"/>
+          <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+            <core:Icon src="sap-icon://task" size="1.2rem" color="var(--aymax-primary)" class="sapUiSmallMarginEnd"/>
+            <Title text="Validation du contenu" level="H1" class="aymaxPageTitle"/>
+          </HBox>
+          <Text text="File d'attente des contenus soumis par les employés pour le Centre de connaissances." class="aymaxSubtitle"/>
         </VBox>
 
-        <!-- TABS -->
-        <HBox class="sapUiMediumMarginBottom" wrap="Wrap">
-          <Button text="En attente ({view>/counts/pending})" type="{= ${view>/filterStatus} === 'pending' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="pending" class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
-          <Button text="Approuvés ({view>/counts/approved})" type="{= ${view>/filterStatus} === 'approved' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="approved" class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
-          <Button text="Rejetés ({view>/counts/rejected})" type="{= ${view>/filterStatus} === 'rejected' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="rejected" class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
-          <Button text="Tous ({view>/counts/all})" type="{= ${view>/filterStatus} === 'all' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="all" class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
+        <!-- STATS ROW -->
+        <HBox class="aymaxValidationStats sapUiSmallMarginBottom" wrap="Wrap">
+          <VBox class="aymaxStatPill aymaxStatPillWarning sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="{view>/counts/pending}" level="H4" class="aymaxStatPillValue"/>
+            <Text text="En attente" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="aymaxStatPill aymaxStatPillSuccess sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="{view>/counts/approved}" level="H4" class="aymaxStatPillValue"/>
+            <Text text="Approuvés" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="aymaxStatPill aymaxStatPillError sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="{view>/counts/rejected}" level="H4" class="aymaxStatPillValue"/>
+            <Text text="Rejetés" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="aymaxStatPill sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="{view>/counts/all}" level="H4" class="aymaxStatPillValue"/>
+            <Text text="Total" class="aymaxMeta"/>
+          </VBox>
         </HBox>
 
-        <!-- LIST -->
-        <VBox items="{view>/displayItems}" width="100%">
-          <Panel class="aymaxCard sapUiSmallMarginBottom" width="100%">
+        <!-- FILTER TABS -->
+        <HBox class="sapUiMediumMarginBottom" wrap="Wrap">
+          <Button
+            text="En attente ({view>/counts/pending})"
+            type="{= ${view>/filterStatus} === 'pending' ? 'Emphasized' : 'Default'}"
+            press=".onTabSelect"
+            customData:key="pending"
+            class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab"/>
+          <Button
+            text="Approuvés ({view>/counts/approved})"
+            type="{= ${view>/filterStatus} === 'approved' ? 'Emphasized' : 'Default'}"
+            press=".onTabSelect"
+            customData:key="approved"
+            class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab"/>
+          <Button
+            text="Rejetés ({view>/counts/rejected})"
+            type="{= ${view>/filterStatus} === 'rejected' ? 'Emphasized' : 'Default'}"
+            press=".onTabSelect"
+            customData:key="rejected"
+            class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab"/>
+          <Button
+            text="Tous ({view>/counts/all})"
+            type="{= ${view>/filterStatus} === 'all' ? 'Emphasized' : 'Default'}"
+            press=".onTabSelect"
+            customData:key="all"
+            class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab"/>
+        </HBox>
+
+        <!-- VALIDATION LIST — use List (VBox does not support items aggregation) -->
+        <List
+          id="validationList"
+          items="{view>/displayItems}"
+          showSeparators="None"
+          noDataText="Aucun élément dans cette catégorie."
+          class="aymaxValidationList">
+          <CustomListItem class="aymaxCard sapUiSmallMarginBottom aymaxValidationItem">
             <VBox class="sapUiSmallMargin">
-              
-              <!-- Badges -->
+
+              <!-- Badges Row -->
               <HBox alignItems="Center" class="sapUiSmallMarginBottom">
-                <ObjectStatus text="{path: 'view>status', formatter: '.formatStatusText'}" state="{path: 'view>status', formatter: '.formatStatusState'}" inverted="true" class="aymaxBadge sapUiSmallMarginEnd"/>
+                <ObjectStatus
+                  text="{path: 'view>status', formatter: '.formatStatusText'}"
+                  state="{path: 'view>status', formatter: '.formatStatusState'}"
+                  inverted="true"
+                  class="aymaxBadge sapUiSmallMarginEnd"/>
                 <Text text="{view>category}" class="aymaxTagOutline"/>
               </HBox>
 
               <!-- Content -->
               <Title text="{view>title}" level="H3" class="aymaxItemTitle sapUiTinyMarginBottom"/>
-              <Text text="Par {view>author} · {view>dept} · soumis {view>time}" class="aymaxMetaText sapUiSmallMarginBottom"/>
-              <Text text="{view>excerpt}" class="aymaxExcerpt sapUiMediumMarginBottom"/>
+              <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+                <core:Icon src="sap-icon://employee" size="0.85rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
+                <Text text="{view>author}" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <Text text="{view>dept}" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <core:Icon src="sap-icon://time" size="0.75rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
+                <Text text="{view>time}" class="aymaxMetaText"/>
+              </HBox>
+              <Text text="{view>excerpt}" class="aymaxExcerpt sapUiMediumMarginBottom" wrapping="true"/>
 
               <!-- Actions (only if pending) -->
-              <HBox visible="{= ${view>status} === 'pending'}" justifyContent="End" alignItems="Center" class="aymaxItemActions">
-                <Button text="Rejeter" type="Reject" press=".onReject" class="sapUiSmallMarginEnd"/>
-                <Button text="Modifier" type="Default" press=".onModify" class="sapUiSmallMarginEnd"/>
-                <Button text="Approuver" type="Accept" press=".onApprove"/>
+              <HBox
+                visible="{= ${view>status} === 'pending'}"
+                justifyContent="End"
+                alignItems="Center"
+                class="aymaxItemActions">
+                <Button text="Rejeter" type="Reject" icon="sap-icon://decline" press=".onReject" class="sapUiSmallMarginEnd"/>
+                <Button text="Modifier" type="Default" icon="sap-icon://edit" press=".onModify" class="sapUiSmallMarginEnd"/>
+                <Button text="Approuver" type="Accept" icon="sap-icon://accept" press=".onApprove"/>
               </HBox>
-              
+
             </VBox>
-          </Panel>
-        </VBox>
+          </CustomListItem>
+        </List>
 
       </VBox>
-    </f:content>
-  </f:DynamicPage>
+    </content>
+  </Page>
 </mvc:View>

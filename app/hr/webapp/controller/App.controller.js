@@ -29,21 +29,9 @@ sap.ui.define([
       // Pour l'app HR, nous sommes toujours sur la route "hr"
       // La mise à jour de la navigation dépend de l'onglet actif
       var oViewModel = this.getOwnerComponent().getModel("view");
-      var sActiveTab = oViewModel.getProperty("/activeTab") || "employes";
-      this._updateActiveNav(sActiveTab);
-    },
-
-    _updateActiveNav: function(sActiveKey) {
-      var aButtons = this.getView().$().find(".aymaxNavLinks button");
-      aButtons.each(function(i, el) {
-        var $el = $(el);
-        var sKey = $el.attr("data-navKey");
-        if (sKey === sActiveKey) {
-          $el.addClass("aymaxNavActive");
-        } else {
-          $el.removeClass("aymaxNavActive");
-        }
-      });
+      if (!oViewModel.getProperty("/activeTab")) {
+        oViewModel.setProperty("/activeTab", "employes");
+      }
     },
 
     onNavTo: function(oEvent) {
@@ -65,7 +53,6 @@ sap.ui.define([
         // Change tab in HR view
         oViewModel.setProperty("/activeTab", sKey);
         oViewModel.setProperty("/activeEmployeeId", null);
-        this._updateActiveNav(sKey);
       } else {
         // Navigate to different app (rewards, rapports)
         if (sap.ushell && sap.ushell.Container) {
@@ -95,6 +82,10 @@ sap.ui.define([
       if (sUrl && sUrl !== "null" && sUrl !== "") return sUrl;
       var initials = sName ? sName.replace(/[^A-Z]/g, "").substring(0, 2) : "RH";
       return "https://ui-avatars.com/api/?name=" + encodeURIComponent(sName || "RH") + "&background=1E3A8A&color=fff&size=128";
+    },
+
+    formatSkillWidth: function(iPercent) {
+      return iPercent ? iPercent + "%" : "0%";
     }
   });
 });

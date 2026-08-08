@@ -1,2 +1,2 @@
-ID;title;period;body;status;intern_ID;tutor_ID
-fe9f8e33-fe0b-451e-af6b-b4fe4aec9cd6;Rapport de stage — Migration HANA Cloud;Juin – Août 2026;;draft;d733ace2-e2d1-4828-98db-30a3fc65361b;b3494d32-704e-4bda-b3b7-50169e77705d
+ID;title;period;body;status;intern_ID;tutor_ID;createdAt;modifiedAt
+rp000001-0000-4000-8000-000000000001;Rapport de stage — Migration HANA Cloud;Juin – Août 2026;Activités réalisées dans le cadre de la migration HANA Cloud. Intégration des flux OData, mise en place des vues CDS et tests de performance.;draft;21336068-8f0d-4281-b8ba-ff1a6b6a67cf;b3494d32-704e-4bda-b3b7-50169e77705d;2026-08-08T09:00:00Z;2026-08-08T10:23:00Z

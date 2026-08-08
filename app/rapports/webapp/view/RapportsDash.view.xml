@@ -10,38 +10,82 @@
     <content>
       <VBox class="sapUiContentPadding aymaxPageContent">
 
-        <Title text="Vue d'ensemble" level="H1" class="aymaxPageTitle sapUiMediumMarginBottom"/>
+        <!-- Page Header -->
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+          <VBox>
+            <Title text="Vue d'ensemble" level="H1" class="aymaxPageTitle"/>
+            <Text text="Indicateurs clés de performance du Knowledge Hub — août 2026" class="aymaxMeta sapUiTinyMarginTop"/>
+          </VBox>
+          <Button text="Exporter" type="Default" icon="sap-icon://download" class="aymaxBtnSecondary"/>
+        </HBox>
 
-        <!-- KPIs GRID -->
-        <HBox items="{view>/kpis}" wrap="Wrap" class="sapUiMediumMarginBottom aymaxKpiGrid">
-          <Panel class="aymaxCard sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxKpiCard" width="260px">
+        <!-- KPIs GRID — use List with CustomListItem -->
+        <List
+          id="kpiList"
+          items="{view>/kpis}"
+          showSeparators="None"
+          class="aymaxKpiList sapUiMediumMarginBottom">
+          <CustomListItem class="aymaxCard sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxKpiCard">
             <VBox class="sapUiSmallMargin">
               <Text text="{view>label}" class="aymaxMeta sapUiTinyMarginBottom"/>
               <Title text="{view>value}" level="H2" class="aymaxKpiValue"/>
-              <ObjectStatus text="{view>delta}" state="{view>state}" inverted="false"/>
+              <HBox alignItems="Center" class="sapUiTinyMarginTop">
+                <core:Icon
+                  src="{path: 'view>state', formatter: '.formatKpiIcon'}"
+                  color="{path: 'view>state', formatter: '.formatKpiColor'}"
+                  size="0.75rem"
+                  class="sapUiTinyMarginEnd"/>
+                <Text text="{view>delta}" class="aymaxKpiDelta"/>
+              </HBox>
             </VBox>
-          </Panel>
-        </HBox>
+          </CustomListItem>
+        </List>
 
         <!-- DATA TABLE -->
         <Panel class="aymaxCard">
           <headerToolbar>
-            <Toolbar style="Clear"><Title level="H5" text="Performance par département"/></Toolbar>
+            <Toolbar style="Clear">
+              <Title level="H5" text="Performance par département" class="card-kicker"/>
+              <ToolbarSpacer/>
+              <Button icon="sap-icon://sort" type="Transparent" tooltip="Trier" class="sapUiTinyMarginEnd"/>
+              <Button icon="sap-icon://filter" type="Transparent" tooltip="Filtrer"/>
+            </Toolbar>
           </headerToolbar>
-          <Table items="{view>/deptRows}" class="aymaxTable">
+          <Table items="{view>/deptRows}" class="aymaxTable" growing="true" growingThreshold="10">
             <columns>
-              <Column><Text text="Département"/></Column>
-              <Column hAlign="End"><Text text="Publications"/></Column>
-              <Column hAlign="End"><Text text="Questions résolues"/></Column>
-              <Column hAlign="End"><Text text="Réputation moyenne"/></Column>
+              <Column width="35%">
+                <Text text="Département"/>
+              </Column>
+              <Column hAlign="End">
+                <Text text="Publications"/>
+              </Column>
+              <Column hAlign="End">
+                <Text text="Questions résolues"/>
+              </Column>
+              <Column hAlign="End">
+                <Text text="Réputation moyenne"/>
+              </Column>
+              <Column hAlign="End" width="120px">
+                <Text text="Tendance"/>
+              </Column>
             </columns>
             <items>
               <ColumnListItem>
                 <cells>
-                  <Text text="{view>dept}" class="aymaxDeptName"/>
-                  <Text text="{view>pubs}"/>
-                  <Text text="{view>solved}"/>
-                  <Text text="{view>avgRep}"/>
+                  <HBox alignItems="Center">
+                    <Avatar
+                      initials="{path: 'view>dept', formatter: '.formatDeptInitials'}"
+                      displaySize="XS"
+                      class="sapUiTinyMarginEnd aymaxDeptAvatar"/>
+                    <Text text="{view>dept}" class="aymaxDeptName"/>
+                  </HBox>
+                  <ObjectNumber number="{view>pubs}" class="aymaxTableNumber"/>
+                  <ObjectNumber number="{view>solved}" class="aymaxTableNumber"/>
+                  <ObjectNumber number="{view>avgRep}" class="aymaxTableNumber aymaxRepNumber"/>
+                  <ObjectStatus
+                    text="{path: 'view>avgRep', formatter: '.formatTrend'}"
+                    state="{path: 'view>avgRep', formatter: '.formatTrendState'}"
+                    inverted="false"/>
                 </cells>
               </ColumnListItem>
             </items>

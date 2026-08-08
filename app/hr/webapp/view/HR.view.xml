@@ -166,48 +166,20 @@
 
         <!-- ═══════ TAB: COMPETENCES ═══════ -->
         <VBox visible="{= ${view>/activeTab} === 'competences'}">
-          <layout:HorizontalLayout allowWrapping="true" class="aymaxSkillGapGrid">
-            <Panel headerText="" class="aymaxCard aymaxSkillGapCard" width="280px">
-              <VBox class="sapUiSmallMargin">
-                <Title text="SAP BTP" level="H5" class="card-title"/>
-                <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
-                <layout:HorizontalLayout class="aymaxProgressBarOuter">
-                  <layout:HorizontalLayout class="aymaxProgressBarInner" width="78%"/>
-                </layout:HorizontalLayout>
-                <Text text="78% · 12 employés" class="aymaxMetaText sapUiTinyMarginTop"/>
-              </VBox>
-            </Panel>
-            <Panel headerText="" class="aymaxCard aymaxSkillGapCard" width="280px">
-              <VBox class="sapUiSmallMargin">
-                <Title text="Java / Spring Boot" level="H5" class="card-title"/>
-                <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
-                <layout:HorizontalLayout class="aymaxProgressBarOuter">
-                  <layout:HorizontalLayout class="aymaxProgressBarInner" width="64%"/>
-                </layout:HorizontalLayout>
-                <Text text="64% · 9 employés" class="aymaxMetaText sapUiTinyMarginTop"/>
-              </VBox>
-            </Panel>
-            <Panel headerText="" class="aymaxCard aymaxSkillGapCard" width="280px">
-              <VBox class="sapUiSmallMargin">
-                <Title text="Cloud Foundry" level="H5" class="card-title"/>
-                <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
-                <layout:HorizontalLayout class="aymaxProgressBarOuter">
-                  <layout:HorizontalLayout class="aymaxProgressBarInner" width="52%"/>
-                </layout:HorizontalLayout>
-                <Text text="52% · 7 employés" class="aymaxMetaText sapUiTinyMarginTop"/>
-              </VBox>
-            </Panel>
-            <Panel headerText="" class="aymaxCard aymaxSkillGapCard" width="280px">
-              <VBox class="sapUiSmallMargin">
-                <Title text="Docker / CI-CD" level="H5" class="card-title"/>
-                <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
-                <layout:HorizontalLayout class="aymaxProgressBarOuter">
-                  <layout:HorizontalLayout class="aymaxProgressBarInner" width="41%"/>
-                </layout:HorizontalLayout>
-                <Text text="41% · 6 employés" class="aymaxMetaText sapUiTinyMarginTop"/>
-              </VBox>
-            </Panel>
-          </layout:HorizontalLayout>
+          <List items="{view>/skillGaps}" showSeparators="None" class="aymaxSkillGapList">
+            <CustomListItem class="aymaxSkillGapItem">
+              <Panel headerText="" class="aymaxCard aymaxSkillGapCard sapUiSmallMarginBottom sapUiSmallMarginEnd" width="280px">
+                <VBox class="sapUiSmallMargin">
+                  <Title text="{view>name}" level="H5" class="card-title"/>
+                  <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
+                  <layout:HorizontalLayout class="aymaxProgressBarOuter">
+                    <layout:HorizontalLayout class="aymaxProgressBarInner" width="{path: 'view>percent', formatter: '.formatSkillWidth'}"/>
+                  </layout:HorizontalLayout>
+                  <Text text="{view>percent}% · {view>headcount} employés" class="aymaxMetaText sapUiTinyMarginTop"/>
+                </VBox>
+              </Panel>
+            </CustomListItem>
+          </List>
         </VBox>
 
         <!-- ═══════ TAB: OBJECTIFS ═══════ -->

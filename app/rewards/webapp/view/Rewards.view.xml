@@ -10,31 +10,71 @@
     <content>
       <VBox class="sapUiContentPadding aymaxPageContent">
 
+        <!-- Page Header -->
         <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
           <VBox>
             <Title text="Catalogue de récompenses" level="H1" class="aymaxPageTitle"/>
-            <Text text="Les employés convertissent leurs points de réputation en cadeaux." class="aymaxMeta sapUiTinyMarginTop"/>
+            <Text text="Les employés convertissent leurs points de réputation en cadeaux exclusifs." class="aymaxMeta sapUiTinyMarginTop"/>
           </VBox>
-          <Button text="+ Ajouter une récompense" type="Emphasized" press=".onAddReward"/>
+          <Button
+            text="+ Ajouter une récompense"
+            type="Emphasized"
+            icon="sap-icon://add"
+            press=".onAddReward"
+            class="aymaxAddBtn"/>
         </HBox>
 
-        <!-- REWARDS GRID -->
-        <HBox items="{/Rewards}" wrap="Wrap" class="aymaxRewardGrid">
-          <Panel class="aymaxCard aymaxRewardCard sapUiSmallMarginEnd sapUiSmallMarginBottom" width="280px">
-            <VBox alignItems="Center" justifyContent="Center" class="sapUiMediumMargin">
-              
-              <VBox class="aymaxRewardIconWrapper sapUiSmallMarginBottom" alignItems="Center" justifyContent="Center">
-                <core:Icon src="sap-icon://gift" size="1.8rem" color="var(--aymax-primary)"/>
-              </VBox>
-              
-              <Title text="{name}" level="H4" class="aymaxRewardTitle sapUiTinyMarginBottom" textAlign="Center"/>
-<Text text="{path: 'points', formatter: '.formatPointsLabel'}" class="aymaxRewardPoints sapUiMediumMarginBottom"/>
-              
-              <Button text="Modifier" type="Default" width="100%" press=".onEditReward" class="aymaxBtnSecondary"/>
-              
-            </VBox>
-          </Panel>
+        <!-- Stats Row -->
+        <HBox class="aymaxRewardStats sapUiMediumMarginBottom" wrap="Wrap">
+          <VBox class="aymaxStatCard sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="35 000" level="H3" class="aymaxStatValue"/>
+            <Text text="Points distribués ce mois" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="aymaxStatCard sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="12" level="H3" class="aymaxStatValue"/>
+            <Text text="Récompenses échangées" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="aymaxStatCard sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="3" level="H3" class="aymaxStatValue"/>
+            <Text text="Articles disponibles" class="aymaxMeta"/>
+          </VBox>
         </HBox>
+
+        <!-- REWARDS GRID — use List with horizontal GridList pattern -->
+        <List
+          id="rewardsList"
+          items="{view>/rewards}"
+          showSeparators="None"
+          class="aymaxRewardList">
+          <CustomListItem class="aymaxCard aymaxRewardCard sapUiSmallMarginEnd sapUiSmallMarginBottom">
+            <VBox alignItems="Center" class="sapUiMediumMargin aymaxRewardCardInner">
+
+              <!-- Icon Wrapper -->
+              <VBox class="aymaxRewardIconWrapper sapUiSmallMarginBottom" alignItems="Center" justifyContent="Center">
+                <core:Icon src="{path: 'view>icon', formatter: '.formatRewardIcon'}" size="1.8rem" color="var(--aymax-primary)"/>
+              </VBox>
+
+              <!-- Name -->
+              <Title text="{view>name}" level="H4" class="aymaxRewardTitle sapUiTinyMarginBottom" textAlign="Center"/>
+
+              <!-- Points badge -->
+              <HBox alignItems="Center" justifyContent="Center" class="aymaxRewardPointsBadge sapUiSmallMarginBottom">
+                <core:Icon src="sap-icon://favorite" size="0.9rem" color="var(--aymax-accent)" class="sapUiTinyMarginEnd"/>
+                <Text text="{path: 'view>points', formatter: '.formatPointsLabel'}" class="aymaxRewardPoints"/>
+              </HBox>
+
+              <!-- Category tag -->
+              <Text text="{view>category}" class="aymaxRewardCategory sapUiTinyMarginBottom"/>
+
+              <!-- Actions -->
+              <HBox class="sapUiSmallMarginTop" justifyContent="Center">
+                <Button text="Modifier" type="Default" press=".onEditReward" class="aymaxBtnSecondary sapUiTinyMarginEnd"/>
+                <Button text="Supprimer" type="Transparent" press=".onDeleteReward" class="aymaxDeleteBtn"/>
+              </HBox>
+
+            </VBox>
+          </CustomListItem>
+        </List>
 
       </VBox>
     </content>

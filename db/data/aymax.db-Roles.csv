@@ -1,6 +1,6 @@
 ID;name;desc;count
-632f98ee-a9c2-45cd-9b01-facf9121a23d;Administrateur;Gestion technique de la plateforme;2
-cd45ed10-9a24-4ff1-bbfd-167b6ff661af;Manager;Vue globale, validation du contenu;8
-56c3c470-12ef-4604-a0ad-8cae93197a9a;RH;Analytique employés et récompenses;3
-47d1f307-94c1-4a3d-8550-d48ee3122a19;Employé;Accès standard;142
-09869cdd-be81-4ff8-9d0b-47f0cca15c5f;Stagiaire;Accès restreint;14
+r0000001-0000-4000-8000-000000000001;Administrateur;Gestion technique de la plateforme;2
+r0000001-0000-4000-8000-000000000002;Manager;Vue globale, validation du contenu;8
+r0000001-0000-4000-8000-000000000003;RH;Analytique employés et récompenses;3
+r0000001-0000-4000-8000-000000000004;Employé;Accès standard;142
+r0000001-0000-4000-8000-000000000005;Stagiaire;Accès restreint;14

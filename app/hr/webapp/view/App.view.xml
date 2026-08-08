@@ -19,13 +19,22 @@
 
         <HBox class="aymaxNavLinks sapUiSmallMarginBegin">
           <Button text="Employés" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="employes"/></customData>
+            <customData>
+              <core:CustomData key="navKey" value="employes"/>
+              <core:CustomData key="active" value="{= ${view>/activeTab} === 'employes' ? 'true' : 'false'}" writeToDom="true" />
+            </customData>
           </Button>
           <Button text="Compétences" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="competences"/></customData>
+            <customData>
+              <core:CustomData key="navKey" value="competences"/>
+              <core:CustomData key="active" value="{= ${view>/activeTab} === 'competences' ? 'true' : 'false'}" writeToDom="true" />
+            </customData>
           </Button>
           <Button text="Objectifs" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="objectifs"/></customData>
+            <customData>
+              <core:CustomData key="navKey" value="objectifs"/>
+              <core:CustomData key="active" value="{= ${view>/activeTab} === 'objectifs' ? 'true' : 'false'}" writeToDom="true" />
+            </customData>
           </Button>
           <Button text="Récompenses" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="rewards"/></customData>
