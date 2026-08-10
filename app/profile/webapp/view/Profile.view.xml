@@ -197,7 +197,8 @@
                       <List items="{view>/certsEarned}" noDataText="{i18n>noCertEarned}" showSeparators="None">
                         <StandardListItem
                           title="{view>certification/name}"
-                          info="{path:'view>earnedDate', formatter:'.formatter.certEarnedOnLabel'}"/>
+                          info="{path:'view>earnedDate', formatter:'.formatter.certEarnedOnLabel'}"
+                          infoState="Success"/>
                       </List>
                     </Panel>
                     <Panel headerText="{i18n>certInProgress}" class="profileCard">
@@ -205,14 +206,17 @@
                         <StandardListItem
                           title="{view>certification/name}"
                           description="{path:'view>certification/provider', formatter:'.formatter.certProviderLabel'}"
-                          info="{path:'view>startDate', formatter:'.formatter.certStartedOnLabel'}"/>
+                          info="{path:'view>startDate', formatter:'.formatter.certStartedOnLabel'}"
+                          infoState="Information"/>
                       </List>
                     </Panel>
                     <Panel headerText="{i18n>certRecommended}" class="profileCard">
                       <List items="{view>/certsRecommended}" noDataText="{i18n>noCertRecommended}" showSeparators="None">
                         <StandardListItem
                           title="{view>certification/name}"
-                          description="{view>reason}"/>
+                          description="{view>reason}"
+                          info="{i18n>certRecommended}"
+                          infoState="Warning"/>
                       </List>
                     </Panel>
                   </VBox>

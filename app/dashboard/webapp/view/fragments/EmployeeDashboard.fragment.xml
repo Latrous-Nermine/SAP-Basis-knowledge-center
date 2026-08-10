@@ -201,13 +201,13 @@
               </List>
             </VBox>
             <VBox visible="{= ${view>/employee/certsInProgress}.length > 0 }">
-              <Text text="{i18n>certInProgress}" class="dashboardCardKicker"/>
+              <Text text="{i18n>certInProgress}" class="dashboardCardKickerInfo"/>
               <List items="{view>/employee/certsInProgress}" showSeparators="None">
                 <StandardListItem title="{view>certification/name}"/>
               </List>
             </VBox>
             <VBox visible="{= ${view>/employee/certsRecommended}.length > 0 }">
-              <Text text="{i18n>certRecommended}" class="dashboardCardKicker"/>
+              <Text text="{i18n>certRecommended}" class="dashboardCardKickerWarning"/>
               <List items="{view>/employee/certsRecommended}" showSeparators="None">
                 <StandardListItem title="{view>certification/name}"/>
               </List>

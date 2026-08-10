@@ -95,8 +95,8 @@
         <f:content>
           <VBox class="sapUiSmallMargin dashboardGap8">
             <Text text="{parts:[{path:'view>/hr/certsEarned'}], formatter:'.formatter.certsEarnedLabel'}" class="dashboardCardKickerSuccess"/>
-            <Text text="{parts:[{path:'view>/hr/certsInProgress'}], formatter:'.formatter.certsInProgressLabel'}" class="dashboardCardKicker"/>
-            <Text text="{parts:[{path:'view>/hr/certsRecommended'}], formatter:'.formatter.certsRecommendedLabel'}" class="dashboardCardKicker"/>
+            <Text text="{parts:[{path:'view>/hr/certsInProgress'}], formatter:'.formatter.certsInProgressLabel'}" class="dashboardCardKickerInfo"/>
+            <Text text="{parts:[{path:'view>/hr/certsRecommended'}], formatter:'.formatter.certsRecommendedLabel'}" class="dashboardCardKickerWarning"/>
           </VBox>
         </f:content>
       </f:Card>

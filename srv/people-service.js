@@ -1,5 +1,6 @@
 import cds from '@sap/cds';
 import { calculateLevel, levelToReputationRange } from './domain/ExpertiseLevelCalculator.js';
+import { makeSearchCaseInsensitive } from './domain/CaseInsensitiveSearch.js';
 
 const MONTH_FORMATTER = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' });
 
@@ -111,6 +112,9 @@ export default class PeopleService extends cds.ApplicationService {
     this.before('READ', 'People', (req) => {
       const where = req.query.SELECT.where;
       if (where) rewriteExpertiseLevelFilter(where);
+      // Name/position/skill/technology search (Experts) - case-insensitive,
+      // see CaseInsensitiveSearch.js for why this is a backend query rewrite.
+      makeSearchCaseInsensitive(req.query);
     });
 
     // ────────────────────────────────────────────────────────────

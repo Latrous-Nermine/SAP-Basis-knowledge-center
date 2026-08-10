@@ -133,8 +133,25 @@ html, body {
   letter-spacing: 0.03em;
 }
 
+/* Certification status - Obtenues/En cours/Recommandées each need their
+   own semantic treatment (green/blue/orange), not just "earned is
+   colored, the other two share the same neutral grey" - matches the
+   sap.ui.core.ValueState tokens ObjectStatus already uses everywhere
+   else in this app (Success/Information/Warning), never a custom hex. */
 .dashboardCardKickerSuccess {
   color: var(--sapPositiveColor, #257a3e);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.dashboardCardKickerInfo {
+  color: var(--sapInformativeColor, #0a6ed1);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.dashboardCardKickerWarning {
+  color: var(--sapCriticalColor, #b35c00);
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -206,4 +223,10 @@ html, body {
 
 .dashboardTimelineEntry {
   padding: 4px 0;
+  gap: 4px;
+}
+
+.dashboardTimelineLabel {
+  flex: 1;
+  min-width: 0;
 }

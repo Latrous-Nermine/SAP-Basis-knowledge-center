@@ -1,5 +1,6 @@
 import cds from '@sap/cds';
 import { canTransition, isContributor } from './domain/KnowledgeWorkflow.js';
+import { makeSearchCaseInsensitive } from './domain/CaseInsensitiveSearch.js';
 
 /**
  * Handler for KnowledgeService. Stays thin: reads req, delegates the
@@ -23,6 +24,12 @@ export default class KnowledgeService extends cds.ApplicationService {
       req.data.contributors = [
         { user_userID: req.user.id, role: 'author' },
       ];
+    });
+
+    // Title search (KnowledgeList.controller.js) - case-insensitive, see
+    // CaseInsensitiveSearch.js for why this is a backend query rewrite.
+    this.before('READ', 'KnowledgeItems', (req) => {
+      makeSearchCaseInsensitive(req.query);
     });
 
     // ────────────────────────────────────────────────────────────

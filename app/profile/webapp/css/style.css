@@ -166,6 +166,14 @@
 
 .profileTimelineEntry {
   padding: 4px 0;
+  gap: 4px;
+}
+
+/* Lets the label take the remaining row width and wrap naturally next to
+   the fixed-width points chip, instead of being squeezed by it. */
+.profileTimelineLabel {
+  flex: 1;
+  min-width: 0;
 }
 
 .profileSkillRow {

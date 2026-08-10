@@ -111,8 +111,24 @@ sap.ui.define([
       this._applyFilters();
     },
 
+    // Was only clearing the dialog's own edit-buffer (view>/filters) - the
+    // applied filter state (this._oFilters), the active-filter token chips
+    // and the actual list results were left untouched, so "Réinitialiser"
+    // visually cleared the form but the results stayed filtered by
+    // whatever was applied before. Now mirrors onApplyFilters: commits the
+    // cleared state, refreshes the tokens, re-runs the query, and closes.
     onResetFilters: function() {
-      this.getViewModel().setProperty("/filters", { expertiseLevel: "", availability: "", technologies: [], skill: "" });
+      var oEmptyFilters = { expertiseLevel: "", availability: "", technologies: [], skill: "" };
+      this.getViewModel().setProperty("/filters", oEmptyFilters);
+
+      this._oFilters.expertiseLevel = "";
+      this._oFilters.availability = "";
+      this._oFilters.technologies = [];
+      this._oFilters.skill = "";
+
+      this._updateActiveFilterTokens();
+      this._pFilterDialog.then(function(oDialog) { oDialog.close(); });
+      this._applyFilters();
     },
 
     onRemoveFilterToken: function(oEvent) {

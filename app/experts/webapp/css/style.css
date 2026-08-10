@@ -97,3 +97,10 @@
 .expertsCardActions {
   background: transparent;
 }
+
+/* Filter dialog - a touch more vertical room between the 4 fields than
+   ResponsiveGridLayout's own default, so the dialog doesn't feel like a
+   cramped form squeezed into the card's own width. */
+.expertsFilterForm .sapUiFormElement {
+  margin-bottom: 4px;
+}

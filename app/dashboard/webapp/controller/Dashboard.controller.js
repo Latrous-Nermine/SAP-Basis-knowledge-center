@@ -157,7 +157,7 @@ sap.ui.define([
 
         var oListBinding = this.oPeopleModel.bindList("/People", null, null,
           [new Filter("userID", FilterOperator.EQ, sUserID)],
-          { $expand: "skills,certifications" }
+          { $expand: "skills,certifications($expand=certification)" }
         );
         return oListBinding.requestContexts(0, 1);
       }.bind(this)).then(function(aContexts) {
