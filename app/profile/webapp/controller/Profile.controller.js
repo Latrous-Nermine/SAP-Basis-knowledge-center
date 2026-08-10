@@ -45,7 +45,7 @@ sap.ui.define([
       this.getView().bindElement({
         path: "/People('" + sUserID + "')",
         parameters: {
-          $expand: "skills,userBadges($expand=badge),certifications($expand=certification)"
+          $expand: "skills,userBadges($expand=badge),certifications($expand=certification),technologies"
         },
         events: {
           dataRequested: function() {

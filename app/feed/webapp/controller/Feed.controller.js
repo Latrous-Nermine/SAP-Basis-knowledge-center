@@ -81,10 +81,34 @@ sap.ui.define([
       // list item (has its own UserProfiles binding context). Read the ID
       // from whichever is actually present - never assume "current user".
       var oContext = oEvent.getSource().getBindingContext();
-      var sUserID = oContext
-        ? oContext.getProperty("userID")
-        : this.oViewModel.getProperty("/currentUser/userID");
+      if (oContext) {
+        this._navigateToProfile(oContext.getProperty("userID"));
+        return;
+      }
 
+      // Own-avatar case: currentUser.userID is only populated once
+      // Component.js#_loadCurrentUser()'s async call resolves - if it
+      // hasn't yet (or silently failed), re-fetch live instead of the
+      // click silently doing nothing.
+      var sUserID = this.oViewModel.getProperty("/currentUser/userID");
+      if (sUserID) {
+        this._navigateToProfile(sUserID);
+        return;
+      }
+
+      var oContextRequest = this.oModel.bindContext("/getCurrentUserProfile()");
+      oContextRequest.requestObject().then(function(oData) {
+        if (oData && oData.userID) {
+          this._navigateToProfile(oData.userID);
+        } else {
+          MessageToast.show("Impossible d'ouvrir le profil pour le moment");
+        }
+      }.bind(this)).catch(function() {
+        MessageToast.show("Impossible d'ouvrir le profil pour le moment");
+      });
+    },
+
+    _navigateToProfile: function(sUserID) {
       if (!sUserID) return;
       window.location.href = "/profile/webapp/index.html#/profile/" + encodeURIComponent(sUserID);
     },

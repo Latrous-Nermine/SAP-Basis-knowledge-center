@@ -1,10 +1,40 @@
 import cds from '@sap/cds';
-import { calculateLevel } from './domain/ExpertiseLevelCalculator.js';
+import { calculateLevel, levelToReputationRange } from './domain/ExpertiseLevelCalculator.js';
 
 const MONTH_FORMATTER = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' });
 
 function capitalize(sText) {
   return sText.charAt(0).toUpperCase() + sText.slice(1);
+}
+
+/**
+ * Finds `expertiseLevel = '<level>'` in a CQN where-array - top level, or
+ * one level into a parenthesised `xpr` sub-expression, as far as UI5's own
+ * array-of-Filters combination ever nests - and replaces it in place with
+ * the equivalent `reputation` range. Unknown level values match nothing
+ * (never "everything"), so a typo'd filter fails closed, not open.
+ */
+function rewriteExpertiseLevelFilter(tokens) {
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+
+    if (token && Array.isArray(token.xpr)) {
+      rewriteExpertiseLevelFilter(token.xpr);
+      continue;
+    }
+
+    const isExpertiseLevelRef = token && token.ref && token.ref[token.ref.length - 1] === 'expertiseLevel';
+    if (isExpertiseLevelRef && tokens[i + 1] === '=' && tokens[i + 2] && 'val' in tokens[i + 2]) {
+      const range = levelToReputationRange(tokens[i + 2].val);
+      const replacement = !range
+        ? [{ ref: ['reputation'] }, '=', { val: -1 }]
+        : range.max == null
+          ? [{ ref: ['reputation'] }, '>=', { val: range.min }]
+          : ['(', { ref: ['reputation'] }, '>=', { val: range.min }, 'and', { ref: ['reputation'] }, '<', { val: range.max }, ')'];
+      tokens.splice(i, 3, ...replacement);
+      return;
+    }
+  }
 }
 
 /**
@@ -33,11 +63,13 @@ export default class PeopleService extends cds.ApplicationService {
 
       const userIDs = rows.map((r) => r.userID);
 
-      const [followerRows, followingRows] = await Promise.all([
+      const [followerRows, followingRows, contributionRows] = await Promise.all([
         SELECT.from(Follows).columns('followedUser_userID')
           .where({ followedUser_userID: { in: userIDs } }),
         SELECT.from(Follows).columns('userID')
           .where({ userID: { in: userIDs }, followedUser_userID: { '!=': null } }),
+        SELECT.from(KnowledgeContributors).columns('user_userID')
+          .where({ user_userID: { in: userIDs } }),
       ]);
 
       const followerCounts = new Map();
@@ -47,6 +79,10 @@ export default class PeopleService extends cds.ApplicationService {
       const followingCounts = new Map();
       for (const { userID } of followingRows) {
         followingCounts.set(userID, (followingCounts.get(userID) || 0) + 1);
+      }
+      const contributionCounts = new Map();
+      for (const { user_userID } of contributionRows) {
+        contributionCounts.set(user_userID, (contributionCounts.get(user_userID) || 0) + 1);
       }
 
       let myFollows = new Set();
@@ -59,9 +95,22 @@ export default class PeopleService extends cds.ApplicationService {
       for (const row of rows) {
         row.followersCount = followerCounts.get(row.userID) || 0;
         row.followingCount = followingCounts.get(row.userID) || 0;
+        row.contributionsCount = contributionCounts.get(row.userID) || 0;
         row.isFollowedByMe = myFollows.has(row.userID);
         row.expertiseLevel = calculateLevel(row.reputation);
       }
+    });
+
+    // ────────────────────────────────────────────────────────────
+    // Experts "expertise level" filter - expertiseLevel is computed above,
+    // after READ, so it isn't a column the DB can filter on. Rewrite
+    // `expertiseLevel eq 'Expert'` into the equivalent `reputation` range
+    // before the query runs, using the same threshold table calculateLevel
+    // uses, so the two can never drift apart.
+    // ────────────────────────────────────────────────────────────
+    this.before('READ', 'People', (req) => {
+      const where = req.query.SELECT.where;
+      if (where) rewriteExpertiseLevelFilter(where);
     });
 
     // ────────────────────────────────────────────────────────────

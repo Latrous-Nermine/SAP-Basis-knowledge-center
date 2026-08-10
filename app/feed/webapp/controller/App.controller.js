@@ -79,20 +79,50 @@ sap.ui.define([
         return;
       }
 
-      if (sKey === "profile") {
-        var sUserID = this.getOwnerComponent().getModel("view").getProperty("/currentUser/userID");
-        if (sUserID) {
-          window.location.href = "/profile/webapp/index.html#/profile/" + encodeURIComponent(sUserID);
-        }
+      if (sKey === "experts") {
+        window.location.href = "/experts/webapp/index.html";
         return;
       }
 
-      if (sKey === "dashboard" || sKey === "experts") {
-        MessageToast.show("Page en cours de développement (Lot 2)");
+      if (sKey === "profile") {
+        this._navigateToOwnProfile();
+        return;
+      }
+
+      if (sKey === "dashboard") {
+        window.location.href = "/dashboard/webapp/index.html";
         return;
       }
 
       this.getOwnerComponent().getRouter().navTo(mRoutes[sKey], {}, true);
+    },
+
+    // currentUser.userID (view model) is only populated once
+    // Component.js#_loadCurrentUser()'s async call resolves. Clicking
+    // "Profil" before that finished - or after it silently failed - used
+    // to just do nothing. The cached value is still used when it's already
+    // there (fast path, no behaviour change); otherwise this re-fetches
+    // live instead of leaving the click a no-op, and surfaces a real error
+    // if that fetch fails too.
+    _navigateToOwnProfile: function() {
+      var oViewModel = this.getOwnerComponent().getModel("view");
+      var sUserID = oViewModel.getProperty("/currentUser/userID");
+
+      if (sUserID) {
+        window.location.href = "/profile/webapp/index.html#/profile/" + encodeURIComponent(sUserID);
+        return;
+      }
+
+      var oContext = this.getOwnerComponent().getModel().bindContext("/getCurrentUserProfile()");
+      oContext.requestObject().then(function(oData) {
+        if (oData && oData.userID) {
+          window.location.href = "/profile/webapp/index.html#/profile/" + encodeURIComponent(oData.userID);
+        } else {
+          MessageToast.show("Impossible d'ouvrir le profil pour le moment");
+        }
+      }).catch(function() {
+        MessageToast.show("Impossible d'ouvrir le profil pour le moment");
+      });
     },
 
     onNotificationsPress: function() {

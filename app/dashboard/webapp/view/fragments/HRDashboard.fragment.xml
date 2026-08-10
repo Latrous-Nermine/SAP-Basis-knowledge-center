@@ -1,0 +1,148 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:f="sap.f"
+  xmlns:card="sap.f.cards"
+  xmlns:viz="sap.viz.ui5.controls"
+  xmlns:vizData="sap.viz.ui5.data"
+  xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds">
+
+  <VBox visible="{= ${view>/role} === 'HR' }" class="dashboardSectionGap">
+
+    <HBox class="dashboardGap16" wrap="Wrap" width="100%">
+      <!-- Évolution des compétences - TODO-INTEGRATION.md I-21: no
+           quarter-over-quarter tracking model exists yet, so this chart
+           renders its empty state until that's built. Kept as a real
+           VizFrame (not removed) so populating it later needs no UI
+           change - only real data. -->
+      <f:Card class="dashboardCard dashboardHalfCard">
+
+        <f:layoutData>
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="320px"/>
+
+        </f:layoutData>
+        <f:header>
+          <card:Header title="{i18n>skillsEvolutionTitle}"/>
+        </f:header>
+        <f:content>
+          <VBox class="sapUiSmallMargin">
+            <viz:VizFrame
+              vizType="bar"
+              width="100%"
+              height="240px"
+              uiConfig="{applicationSet:'fiori'}" vizProperties="{title:{visible:false}}">
+              <viz:dataset>
+                <vizData:FlattenedDataset data="{view>/hr/skillsEvolution}">
+                  <vizData:dimensions>
+                    <vizData:DimensionDefinition name="Compétence" value="{view>name}"/>
+                  </vizData:dimensions>
+                  <vizData:measures>
+                    <vizData:MeasureDefinition name="Niveau (%)" value="{view>percent}"/>
+                  </vizData:measures>
+                </vizData:FlattenedDataset>
+              </viz:dataset>
+              <viz:feeds>
+                <vizFeeds:FeedItem uid="valueAxis" type="Measure" values="Niveau (%)"/>
+                <vizFeeds:FeedItem uid="categoryAxis" type="Dimension" values="Compétence"/>
+              </viz:feeds>
+            </viz:VizFrame>
+            <Text text="{i18n>noSkillsEvolution}" visible="{= ${view>/hr/skillsEvolution}.length === 0 }"/>
+          </VBox>
+        </f:content>
+      </f:Card>
+
+      <!-- Objectifs - TODO-INTEGRATION.md I-22: no Objectives entity
+           exists anywhere yet (a team decision, not mine to invent). -->
+      <f:Card class="dashboardCard dashboardHalfCard">
+
+        <f:layoutData>
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="320px"/>
+
+        </f:layoutData>
+        <f:header>
+          <card:Header title="{i18n>objectivesTitle}"/>
+        </f:header>
+        <f:content>
+          <VBox class="sapUiSmallMargin">
+            <List items="{view>/hr/objectives}" noDataText="{i18n>noObjectives}" showSeparators="None">
+              <CustomListItem>
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="dashboardListRow">
+                  <Text text="{view>title}"/>
+                  <ObjectStatus text="{view>tagLabel}" state="{view>tagState}"/>
+                </HBox>
+              </CustomListItem>
+            </List>
+          </VBox>
+        </f:content>
+      </f:Card>
+    </HBox>
+
+    <HBox class="dashboardGap16" wrap="Wrap" width="100%">
+      <!-- Certifications - real, company-wide (UserCertifications grouped
+           by status). -->
+      <f:Card class="dashboardCard dashboardHalfCard">
+
+        <f:layoutData>
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="320px"/>
+
+        </f:layoutData>
+        <f:header>
+          <card:Header title="{i18n>hrCertificationsTitle}"/>
+        </f:header>
+        <f:content>
+          <VBox class="sapUiSmallMargin dashboardGap8">
+            <Text text="{parts:[{path:'view>/hr/certsEarned'}], formatter:'.formatter.certsEarnedLabel'}" class="dashboardCardKickerSuccess"/>
+            <Text text="{parts:[{path:'view>/hr/certsInProgress'}], formatter:'.formatter.certsInProgressLabel'}" class="dashboardCardKicker"/>
+            <Text text="{parts:[{path:'view>/hr/certsRecommended'}], formatter:'.formatter.certsRecommendedLabel'}" class="dashboardCardKicker"/>
+          </VBox>
+        </f:content>
+      </f:Card>
+
+      <!-- Top contributeurs - real, company-wide reputation ranking. -->
+      <f:Card class="dashboardCard dashboardHalfCard">
+
+        <f:layoutData>
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="320px"/>
+
+        </f:layoutData>
+        <f:header>
+          <card:Header title="{i18n>topContributorsTitle}"/>
+        </f:header>
+        <f:content>
+          <VBox class="sapUiSmallMargin">
+            <List items="{view>/hr/topContributors}" noDataText="{i18n>noTopContributors}" showSeparators="None">
+              <CustomListItem>
+                <HBox justifyContent="SpaceBetween" class="dashboardListRow">
+                  <Text text="{view>name}"/>
+                  <Text text="{parts:[{path:'view>count'}], formatter:'.formatter.pointsLabel'}" class="dashboardMetaText"/>
+                </HBox>
+              </CustomListItem>
+            </List>
+          </VBox>
+        </f:content>
+      </f:Card>
+    </HBox>
+
+    <!-- Catalogue de récompenses - TODO-INTEGRATION.md I-08 - Rewards
+         doesn't exist yet, renders correctly empty. -->
+    <f:Card class="dashboardCard">
+      <f:header>
+        <card:Header title="{i18n>rewardsTitle}"/>
+      </f:header>
+      <f:content>
+        <VBox class="sapUiSmallMargin">
+          <HBox wrap="Wrap" items="{view>/hr/rewards}">
+            <Text text="{view>name} — {view>pointsLabel}" class="dashboardTagChip"/>
+          </HBox>
+          <Text text="{i18n>noRewards}" visible="{= ${view>/hr/rewards}.length === 0 }"/>
+          <Link text="{i18n>manage}" press=".onNavToRewards" class="sapUiTinyMarginTop"/>
+        </VBox>
+      </f:content>
+    </f:Card>
+
+  </VBox>
+</core:FragmentDefinition>

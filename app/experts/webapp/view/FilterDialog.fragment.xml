@@ -1,0 +1,48 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:form="sap.ui.layout.form">
+
+  <Dialog title="{i18n>filtersDialogTitle}" contentWidth="26rem">
+    <content>
+      <form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanM="4" class="sapUiSmallMargin">
+
+        <Label text="{i18n>filterExpertiseLevel}"/>
+        <Select selectedKey="{view>/filters/expertiseLevel}" width="100%">
+          <core:Item key="" text="{i18n>filterAll}"/>
+          <core:Item key="Débutant" text="{i18n>level.Debutant}"/>
+          <core:Item key="Contributeur" text="{i18n>level.Contributeur}"/>
+          <core:Item key="Expert" text="{i18n>level.Expert}"/>
+          <core:Item key="Spécialiste" text="{i18n>level.Specialiste}"/>
+          <core:Item key="Master" text="{i18n>level.Master}"/>
+        </Select>
+
+        <Label text="{i18n>filterAvailability}"/>
+        <Select selectedKey="{view>/filters/availability}" width="100%">
+          <core:Item key="" text="{i18n>filterAll}"/>
+          <core:Item key="available" text="{i18n>availability.available}"/>
+          <core:Item key="busy" text="{i18n>availability.busy}"/>
+          <core:Item key="unavailable" text="{i18n>availability.unavailable}"/>
+        </Select>
+
+        <Label text="{i18n>filterTechnology}"/>
+        <MultiComboBox
+          selectedKeys="{view>/filters/technologies}"
+          items="{path:'view>/technologyOptions', templateShareable:'false'}"
+          width="100%">
+          <core:Item key="{view>key}" text="{view>text}"/>
+        </MultiComboBox>
+
+        <Label text="{i18n>filterSkill}"/>
+        <Input value="{view>/filters/skill}" placeholder="{i18n>filterSkillPlaceholder}"/>
+
+      </form:SimpleForm>
+    </content>
+    <beginButton>
+      <Button text="{i18n>filterReset}" press=".onResetFilters"/>
+    </beginButton>
+    <endButton>
+      <Button text="{i18n>filterApply}" type="Emphasized" press=".onApplyFilters"/>
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

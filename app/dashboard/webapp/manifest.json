@@ -1,0 +1,123 @@
+{
+  "_version": "1.32.0",
+  "sap.app": {
+    "id": "aymax.dashboard",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "applicationVersion": { "version": "1.0.0" },
+    "dataSources": {
+      "dashboardService": {
+        "uri": "/odata/v4/dashboard/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "peopleService": {
+        "uri": "/odata/v4/people/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "knowledgeService": {
+        "uri": "/odata/v4/knowledge/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "notificationService": {
+        "uri": "/odata/v4/notification/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "feedService": {
+        "uri": "/odata/v4/feed/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      }
+    }
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.f": {},
+        "sap.ui.core": {},
+        "sap.viz": {}
+      }
+    },
+    "rootView": {
+      "viewName": "aymax.dashboard.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "aymax.dashboard.view",
+        "controlId": "appNavContainer",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        { "pattern": "", "name": "dashboard", "target": "dashboard" }
+      ],
+      "targets": {
+        "dashboard": { "viewName": "Dashboard", "viewLevel": 1 }
+      }
+    },
+    "models": {
+      "": {
+        "dataSource": "dashboardService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "people": {
+        "dataSource": "peopleService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "knowledge": {
+        "dataSource": "knowledgeService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "notification": {
+        "dataSource": "notificationService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "feed": {
+        "dataSource": "feedService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.dashboard.i18n.i18n" }
+      },
+      "view": { "type": "sap.ui.model.json.JSONModel" }
+    },
+    "resources": {
+      "css": [
+        { "uri": "css/style.css" }
+      ]
+    }
+  }
+}

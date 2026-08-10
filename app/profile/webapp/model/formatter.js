@@ -20,6 +20,15 @@ sap.ui.define([
     Intern: "role.intern"
   };
 
+  // Same three states as the Experts module's formatter (app/experts/webapp/
+  // model/formatter.js) - kept in sync by hand since no shared library
+  // exists yet (docs/lot2-analysis.md §6.3, still open).
+  var AVAILABILITY_META = {
+    available:   { key: "availability.available",   state: "Success" },
+    busy:        { key: "availability.busy",         state: "Warning" },
+    unavailable: { key: "availability.unavailable",   state: "Error" }
+  };
+
   var oResourceBundle = null;
 
   function relativeDateTime(vDate) {
@@ -67,6 +76,22 @@ sap.ui.define([
       if (!sRole || !oResourceBundle) return "";
       var sKey = ROLE_KEYS[sRole];
       return sKey ? oResourceBundle.getText(sKey) : sRole;
+    },
+
+    availabilityLabel: function(sAvailability) {
+      if (!sAvailability || !oResourceBundle) return "";
+      var oMeta = AVAILABILITY_META[sAvailability];
+      return oMeta ? oResourceBundle.getText(oMeta.key) : sAvailability;
+    },
+
+    availabilityState: function(sAvailability) {
+      var oMeta = AVAILABILITY_META[sAvailability];
+      return oMeta ? oMeta.state : "None";
+    },
+
+    yearsOfExperienceLabel: function(iYears) {
+      if (!oResourceBundle || iYears === null || iYears === undefined) return "";
+      return oResourceBundle.getText("yearsOfExperience", [iYears]);
     },
 
     followButtonText: function(bIsFollowedByMe) {

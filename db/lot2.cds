@@ -235,10 +235,24 @@ extend UserProfiles with {
 
   bio              : String(1000);
 
+  /** Experts module (docs/design/Experts.md is silent on these three -
+      added as a deliberate, explained extension, not implied by the
+      original design). Seed-data only for now, same as every other
+      People field - PeopleService has no write endpoint at all yet
+      (see its own header comment), so this doesn't open one. */
+  availability      : String(20) enum { available; busy; unavailable } default 'available';
+  yearsOfExperience : Integer;
+
   skills           : Composition of many UserSkills         on skills.user = $self;
   userBadges       : Composition of many UserBadges         on userBadges.user = $self;
   certifications   : Composition of many UserCertifications on certifications.user = $self;
   reputationEvents : Composition of many ReputationEvents    on reputationEvents.user = $self;
+
+  /** SAP technology facet for the Experts filter - distinct from
+      UserSkills (free-text skill name + star level for the Profile skill
+      bars). Reuses Lot 1's Tags entity instead of a second taxonomy, same
+      relationship shape as KnowledgeItemTags below. */
+  technologies     : Composition of many UserTechnologyTags  on technologies.user = $self;
 
   /** Reverse side of Lot 1's Follows. `userID` there is a plain
       string column (not an association), so `following` is keyed on
@@ -246,6 +260,11 @@ extend UserProfiles with {
       association instead of guessing its flattened FK column name. */
   followers        : Association to many Follows on followers.followedUser.userID = $self.userID;
   following        : Association to many Follows on following.userID              = $self.userID;
+}
+
+entity UserTechnologyTags : cuid {
+  user : Association to UserProfiles;
+  tag  : Association to Tags;
 }
 
 entity UserSkills : cuid {

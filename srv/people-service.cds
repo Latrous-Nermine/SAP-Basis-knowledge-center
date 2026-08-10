@@ -27,10 +27,17 @@ service PeopleService {
     skills         : redirected to UserSkills,
     userBadges     : redirected to UserBadges,
     certifications : redirected to UserCertifications,
-    virtual followersCount : Integer,
-    virtual followingCount : Integer,
-    virtual isFollowedByMe : Boolean,
-    virtual expertiseLevel : String(20)
+    technologies   : redirected to UserTechnologies,
+    virtual followersCount     : Integer,
+    virtual followingCount     : Integer,
+    virtual isFollowedByMe     : Boolean,
+    virtual expertiseLevel     : String(20),
+    /** Experts card footer ("64 contributions") - count of
+        KnowledgeContributors rows, batched in the same after-READ hook
+        as followersCount/followingCount. Not persisted: same reasoning
+        as expertiseLevel, this is cheap to compute per page load and
+        would otherwise need its own reconciliation workflow. */
+    virtual contributionsCount : Integer
   } excluding { isActive, posts, comments, reputationEvents, followers, following };
 
   @readonly
@@ -47,6 +54,19 @@ service PeopleService {
 
   @readonly
   entity UserCertifications as projection on kh.UserCertifications { *, certification : redirected to Certifications };
+
+  /** SAP Technology filter facet (Experts). Flattens tag.name/tag.color
+      one level so `$filter=technologies/any(t:t/technologyName eq '...')`
+      stays a single-hop lambda - reliably translated by CAP, unlike a
+      two-hop `technologies/any(t:t/tag/name eq ...)`. Read-only: no
+      client can create/update/delete these rows directly, matching the
+      "no write endpoint yet" decision for this module. */
+  @readonly
+  entity UserTechnologies as projection on kh.UserTechnologyTags {
+    *,
+    tag.name  as technologyName : String(50),
+    tag.color as technologyColor : String(7)
+  };
 
   /** Activity feed for a profile - assembled from entities that
       already exist (KnowledgeContributors, Comments,

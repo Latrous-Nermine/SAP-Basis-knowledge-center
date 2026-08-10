@@ -131,7 +131,16 @@
                     <Text text="{jobTitle}"/>
                     <Label text="{i18n>fieldEmail}"/>
                     <Text text="{email}"/>
+                    <Label text="{i18n>fieldAvailability}"/>
+                    <ObjectStatus
+                      text="{path:'availability', formatter:'.formatter.availabilityLabel'}"
+                      state="{path:'availability', formatter:'.formatter.availabilityState'}"/>
+                    <Label text="{i18n>fieldExperience}"/>
+                    <Text text="{path:'yearsOfExperience', formatter:'.formatter.yearsOfExperienceLabel'}"/>
                   </form:SimpleForm>
+                  <HBox wrap="Wrap" items="{path:'technologies', templateShareable:'false'}" visible="{= ${technologies}.length > 0 }" class="sapUiSmallMarginTop">
+                    <Text text="{technologyName}" class="profileTagChip sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+                  </HBox>
                 </uxap:blocks>
               </uxap:ObjectPageSubSection>
             </uxap:subSections>

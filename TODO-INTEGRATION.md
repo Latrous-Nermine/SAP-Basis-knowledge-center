@@ -7,7 +7,7 @@ demo.** Add a row the moment you write a mock — not later, because later never
 |----|----------------|------|----------|--------------|--------|
 | I-01 | `SecurityGuardian.analyze()` returns risk 0 (decision C6) | `srv/domain/security/NoOpSecurityGuardian.js` | Lot 3 (AI Security Guardian) | The real analyzer exists | ⬜ Open |
 | I-02 | Manager dashboard "Validations en attente" count | `srv/domain/dashboard/providers/ValidationProvider.js` | Lot 3 (Validation) | Validation queue entity exists | ⬜ Open |
-| I-03 | Manager dashboard "Activité des rooms" | `srv/domain/dashboard/providers/RoomProvider.js` | Lot 3 (Rooms) | Rooms module exists | ⬜ Open |
+| I-03 | ~~Manager dashboard "Activité des rooms"~~ — built for real (2026-08-06): Rooms/Posts.room/followersCount already exist in Lot 1's schema, no Lot 3 dependency after all | `srv/domain/dashboard/providers/RoomProvider.js` | Me | — | ✅ Resolved |
 | I-04 | Manager dashboard "Suivi des questions" | `srv/domain/dashboard/providers/QuestionProvider.js` | Lot 3 (Questions) | Questions entity exists | ⬜ Open |
 | I-05 | Search provider for Questions | `srv/domain/search/providers/QuestionSearchProvider.js` | Lot 3 | Questions entity exists | ⬜ Open |
 | I-06 | Search provider for Rooms | `srv/domain/search/providers/RoomSearchProvider.js` | Lot 3 | Rooms split from Topics (C1) | ⬜ Open |
@@ -23,6 +23,10 @@ demo.** Add a row the moment you write a mock — not later, because later never
 | I-16 | Knowledge Center "Contribuer" button can't be role-aware client-side — always enabled, server enforces the real 403. `PeopleService` (`GET /People('{userID}')`, `role` field) now exists, so this is unblocked; the Knowledge Center view itself hasn't been wired to consume it yet | `app/knowledge/webapp/view/KnowledgeList.view.xml` | Me | Someone wires the client-side check | 🟡 Unblocked |
 | I-17 | Profile "Activité" feed has no "answered question" entry — assembled from KnowledgeContributors/Comments/KnowledgeAttachments/Follows only | `srv/people-service.js` (`getActivity`) | Lot 3 (Questions) | Questions entity exists | ⬜ Open |
 | I-18 | `ReputationEvents` ledger is seed data only — no awarding workflow writes to it yet, so it can drift from `UserProfiles.reputation` (which stays authoritative for the total shown) | `db/lot2.cds`, `db/data/aymax.knowledgehub-ReputationEvents.csv` | Me, later | A badge/point-awarding workflow is built | ⬜ Open |
+| I-19 | Experts "Poser une question" button creates a Lot 1 `Post` (`type: 'question'`) instead of a real Question — Lot 3's Questions entity doesn't exist yet | `app/experts/webapp/controller/ExpertsList.controller.js` (`onAskQuestionPress`) | Lot 3 (Questions) | Questions entity exists | ⬜ Open |
+| I-20 | `availability`/`yearsOfExperience`/`technologies` (Experts module) are seed-data only — `PeopleService` has no write endpoint at all yet, so these aren't user-editable | `db/lot2.cds`, `srv/people-service.cds` | Me, later | A `MyProfile` PATCH endpoint is deliberately added (own milestone, not silently bundled into another module) | ⬜ Open |
+| I-21 | HR dashboard "Évolution des compétences" (quarter-over-quarter skill deltas) — no historical/time-series tracking model exists anywhere in this schema, so this always returns empty | `srv/domain/dashboard/strategies/HRDashboardStrategy.js` | Me, later | A skill-snapshot-over-time model is designed (own milestone — not a Lot 3 dependency) | ⬜ Open |
+| I-22 | HR dashboard "Objectifs" — no Objectives entity exists anywhere in the schema | `srv/domain/dashboard/strategies/HRDashboardStrategy.js` | Team | An Objectives entity + ownership is agreed | ⬜ Open |
 
 ## How to use this file
 
