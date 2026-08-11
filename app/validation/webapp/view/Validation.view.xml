@@ -69,10 +69,10 @@
             class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab"/>
         </HBox>
 
-        <!-- VALIDATION LIST — use List (VBox does not support items aggregation) -->
+        <!-- VALIDATION LIST -->
         <List
           id="validationList"
-          items="{view>/displayItems}"
+          items="{path: '/ValidationItems', parameters: { $expand: 'author' }}"
           showSeparators="None"
           noDataText="Aucun élément dans cette catégorie."
           class="aymaxValidationList">
@@ -82,29 +82,29 @@
               <!-- Badges Row -->
               <HBox alignItems="Center" class="sapUiSmallMarginBottom">
                 <ObjectStatus
-                  text="{path: 'view>status', formatter: '.formatStatusText'}"
-                  state="{path: 'view>status', formatter: '.formatStatusState'}"
+                  text="{path: 'status', formatter: '.formatStatusText'}"
+                  state="{path: 'status', formatter: '.formatStatusState'}"
                   inverted="true"
                   class="aymaxBadge sapUiSmallMarginEnd"/>
-                <Text text="{view>category}" class="aymaxTagOutline"/>
+                <Text text="{category}" class="aymaxTagOutline"/>
               </HBox>
 
               <!-- Content -->
-              <Title text="{view>title}" level="H3" class="aymaxItemTitle sapUiTinyMarginBottom"/>
+              <Title text="{title}" level="H3" class="aymaxItemTitle sapUiTinyMarginBottom"/>
               <HBox alignItems="Center" class="sapUiSmallMarginBottom">
                 <core:Icon src="sap-icon://employee" size="0.85rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
-                <Text text="{view>author}" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <Text text="{author/name}" class="aymaxMetaText sapUiTinyMarginEnd"/>
                 <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
-                <Text text="{view>dept}" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <Text text="{dept}" class="aymaxMetaText sapUiTinyMarginEnd"/>
                 <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
                 <core:Icon src="sap-icon://time" size="0.75rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
-                <Text text="{view>time}" class="aymaxMetaText"/>
+                <Text text="{createdAt}" class="aymaxMetaText"/>
               </HBox>
-              <Text text="{view>excerpt}" class="aymaxExcerpt sapUiMediumMarginBottom" wrapping="true"/>
+              <Text text="{excerpt}" class="aymaxExcerpt sapUiMediumMarginBottom" wrapping="true"/>
 
-              <!-- Actions (only if pending) -->
+              <!-- Actions (only if pending) — FIXED: was ${view>status}, must read item's own "status" -->
               <HBox
-                visible="{= ${view>status} === 'pending'}"
+                visible="{= ${status} === 'pending'}"
                 justifyContent="End"
                 alignItems="Center"
                 class="aymaxItemActions">

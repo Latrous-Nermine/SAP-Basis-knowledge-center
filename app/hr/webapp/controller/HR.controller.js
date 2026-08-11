@@ -1,13 +1,21 @@
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
-  "sap/m/MessageToast"
-], function(Controller, MessageToast) {
+  "sap/m/MessageToast",
+  "sap/ui/model/json/JSONModel"
+], function(Controller, MessageToast, JSONModel) {
   "use strict";
 
   return Controller.extend("aymax.hr.controller.HR", {
 
     onInit: function() {
       this.oViewModel = this.getOwnerComponent().getModel("view");
+      if (!this.oViewModel) {
+        this.oViewModel = new JSONModel();
+        this.getView().setModel(this.oViewModel, "view");
+      }
+      // FIX: without these defaults, all tab VBoxes stay hidden -> blank page
+      this.oViewModel.setProperty("/activeTab", "employes");
+      this.oViewModel.setProperty("/activeEmployeeId", null);
     },
 
     /* ──────── TAB NAVIGATION ──────── */
@@ -27,7 +35,6 @@ sap.ui.define([
       }
     },
 
-
     onTabSelect: function(oEvent) {
       var sKey = oEvent.getParameter("key");
       this.oViewModel.setProperty("/activeTab", sKey);
@@ -37,15 +44,21 @@ sap.ui.define([
     /* ──────── EMPLOYEE TABLE ──────── */
 
     onEmployeePress: function(oEvent) {
-      var oContext = oEvent.getSource().getBindingContext("view");
-      var sId = oContext.getProperty("id");
+      var oContext = oEvent.getSource().getSelectedItem
+        ? oEvent.getSource().getSelectedItem().getBindingContext()
+        : oEvent.getSource().getBindingContext();
+      if (!oContext) return;
+      var sId = oContext.getProperty("ID");
       this.oViewModel.setProperty("/activeEmployeeId", sId);
-      this.oViewModel.setProperty("/activeEmployee", oContext.getObject());
+
+      var oDetailView = this.byId("detailViewBox");
+      if (oDetailView) {
+        oDetailView.setBindingContext(oContext);
+      }
     },
 
     onBackToList: function() {
       this.oViewModel.setProperty("/activeEmployeeId", null);
-      this.oViewModel.setProperty("/activeEmployee", null);
     },
 
     /* ──────── FORMATTERS ──────── */
@@ -70,28 +83,6 @@ sap.ui.define([
 
     formatSkillWidth: function(iPercent) {
       return iPercent + "%";
-    },
-
-    formatSelectedEmployee: function(sId) {
-      if (!sId) return null;
-      var aEmployees = this.oViewModel.getProperty("/employees");
-      return aEmployees.find(function(e) { return e.id === sId; }) || null;
-    },
-
-    isEmployeesTab: function(sTab) {
-      return sTab === "employes";
-    },
-    isCompetencesTab: function(sTab) {
-      return sTab === "competences";
-    },
-    isObjectifsTab: function(sTab) {
-      return sTab === "objectifs";
-    },
-    hasActiveEmployee: function(sId) {
-      return !!sId;
-    },
-    hasNoActiveEmployee: function(sId) {
-      return !sId;
     }
   });
 });

@@ -17,20 +17,16 @@
         <VBox class="sapUiLargeMarginBottom">
           <Title text="Obtenues" level="H3" class="aymaxSectionTitle sapUiSmallMarginBottom"/>
 
-          <List items="{view>/earned}" showSeparators="None" class="aymaxCertList">
+          <List items="{path: '/Earned', parameters: { $expand: 'certification($expand=tags)' }}" showSeparators="None" class="aymaxCertList">
             <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
               <VBox class="sapUiSmallMargin aymaxCertCardInner">
                 <HBox justifyContent="SpaceBetween" alignItems="Start" class="sapUiTinyMarginBottom">
-                  <Title text="{view>name}" level="H4" class="aymaxCertName"/>
+                  <Title text="{certification/name}" level="H4" class="aymaxCertName"/>
                   <core:Icon src="sap-icon://accept" color="#16a34a" size="1.2rem" class="aymaxCheckIcon"/>
                 </HBox>
-                <Text text="{view>description}" class="aymaxMeta sapUiTinyMarginBottom" wrapping="true"/>
-                <Text text="{view>date}" class="aymaxCertDate"/>
-                <HBox wrap="Wrap" class="sapUiSmallMarginTop">
-                  <Text text="{view>skills/0}" class="aymaxTag aymaxTagAccent" visible="{= !!${view>skills/0} }"/>
-                  <Text text="{view>skills/1}" class="aymaxTag aymaxTagAccent" visible="{= !!${view>skills/1} }"/>
-                  <Text text="{view>skills/2}" class="aymaxTag aymaxTagAccent" visible="{= !!${view>skills/2} }"/>
-                </HBox>
+                <Text text="{certification/description}" class="aymaxMeta sapUiTinyMarginBottom" wrapping="true"/>
+                <Text text="{earnedDate}" class="aymaxCertDate"/>
+                <HBox items="{certification/tags}" wrap="Wrap" class="sapUiSmallMarginTop"><items><Text text="{tag}" class="aymaxTag aymaxTagAccent"/></items></HBox>
               </VBox>
             </CustomListItem>
           </List>
@@ -40,43 +36,40 @@
         <VBox class="sapUiLargeMarginBottom">
           <Title text="En cours" level="H3" class="aymaxSectionTitle sapUiSmallMarginBottom"/>
 
-          <List items="{view>/inProgress}" showSeparators="None" class="aymaxCertList">
+          <List items="{path: '/InProgress', parameters: { $expand: 'certification($expand=tags)' }}" showSeparators="None" class="aymaxCertList">
             <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
               <VBox class="sapUiSmallMargin aymaxCertCardInner">
                 <HBox justifyContent="SpaceBetween" alignItems="Start" class="sapUiTinyMarginBottom">
-                  <Title text="{view>name}" level="H4" class="aymaxCertName"/>
+                  <Title text="{certification/name}" level="H4" class="aymaxCertName"/>
                   <ObjectStatus text="En cours" state="Information" inverted="true" class="aymaxStatusBadge"/>
                 </HBox>
-                <Text text="{view>description}" class="aymaxMeta sapUiTinyMarginBottom" wrapping="true"/>
+                <Text text="{certification/description}" class="aymaxMeta sapUiTinyMarginBottom" wrapping="true"/>
 
                 <HBox class="sapUiTinyMarginBottom">
                   <Text text="Organisme : " class="aymaxMeta sapUiTinyMarginEnd"/>
-                  <Text text="{view>provider}" class="aymaxCertMetaValue"/>
+                  <Text text="{certification/provider}" class="aymaxCertMetaValue"/>
                 </HBox>
                 <HBox class="sapUiTinyMarginBottom">
                   <Text text="Débutée le " class="aymaxMeta sapUiTinyMarginEnd"/>
-                  <Text text="{view>startDate}" class="aymaxCertMetaValue"/>
+                  <Text text="{startDate}" class="aymaxCertMetaValue"/>
                 </HBox>
 
                 <!-- Progress bar -->
                 <VBox class="sapUiSmallMarginTop sapUiTinyMarginBottom">
                   <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
                     <Text text="Progression" class="aymaxMeta"/>
-                    <Text text="{= ${view>progress} + '%' }" class="aymaxProgressLabel"/>
+                    <Text text="{= ${progress} + '%' }" class="aymaxProgressLabel"/>
                   </HBox>
                   <layout:HorizontalLayout class="aymaxProgressBarOuter">
                     <layout:HorizontalLayout
                       class="aymaxProgressBarInner"
-                      width="{= ${view>progress} + '%' }">
+                      width="{= ${progress} + '%' }">
                     </layout:HorizontalLayout>
                   </layout:HorizontalLayout>
                 </VBox>
 
                 <!-- Skill tags -->
-                <HBox wrap="Wrap" class="sapUiSmallMarginTop">
-                  <Text text="{view>skills/0}" class="aymaxTag aymaxTagAccent"/>
-                  <Text text="{view>skills/1}" class="aymaxTag aymaxTagAccent"/>
-                </HBox>
+                <HBox items="{certification/tags}" wrap="Wrap" class="sapUiSmallMarginTop"><items><Text text="{tag}" class="aymaxTag aymaxTagAccent"/></items></HBox>
 
                 <Button
                   text="Continuer"
@@ -93,23 +86,19 @@
         <VBox>
           <Title text="Recommandées pour vous" level="H3" class="aymaxSectionTitle sapUiSmallMarginBottom"/>
 
-          <List items="{view>/recommended}" showSeparators="None" class="aymaxCertList">
+          <List items="{path: '/Recommended', parameters: { $expand: 'certification($expand=tags)' }}" showSeparators="None" class="aymaxCertList">
             <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
               <VBox class="sapUiSmallMargin aymaxCertCardInner">
-                <Title text="{view>name}" level="H4" class="aymaxCertName sapUiTinyMarginBottom"/>
-                <Text text="{view>description}" class="aymaxMeta sapUiTinyMarginBottom" wrapping="true"/>
+                <Title text="{certification/name}" level="H4" class="aymaxCertName sapUiTinyMarginBottom"/>
+                <Text text="{certification/description}" class="aymaxMeta sapUiTinyMarginBottom" wrapping="true"/>
 
                 <VBox class="sapUiTinyMarginBottom">
-                  <Text text="{= 'Articles recommandés : ' + ${view>recArticles} }" class="aymaxMeta"/>
-                  <Text text="{= 'Questions liées : ' + ${view>recQuestions} }" class="aymaxMeta"/>
+                  <Text text="{= 'Articles recommandés : ' + ${certification/recArticles} }" class="aymaxMeta"/>
+                  <Text text="{= 'Questions liées : ' + ${certification/recQuestions} }" class="aymaxMeta"/>
                 </VBox>
 
                 <!-- Skill tags -->
-                <HBox wrap="Wrap" class="sapUiSmallMarginTop sapUiTinyMarginBottom">
-                  <Text text="{view>skills/0}" class="aymaxTag aymaxTagAccent"/>
-                  <Text text="{view>skills/1}" class="aymaxTag aymaxTagAccent"/>
-                  <Text text="{view>skills/2}" class="aymaxTag aymaxTagAccent" visible="{= !!${view>skills/2} }"/>
-                </HBox>
+                <HBox items="{certification/tags}" wrap="Wrap" class="sapUiSmallMarginTop sapUiTinyMarginBottom"><items><Text text="{tag}" class="aymaxTag aymaxTagAccent"/></items></HBox>
 
                 <Button
                   text="Commencer"
@@ -125,3 +114,4 @@
     </content>
   </Page>
 </mvc:View>
+

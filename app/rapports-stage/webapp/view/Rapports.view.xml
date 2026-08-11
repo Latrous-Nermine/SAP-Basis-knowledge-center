@@ -24,10 +24,10 @@
         <Panel class="aymaxCard sapUiMediumMarginBottom aymaxEditorPanel">
           <VBox class="sapUiSmallMargin">
             <Label text="Titre du rapport" class="aymaxLabel sapUiTinyMarginBottom" required="true"/>
-            <Input value="{view>/draftTitle}" class="sapUiSmallMarginBottom"/>
+            <Input value="{title}" class="sapUiSmallMarginBottom"/>
 
             <Label text="Période couverte" class="aymaxLabel sapUiTinyMarginBottom"/>
-            <Input value="{view>/draftPeriod}" placeholder="ex. Juin – Août 2026" class="sapUiSmallMarginBottom"/>
+            <Input value="{period}" placeholder="ex. Juin – Août 2026" class="sapUiSmallMarginBottom"/>
 
             <Label text="Contenu" class="aymaxLabel sapUiTinyMarginBottom"/>
             
@@ -39,7 +39,7 @@
             </OverflowToolbar>
             
             <TextArea 
-              value="{view>/draftBody}" 
+              value="{body}" 
               placeholder="Décrivez les activités, apprentissages et difficultés rencontrées…" 
               growing="true" 
               growingMinLines="12"
@@ -48,7 +48,7 @@
 
             <HBox>
               <Button text="Enregistrer le brouillon" type="Default" press=".onSaveDraft" class="sapUiSmallMarginEnd aymaxBtnSecondary"/>
-              <Button text="Soumettre à mon tuteur" type="Emphasized" press=".onSubmitReport" enabled="{= ${view>/draftTitle}.length > 0 }"/>
+              <Button text="Soumettre à mon tuteur" type="Emphasized" press=".onSubmitReport" enabled="{= ${title}.length > 0 }"/>
             </HBox>
           </VBox>
         </Panel>
@@ -58,11 +58,11 @@
           <headerToolbar>
             <Toolbar style="Clear"><Title level="H5" text="Historique des soumissions"/></Toolbar>
           </headerToolbar>
-          <List items="{view>/history}" showSeparators="None" class="aymaxHistoryList">
+          <List items="{history}" showSeparators="None" class="aymaxHistoryList">
             <CustomListItem>
               <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxHistoryItem">
-                <Text text="{view>text}" class="aymaxHistoryText"/>
-                <Text text="{view>time}" class="aymaxMeta"/>
+                <Text text="{text}" class="aymaxHistoryText"/>
+                <Text text="{time}" class="aymaxMeta"/>
               </HBox>
             </CustomListItem>
           </List>
@@ -72,3 +72,4 @@
     </content>
   </Page>
 </mvc:View>
+

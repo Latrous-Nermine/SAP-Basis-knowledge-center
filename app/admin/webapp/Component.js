@@ -12,23 +12,13 @@ sap.ui.define([
     init: function() {
       UIComponent.prototype.init.apply(this, arguments);
 
+      // Initialize the router
+      if (this.getRouter()) {
+        this.getRouter().initialize();
+      }
+
       var oViewModel = new JSONModel({
-        activeTab: "roles",
-        roles: [
-          { name: 'Administrateur', desc: 'Gestion technique de la plateforme', count: 2 },
-          { name: 'Manager', desc: 'Vue globale, validation du contenu', count: 8 },
-          { name: 'RH', desc: 'Analytique employés et récompenses', count: 3 },
-          { name: 'Employé', desc: 'Accès standard', count: 142 },
-          { name: 'Stagiaire', desc: 'Accès restreint', count: 14 }
-        ],
-        permissions: [
-          { name: 'Publier un article', admin: '—', manager: '✓', hr: '—', employee: '✓', intern: '—' },
-          { name: 'Valider le contenu', admin: '—', manager: '✓', hr: '—', employee: '—', intern: '—' },
-          { name: 'Voter (upvote/downvote)', admin: '—', manager: '✓', hr: '—', employee: '✓', intern: '—' },
-          { name: 'Gérer les récompenses', admin: '—', manager: '—', hr: '✓', employee: '—', intern: '—' },
-          { name: 'Gérer les rôles', admin: '✓', manager: '—', hr: '—', employee: '—', intern: '—' },
-          { name: 'Créer une question', admin: '—', manager: '✓', hr: '—', employee: '✓', intern: '✓' }
-        ]
+        activeTab: "roles"
       });
       this.setModel(oViewModel, "view");
     }

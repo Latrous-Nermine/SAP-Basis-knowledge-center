@@ -11,7 +11,7 @@
     "description": "{{appDescription}}",
     "dataSources": {
       "mainService": {
-        "uri": "/odata/v4/hr/",
+        "uri": "/odata/v4/validation/",
         "type": "OData",
         "settings": {
           "odataVersion": "4.0"

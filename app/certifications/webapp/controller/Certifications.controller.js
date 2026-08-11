@@ -28,42 +28,35 @@ sap.ui.define([
     },
 
 
-    /* ──────── ACTIONS ──────── */
+    /* ================= ACTIONS ================= */
 
     onStartCertification: function(oEvent) {
-      var oContext = oEvent.getSource().getBindingContext("view");
-      var sName = oContext.getProperty("name");
+      var oContext = oEvent.getSource().getBindingContext();
+      if (!oContext) return;
+      var sName = oContext.getProperty("certification/name") || "la certification";
 
-      // Move from recommended to inProgress
-      var aRecommended = this.oViewModel.getProperty("/recommended");
-      var aInProgress = this.oViewModel.getProperty("/inProgress");
-      var iIndex = aRecommended.findIndex(function(c) { return c.name === sName; });
-
-      if (iIndex > -1) {
-        var oCert = Object.assign({}, aRecommended[iIndex], {
-          startDate: new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }),
-          progress: 0,
-          provider: "SAP Learning"
-        });
-        aInProgress.push(oCert);
-        aRecommended.splice(iIndex, 1);
-
-        this.oViewModel.setProperty("/inProgress", aInProgress);
-        this.oViewModel.setProperty("/recommended", aRecommended);
-
-        MessageToast.show("Certification « " + sName + " » démarrée !");
+      // Mettre à jour le statut via OData
+      oContext.setProperty("status", "inProgress");
+      oContext.setProperty("startDate", new Date().toISOString().split('T')[0]);
+      oContext.setProperty("progress", 0);
+      
+      var oModel = this.getView().getModel();
+      if (oModel && oModel.hasPendingChanges()) {
+        oModel.submitBatch("$auto");
       }
+
+      MessageToast.show("Certification " + sName + " démarrée !");
     },
 
     onViewCertificate: function(oEvent) {
-      var oContext = oEvent.getSource().getBindingContext("view");
-      var sName = oContext.getProperty("name");
+      var oContext = oEvent.getSource().getBindingContext();
+      var sName = oContext ? oContext.getProperty("certification/name") : "";
       MessageToast.show("Ouverture du certificat : " + sName);
     },
 
     onContinueCertification: function(oEvent) {
-      var oContext = oEvent.getSource().getBindingContext("view");
-      var sName = oContext.getProperty("name");
+      var oContext = oEvent.getSource().getBindingContext();
+      var sName = oContext ? oContext.getProperty("certification/name") : "";
       MessageToast.show("Reprise de la formation : " + sName);
     },
 

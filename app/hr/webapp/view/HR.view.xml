@@ -18,7 +18,7 @@
             <Panel class="aymaxCard" headerText="">
               <Table
                 id="employeeTable"
-                items="{view>/employees}"
+                items="{path: '/Employees', parameters: { $expand: 'skills' }}"
                 growing="true"
                 growingThreshold="10"
                 class="aymaxTable"
@@ -35,15 +35,15 @@
                   <ColumnListItem type="Active" press=".onEmployeePress">
                     <cells>
                       <HBox alignItems="Center">
-                        <Avatar initials="{view>initials}" displaySize="XS" class="sapUiSmallMarginEnd aymaxAvatarAccent"/>
-                        <Text text="{view>name}" class="aymaxEmployeeName"/>
+                        <Avatar initials="{initials}" displaySize="XS" class="sapUiSmallMarginEnd aymaxAvatarAccent"/>
+                        <Text text="{name}" class="aymaxEmployeeName"/>
                       </HBox>
-                      <Text text="{view>dept}" class="aymaxMetaText"/>
-                      <ObjectStatus text="{view>level}" state="Information" inverted="true" class="aymaxLevelBadge"/>
-                      <ObjectNumber number="{view>reputation}" class="aymaxRepNumber"/>
+                      <Text text="{dept}" class="aymaxMetaText"/>
+                      <ObjectStatus text="{level}" state="Information" inverted="true" class="aymaxLevelBadge"/>
+                      <ObjectNumber number="{reputation}" class="aymaxRepNumber"/>
                       <ObjectStatus
-                        text="{path:'view>objStatus', formatter:'.formatObjStatusText'}"
-                        state="{path:'view>objStatus', formatter:'.formatObjStatusState'}"
+                        text="{path:'objStatus', formatter:'.formatObjStatusText'}"
+                        state="{path:'objStatus', formatter:'.formatObjStatusState'}"
                         inverted="true"
                         class="aymaxStatusBadge"/>
                     </cells>
@@ -54,7 +54,7 @@
           </VBox>
 
           <!-- —— Employee Detail View —— -->
-          <VBox visible="{= !!${view>/activeEmployeeId}}" class="aymaxDetailView">
+          <VBox id="detailViewBox" visible="{= !!${view>/activeEmployeeId}}" class="aymaxDetailView">
 
             <Button
               text="← Retour aux employés"
@@ -69,23 +69,23 @@
                 <Panel class="aymaxProfileDetailCard">
                   <VBox alignItems="Center" class="sapUiMediumMargin">
                     <Avatar
-                      initials="{view>/activeEmployee/initials}"
+                      initials="{initials}"
                       displaySize="XL"
                       class="sapUiSmallMarginBottom aymaxAvatarAccent"/>
                     <Title
-                      text="{view>/activeEmployee/name}"
+                      text="{name}"
                       level="H3"/>
                     <Text
-                      text="{view>/activeEmployee/dept}"
+                      text="{dept}"
                       class="aymaxMetaText sapUiTinyMarginBottom"/>
                     <ObjectStatus
-                      text="{view>/activeEmployee/level}"
+                      text="{level}"
                       state="Information"
                       inverted="true"
                       class="sapUiSmallMarginBottom aymaxLevelBadge"/>
                     <VBox alignItems="Center" class="sapUiSmallMarginTop aymaxStatDivider" width="100%">
                       <Title
-                        text="{view>/activeEmployee/reputation}"
+                        text="{reputation}"
                         level="H2" class="aymaxRepTitle"/>
                       <Text text="Réputation" class="aymaxMetaText"/>
                     </VBox>
@@ -102,19 +102,19 @@
                     <Toolbar style="Clear"><Title level="H5" text="Compétences" class="card-kicker"/></Toolbar>
                   </headerToolbar>
                   <List
-                    items="{view>/activeEmployee/skills}"
+                    items="{skills}"
                     showSeparators="None"
                     class="aymaxSkillList">
                     <CustomListItem>
                       <VBox class="sapUiSmallMargin">
                         <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
-                          <Text text="{view>name}" class="aymaxSkillName"/>
-                          <Text text="{view>stars}" class="aymaxSkillStars"/>
+                          <Text text="{name}" class="aymaxSkillName"/>
+                          <Text text="{stars}" class="aymaxSkillStars"/>
                         </HBox>
                         <layout:HorizontalLayout class="aymaxProgressBarOuter">
                           <layout:HorizontalLayout
                             class="aymaxProgressBarInner"
-                            width="{= ${view>percent} + '%' }">
+                            width="{= ${percent} + '%' }">
                           </layout:HorizontalLayout>
                         </layout:HorizontalLayout>
                       </VBox>
@@ -129,11 +129,11 @@
                   </headerToolbar>
                   <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMargin">
                     <Text
-                      text="{view>/activeEmployee/objectiveTitle}"
+                      text="{objectiveTitle}"
                       class="aymaxObjTitle"/>
                     <ObjectStatus
-                      text="{path:'view>/activeEmployee/objStatus', formatter:'.formatObjStatusText'}"
-                      state="{path:'view>/activeEmployee/objStatus', formatter:'.formatObjStatusState'}"
+                      text="{path:'objStatus', formatter:'.formatObjStatusText'}"
+                      state="{path:'objStatus', formatter:'.formatObjStatusState'}"
                       inverted="true"
                       class="aymaxStatusBadge"/>
                   </HBox>
@@ -147,13 +147,13 @@
                   <HBox class="sapUiSmallMargin" justifyContent="Start">
                     <VBox class="sapUiMediumMarginEnd">
                       <ObjectStatus
-                        text="{view>/activeEmployee/certsEarnedCount} obtenues"
+                        text="{certsEarnedCount} obtenues"
                         state="Success"
                         inverted="false"/>
                     </VBox>
                     <VBox>
                       <ObjectStatus
-                        text="{view>/activeEmployee/certsProgressCount} en cours"
+                        text="{certsProgressCount} en cours"
                         state="Information"
                         inverted="false"/>
                     </VBox>
@@ -166,16 +166,16 @@
 
         <!-- ═══════ TAB: COMPETENCES ═══════ -->
         <VBox visible="{= ${view>/activeTab} === 'competences'}">
-          <List items="{view>/skillGaps}" showSeparators="None" class="aymaxSkillGapList">
+          <List items="{/SkillGaps}" showSeparators="None" class="aymaxSkillGapList">
             <CustomListItem class="aymaxSkillGapItem">
               <Panel headerText="" class="aymaxCard aymaxSkillGapCard sapUiSmallMarginBottom sapUiSmallMarginEnd" width="280px">
                 <VBox class="sapUiSmallMargin">
-                  <Title text="{view>name}" level="H5" class="card-title"/>
+                  <Title text="{name}" level="H5" class="card-title"/>
                   <Text text="Couverture moyenne dans l'équipe" class="aymaxMetaText sapUiTinyMarginBottom"/>
                   <layout:HorizontalLayout class="aymaxProgressBarOuter">
                     <layout:HorizontalLayout class="aymaxProgressBarInner" width="{path: 'view>percent', formatter: '.formatSkillWidth'}"/>
                   </layout:HorizontalLayout>
-                  <Text text="{view>percent}% · {view>headcount} employés" class="aymaxMetaText sapUiTinyMarginTop"/>
+                  <Text text="{percent}% · {headcount} employés" class="aymaxMetaText sapUiTinyMarginTop"/>
                 </VBox>
               </Panel>
             </CustomListItem>
@@ -184,16 +184,16 @@
 
         <!-- ═══════ TAB: OBJECTIFS ═══════ -->
         <VBox visible="{= ${view>/activeTab} === 'objectifs'}">
-          <List items="{view>/objectives}" class="aymaxObjectiveList">
+          <List items="{/Objectives}" class="aymaxObjectiveList">
             <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
               <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiSmallMargin">
                 <VBox class="aymaxObjInfo">
-                  <Text text="{view>title}" class="aymaxObjTitle"/>
-                  <Text text="{view>owner} · échéance {view>due}" class="aymaxMetaText"/>
+                  <Text text="{title}" class="aymaxObjTitle"/>
+                  <Text text="{owner} · échéance {due}" class="aymaxMetaText"/>
                 </VBox>
                 <ObjectStatus
-                  text="{path:'view>status', formatter:'.formatObjStatusText'}"
-                  state="{path:'view>status', formatter:'.formatObjStatusState'}"
+                  text="{path:'status', formatter:'.formatObjStatusText'}"
+                  state="{path:'status', formatter:'.formatObjStatusState'}"
                   inverted="true"
                   class="aymaxStatusBadge"/>
               </HBox>
@@ -205,3 +205,4 @@
     </content>
   </Page>
 </mvc:View>
+

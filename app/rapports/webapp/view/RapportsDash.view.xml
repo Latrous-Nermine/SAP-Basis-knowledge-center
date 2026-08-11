@@ -22,20 +22,20 @@
         <!-- KPIs GRID — use List with CustomListItem -->
         <List
           id="kpiList"
-          items="{view>/kpis}"
+          items="{/KPIs}"
           showSeparators="None"
           class="aymaxKpiList sapUiMediumMarginBottom">
           <CustomListItem class="aymaxCard sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxKpiCard">
             <VBox class="sapUiSmallMargin">
-              <Text text="{view>label}" class="aymaxMeta sapUiTinyMarginBottom"/>
-              <Title text="{view>value}" level="H2" class="aymaxKpiValue"/>
+              <Text text="{label}" class="aymaxMeta sapUiTinyMarginBottom"/>
+              <Title text="{value}" level="H2" class="aymaxKpiValue"/>
               <HBox alignItems="Center" class="sapUiTinyMarginTop">
                 <core:Icon
-                  src="{path: 'view>state', formatter: '.formatKpiIcon'}"
-                  color="{path: 'view>state', formatter: '.formatKpiColor'}"
+                  src="{path: 'state', formatter: '.formatKpiIcon'}"
+                  color="{path: 'state', formatter: '.formatKpiColor'}"
                   size="0.75rem"
                   class="sapUiTinyMarginEnd"/>
-                <Text text="{view>delta}" class="aymaxKpiDelta"/>
+                <Text text="{delta}" class="aymaxKpiDelta"/>
               </HBox>
             </VBox>
           </CustomListItem>
@@ -51,7 +51,7 @@
               <Button icon="sap-icon://filter" type="Transparent" tooltip="Filtrer"/>
             </Toolbar>
           </headerToolbar>
-          <Table items="{view>/deptRows}" class="aymaxTable" growing="true" growingThreshold="10">
+          <Table items="{/DepartmentStats}" class="aymaxTable" growing="true" growingThreshold="10">
             <columns>
               <Column width="35%">
                 <Text text="Département"/>
@@ -74,17 +74,17 @@
                 <cells>
                   <HBox alignItems="Center">
                     <Avatar
-                      initials="{path: 'view>dept', formatter: '.formatDeptInitials'}"
+                      initials="{path: 'dept', formatter: '.formatDeptInitials'}"
                       displaySize="XS"
                       class="sapUiTinyMarginEnd aymaxDeptAvatar"/>
-                    <Text text="{view>dept}" class="aymaxDeptName"/>
+                    <Text text="{dept}" class="aymaxDeptName"/>
                   </HBox>
-                  <ObjectNumber number="{view>pubs}" class="aymaxTableNumber"/>
-                  <ObjectNumber number="{view>solved}" class="aymaxTableNumber"/>
-                  <ObjectNumber number="{view>avgRep}" class="aymaxTableNumber aymaxRepNumber"/>
+                  <ObjectNumber number="{pubs}" class="aymaxTableNumber"/>
+                  <ObjectNumber number="{solved}" class="aymaxTableNumber"/>
+                  <ObjectNumber number="{avgRep}" class="aymaxTableNumber aymaxRepNumber"/>
                   <ObjectStatus
-                    text="{path: 'view>avgRep', formatter: '.formatTrend'}"
-                    state="{path: 'view>avgRep', formatter: '.formatTrendState'}"
+                    text="{path: 'avgRep', formatter: '.formatTrend'}"
+                    state="{path: 'avgRep', formatter: '.formatTrendState'}"
                     inverted="false"/>
                 </cells>
               </ColumnListItem>
@@ -96,3 +96,4 @@
     </content>
   </Page>
 </mvc:View>
+

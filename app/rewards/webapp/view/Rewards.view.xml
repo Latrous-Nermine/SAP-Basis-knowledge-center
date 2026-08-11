@@ -43,7 +43,7 @@
         <!-- REWARDS GRID — use List with horizontal GridList pattern -->
         <List
           id="rewardsList"
-          items="{view>/rewards}"
+          items="{/Rewards}"
           showSeparators="None"
           class="aymaxRewardList">
           <CustomListItem class="aymaxCard aymaxRewardCard sapUiSmallMarginEnd sapUiSmallMarginBottom">
@@ -51,20 +51,20 @@
 
               <!-- Icon Wrapper -->
               <VBox class="aymaxRewardIconWrapper sapUiSmallMarginBottom" alignItems="Center" justifyContent="Center">
-                <core:Icon src="{path: 'view>icon', formatter: '.formatRewardIcon'}" size="1.8rem" color="var(--aymax-primary)"/>
+                <core:Icon src="{path: 'icon', formatter: '.formatRewardIcon'}" size="1.8rem" color="var(--aymax-primary)"/>
               </VBox>
 
               <!-- Name -->
-              <Title text="{view>name}" level="H4" class="aymaxRewardTitle sapUiTinyMarginBottom" textAlign="Center"/>
+              <Title text="{name}" level="H4" class="aymaxRewardTitle sapUiTinyMarginBottom" textAlign="Center"/>
 
               <!-- Points badge -->
               <HBox alignItems="Center" justifyContent="Center" class="aymaxRewardPointsBadge sapUiSmallMarginBottom">
                 <core:Icon src="sap-icon://favorite" size="0.9rem" color="var(--aymax-accent)" class="sapUiTinyMarginEnd"/>
-                <Text text="{path: 'view>points', formatter: '.formatPointsLabel'}" class="aymaxRewardPoints"/>
+                <Text text="{path: 'points', formatter: '.formatPointsLabel'}" class="aymaxRewardPoints"/>
               </HBox>
 
               <!-- Category tag -->
-              <Text text="{view>category}" class="aymaxRewardCategory sapUiTinyMarginBottom"/>
+              <Text text="{category}" class="aymaxRewardCategory sapUiTinyMarginBottom"/>
 
               <!-- Actions -->
               <HBox class="sapUiSmallMarginTop" justifyContent="Center">
@@ -80,3 +80,4 @@
     </content>
   </Page>
 </mvc:View>
+

@@ -26,10 +26,26 @@
 
         <!-- FILTER TABS -->
         <HBox class="sapUiMediumMarginBottom" wrap="Wrap">
-          <Button text="Rôles" type="{= ${view>/activeTab} === 'roles' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="roles" class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab"/>
-          <Button text="Permissions" type="{= ${view>/activeTab} === 'permissions' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="permissions" class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab"/>
-          <Button text="Paramètres" type="{= ${view>/activeTab} === 'settings' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="settings" class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab"/>
-          <Button text="Configuration" type="{= ${view>/activeTab} === 'config' ? 'Emphasized' : 'Default'}" press=".onTabSelect" customData:key="config" class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab"/>
+          <Button text="Rôles" type="{= ${view>/activeTab} === 'roles' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
+            <customData>
+              <core:CustomData key="tab" value="roles"/>
+            </customData>
+          </Button>
+          <Button text="Permissions" type="{= ${view>/activeTab} === 'permissions' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
+            <customData>
+              <core:CustomData key="tab" value="permissions"/>
+            </customData>
+          </Button>
+          <Button text="Paramètres" type="{= ${view>/activeTab} === 'settings' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
+            <customData>
+              <core:CustomData key="tab" value="settings"/>
+            </customData>
+          </Button>
+          <Button text="Configuration" type="{= ${view>/activeTab} === 'config' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
+            <customData>
+              <core:CustomData key="tab" value="config"/>
+            </customData>
+          </Button>
         </HBox>
 
         <!-- TAB: ROLES -->
@@ -42,7 +58,7 @@
                 <Button text="+ Nouveau rôle" type="Emphasized" icon="sap-icon://add" press=".onAddRole"/>
               </Toolbar>
             </headerToolbar>
-            <Table items="{view>/roles}" class="aymaxTable">
+            <Table items="{/Roles}" class="aymaxTable">
               <columns>
                 <Column width="25%"><Text text="Rôle"/></Column>
                 <Column width="50%"><Text text="Description"/></Column>
@@ -54,14 +70,14 @@
                   <cells>
                     <HBox alignItems="Center">
                       <Avatar
-                        initials="{path: 'view>name', formatter: '.formatRoleInitials'}"
+                        initials="{path: 'name', formatter: '.formatRoleInitials'}"
                         displaySize="XS"
                         class="sapUiTinyMarginEnd aymaxRoleAvatar"/>
-                      <Text text="{view>name}" class="aymaxBoldText"/>
+                      <Text text="{name}" class="aymaxBoldText"/>
                     </HBox>
-                    <Text text="{view>desc}" class="aymaxMetaText"/>
+                    <Text text="{desc}" class="aymaxMetaText"/>
                     <HBox justifyContent="End" alignItems="Center">
-                      <Text text="{view>count}" class="aymaxCountText sapUiTinyMarginEnd"/>
+                      <Text text="{count}" class="aymaxCountText sapUiTinyMarginEnd"/>
                       <Text text="utilisateurs" class="aymaxMetaText"/>
                     </HBox>
                     <Button icon="sap-icon://edit" type="Transparent" tooltip="Modifier" press=".onEditRole"/>
@@ -82,7 +98,7 @@
                 <Text text="✓ = Autorisé   —  = Non autorisé" class="aymaxMeta"/>
               </Toolbar>
             </headerToolbar>
-            <Table items="{view>/permissions}" class="aymaxTable aymaxPermTable">
+            <Table items="{/Permissions}" class="aymaxTable aymaxPermTable">
               <columns>
                 <Column width="30%"><Text text="Permission"/></Column>
                 <Column hAlign="Center"><Text text="Admin"/></Column>
@@ -94,35 +110,35 @@
               <items>
                 <ColumnListItem>
                   <cells>
-                    <Text text="{view>name}" class="aymaxBoldText"/>
+                    <Text text="{name}" class="aymaxBoldText"/>
                     <HBox justifyContent="Center">
                       <core:Icon
-                        src="{path: 'view>admin', formatter: '.formatPermIcon'}"
-                        color="{path: 'view>admin', formatter: '.formatPermColor'}"
+                        src="{path: 'admin', formatter: '.formatPermIcon'}"
+                        color="{path: 'admin', formatter: '.formatPermColor'}"
                         size="1rem"/>
                     </HBox>
                     <HBox justifyContent="Center">
                       <core:Icon
-                        src="{path: 'view>manager', formatter: '.formatPermIcon'}"
-                        color="{path: 'view>manager', formatter: '.formatPermColor'}"
+                        src="{path: 'manager', formatter: '.formatPermIcon'}"
+                        color="{path: 'manager', formatter: '.formatPermColor'}"
                         size="1rem"/>
                     </HBox>
                     <HBox justifyContent="Center">
                       <core:Icon
-                        src="{path: 'view>hr', formatter: '.formatPermIcon'}"
-                        color="{path: 'view>hr', formatter: '.formatPermColor'}"
+                        src="{path: 'hr', formatter: '.formatPermIcon'}"
+                        color="{path: 'hr', formatter: '.formatPermColor'}"
                         size="1rem"/>
                     </HBox>
                     <HBox justifyContent="Center">
                       <core:Icon
-                        src="{path: 'view>employee', formatter: '.formatPermIcon'}"
-                        color="{path: 'view>employee', formatter: '.formatPermColor'}"
+                        src="{path: 'employee', formatter: '.formatPermIcon'}"
+                        color="{path: 'employee', formatter: '.formatPermColor'}"
                         size="1rem"/>
                     </HBox>
                     <HBox justifyContent="Center">
                       <core:Icon
-                        src="{path: 'view>intern', formatter: '.formatPermIcon'}"
-                        color="{path: 'view>intern', formatter: '.formatPermColor'}"
+                        src="{path: 'intern', formatter: '.formatPermIcon'}"
+                        color="{path: 'intern', formatter: '.formatPermColor'}"
                         size="1rem"/>
                     </HBox>
                   </cells>

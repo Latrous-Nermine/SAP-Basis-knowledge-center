@@ -20,6 +20,7 @@ entity Employees : cuid, managed {
   reportsAsIntern    : Association to many Rapports on reportsAsIntern.intern = $self;
   reportsAsTutor     : Association to many Rapports on reportsAsTutor.tutor = $self;
   validationItems    : Association to many ValidationItems on validationItems.author = $self;
+  
   depotFiles         : Association to many DepotFiles on depotFiles.uploadedBy = $self;
 }
 
@@ -83,7 +84,14 @@ entity ValidationItems : cuid {
   status    : String(20) enum { pending; approved; rejected; };
   createdAt : Timestamp @cds.on.insert: $now;
 }
-
+/* Persistent counters stored in SQLite */
+entity ValidationCounts {
+  key ID      : Integer default 1;
+  pending     : Integer default 0;
+  approved    : Integer default 0;
+  rejected    : Integer default 0;
+  total       : Integer default 0;
+}
 /* ──────────────── Rewards ──────────────── */
 
 entity Rewards : cuid {

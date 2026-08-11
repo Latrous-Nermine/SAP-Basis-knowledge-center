@@ -1,7 +1,12 @@
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
-  "sap/m/MessageToast"
-], function(Controller, MessageToast) {
+  "sap/m/MessageToast",
+  "sap/m/Dialog",
+  "sap/m/Button",
+  "sap/m/Input",
+  "sap/m/Label",
+  "sap/ui/layout/VerticalLayout"
+], function(Controller, MessageToast, Dialog, Button, Input, Label, VerticalLayout) {
   "use strict";
 
   return Controller.extend("aymax.admin.controller.Admin", {
@@ -34,21 +39,117 @@ sap.ui.define([
     },
 
     onAddRole: function() {
-      MessageToast.show("Ouverture du formulaire de création de rôle...");
+      if (!this.oAddRoleDialog) {
+        this.oAddRoleDialog = new Dialog({
+          title: "Nouveau rôle",
+          contentWidth: "400px",
+          content: new VerticalLayout({
+            width: "100%",
+            content: [
+              new Label({ text: "Nom du rôle", labelFor: "inputRoleName" }).addStyleClass("sapUiTinyMarginTopBottom"),
+              new Input("inputRoleName", { placeholder: "Ex: Développeur" }),
+              new Label({ text: "Description", labelFor: "inputRoleDesc" }).addStyleClass("sapUiTinyMarginTopBottom"),
+              new Input("inputRoleDesc", { placeholder: "Description du rôle" })
+            ]
+          }).addStyleClass("sapUiContentPadding"),
+          beginButton: new Button({
+            text: "Créer",
+            type: "Emphasized",
+            press: function () {
+              var sName = sap.ui.getCore().byId("inputRoleName").getValue();
+              var sDesc = sap.ui.getCore().byId("inputRoleDesc").getValue();
+              
+              var oModel = this.getView().getModel();
+              var oListBinding = oModel.bindList("/Roles");
+              oListBinding.create({
+                name: sName,
+                desc: sDesc,
+                count: 0
+              });
+              
+              this.oAddRoleDialog.close();
+              MessageToast.show("Rôle créé avec succès.");
+            }.bind(this)
+          }),
+          endButton: new Button({
+            text: "Annuler",
+            press: function () {
+              this.oAddRoleDialog.close();
+            }.bind(this)
+          })
+        });
+        this.getView().addDependent(this.oAddRoleDialog);
+      }
+      sap.ui.getCore().byId("inputRoleName").setValue("");
+      sap.ui.getCore().byId("inputRoleDesc").setValue("");
+      this.oAddRoleDialog.open();
     },
 
-    onEditRole: function() {
-      MessageToast.show("Ouverture de l'éditeur de rôle...");
+    onEditRole: function(oEvent) {
+      var oContext = oEvent.getSource().getBindingContext();
+      if (!oContext) return;
+      
+      var sCurrentName = oContext.getProperty("name");
+      var sCurrentDesc = oContext.getProperty("desc");
+      
+      if (!this.oEditRoleDialog) {
+        this.oEditRoleDialog = new Dialog({
+          title: "Modifier le rôle",
+          contentWidth: "400px",
+          content: new VerticalLayout({
+            width: "100%",
+            content: [
+              new Label({ text: "Nom du rôle", labelFor: "editRoleName" }).addStyleClass("sapUiTinyMarginTopBottom"),
+              new Input("editRoleName"),
+              new Label({ text: "Description", labelFor: "editRoleDesc" }).addStyleClass("sapUiTinyMarginTopBottom"),
+              new Input("editRoleDesc")
+            ]
+          }).addStyleClass("sapUiContentPadding"),
+          beginButton: new Button({
+            text: "Enregistrer",
+            type: "Emphasized",
+            press: function () {
+              var sName = sap.ui.getCore().byId("editRoleName").getValue();
+              var sDesc = sap.ui.getCore().byId("editRoleDesc").getValue();
+              
+              var oCtx = this.oEditRoleDialog.getBindingContext();
+              if (oCtx) {
+                  oCtx.setProperty("name", sName);
+                  oCtx.setProperty("desc", sDesc);
+                  
+                  var oModel = oCtx.getModel();
+                  if (oModel.hasPendingChanges()) {
+                      oModel.submitBatch("$auto");
+                  }
+              }
+              this.oEditRoleDialog.close();
+              MessageToast.show("Rôle mis à jour.");
+            }.bind(this)
+          }),
+          endButton: new Button({
+            text: "Annuler",
+            press: function () {
+              this.oEditRoleDialog.close();
+            }.bind(this)
+          })
+        });
+        this.getView().addDependent(this.oEditRoleDialog);
+      }
+      
+      this.oEditRoleDialog.setBindingContext(oContext);
+      sap.ui.getCore().byId("editRoleName").setValue(sCurrentName);
+      sap.ui.getCore().byId("editRoleDesc").setValue(sCurrentDesc);
+      this.oEditRoleDialog.open();
     },
 
-    /* ── Formatters ── */
+    /* ================= Formatters ================= */
 
-    formatPermIcon: function(sVal) {
-      return sVal === "✓" ? "sap-icon://accept" : "sap-icon://less";
+    formatPermIcon: function(bVal) {
+      return bVal ? "sap-icon://accept" : "sap-icon://less";
     },
 
-    formatPermColor: function(sVal) {
-      return sVal === "✓" ? "#16a34a" : "#b7c1d6";
+    formatPermColor: function(bVal) {
+      return bVal ? "#16a34a" : "#b7c1d6";
     },
 
     formatRoleInitials: function(sName) {

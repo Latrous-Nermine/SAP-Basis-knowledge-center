@@ -40,18 +40,18 @@
           <headerToolbar>
             <Toolbar style="Clear"><Title level="H5" text="Fichiers déposés"/></Toolbar>
           </headerToolbar>
-          <List items="{view>/files}" showSeparators="None" class="aymaxFileList">
+          <List items="{/DepotFiles}" showSeparators="None" class="aymaxFileList">
             <CustomListItem>
               <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxFileItem">
                 <HBox alignItems="Center">
                   <core:Icon 
-                    src="{path: 'view>type', formatter: '.formatIcon'}" 
+                    src="{path: 'type', formatter: '.formatIcon'}" 
                     size="1.5rem" 
                     color="var(--aymax-primary)" 
                     class="sapUiSmallMarginEnd"/>
                   <VBox>
-                    <Text text="{view>name}" class="aymaxFileName"/>
-                    <Text text="{view>size} · Ajouté {view>date}" class="aymaxMeta"/>
+                    <Text text="{name}" class="aymaxFileName"/>
+                    <Text text="{size} · Ajouté {uploadedAt}" class="aymaxMeta"/>
                   </VBox>
                 </HBox>
                 <Button 

@@ -8,6 +8,21 @@ sap.ui.define([
 
     onInit: function() {
       this.oViewModel = this.getOwnerComponent().getModel("view");
+      var oView = this.getView();
+      
+      // Auto-bind to first report for the prototype
+      var oModel = this.getOwnerComponent().getModel();
+      if(oModel) {
+        var oListBinding = oModel.bindList("/Rapports");
+        oListBinding.requestContexts(0, 1).then(function(aContexts) {
+          if (aContexts && aContexts.length > 0) {
+            oView.bindElement({
+              path: aContexts[0].getPath(),
+              parameters: { $expand: 'history' }
+            });
+          }
+        });
+      }
     },
 
     onNavToApp: function(oEvent) {
@@ -28,34 +43,10 @@ sap.ui.define([
 
 
     onSaveDraft: function() {
-      var sTitle = this.oViewModel.getProperty("/draftTitle");
-      if (!sTitle || sTitle.trim() === "") {
-        MessageToast.show("Le titre du rapport est requis.");
-        return;
-      }
-
-      var aHistory = this.oViewModel.getProperty("/history") || [];
-      aHistory.unshift({ text: "Brouillon enregistré", time: "à l'instant" });
-
-      this.oViewModel.setProperty("/status", "draft");
-      this.oViewModel.setProperty("/history", aHistory);
-      
-      MessageToast.show("Brouillon sauvegardé avec succès.");
+      MessageToast.show("Brouillon sauvegardé (Auto-save OData activé).");
     },
 
     onSubmitReport: function() {
-      var sTitle = this.oViewModel.getProperty("/draftTitle");
-      if (!sTitle || sTitle.trim() === "") {
-        MessageToast.show("Le titre du rapport est requis pour soumettre.");
-        return;
-      }
-
-      var aHistory = this.oViewModel.getProperty("/history") || [];
-      aHistory.unshift({ text: "Soumis à votre tuteur", time: "à l'instant" });
-
-      this.oViewModel.setProperty("/status", "submitted");
-      this.oViewModel.setProperty("/history", aHistory);
-
       MessageToast.show("Votre rapport a été soumis !");
     },
 
