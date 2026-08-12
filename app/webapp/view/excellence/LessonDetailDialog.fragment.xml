@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{view-excellence>/selectedLesson/ID}" contentWidth="32rem" verticalScrolling="true">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <Title text="{view-excellence>/selectedLesson/title}" level="H4" wrapping="true"/>
+        <ObjectAttribute title="{i18n-excellence>appliesToLabel}" text="{view-excellence>/selectedLesson/appliesTo}" class="sapUiTinyMarginTop"/>
+
+        <Title text="{i18n-excellence>whatHappenedLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedLesson/whatHappened}"/>
+
+        <Title text="{i18n-excellence>whyItHappenedLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedLesson/whyItHappened}"/>
+
+        <Title text="{i18n-excellence>whatWeLearnedLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedLesson/whatWeLearned}"/>
+
+        <Title text="{i18n-excellence>whatShouldChangeLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedLesson/whatShouldChange}"/>
+
+        <Title text="{i18n-excellence>relatedRecommendationLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+          visible="{= !!${view-excellence>/selectedLesson/recommendation} }"/>
+        <Text text="{view-excellence>/selectedLesson/recommendation}"
+          visible="{= !!${view-excellence>/selectedLesson/recommendation} }"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n-excellence>createKnowledgeButton}" type="Emphasized" icon="sap-icon://add-document" press=".onCreateKnowledge"/>
+      <Button text="{i18n-excellence>close}" press=".onCloseLessonDetail"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

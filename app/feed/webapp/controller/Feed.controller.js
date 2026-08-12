@@ -70,54 +70,45 @@ sap.ui.define([
     },
 
     onKnowledgeCenterPress: function() {
-      // Same standalone-app navigation as the notification bell - no shared
-      // shell/router yet (docs/lot2-analysis.md §6.3 still open).
-      window.location.href = "/knowledge/webapp/index.html";
+      // Knowledge Centre now lives in the shared app/webapp (migrated off
+      // its former standalone app) - still a full navigation, since Feed
+      // remains its own separate app under this shell's own router.
+      window.location.href = "/webapp/index.html#/knowledge";
     },
 
     onProfilePress: function(oEvent) {
       // Two callers share this handler: the own-avatar panel (no binding
-      // context - reads the view model instead) and each Experts-to-découvrir
-      // list item (has its own UserProfiles binding context). Read the ID
-      // from whichever is actually present - never assume "current user".
+      // context) and each Experts-to-découvrir list item (has its own
+      // UserProfiles binding context - a specific OTHER user, so that ID
+      // must be used directly).
       var oContext = oEvent.getSource().getBindingContext();
       if (oContext) {
         this._navigateToProfile(oContext.getProperty("userID"));
         return;
       }
 
-      // Own-avatar case: currentUser.userID is only populated once
-      // Component.js#_loadCurrentUser()'s async call resolves - if it
-      // hasn't yet (or silently failed), re-fetch live instead of the
-      // click silently doing nothing.
-      var sUserID = this.oViewModel.getProperty("/currentUser/userID");
-      if (sUserID) {
-        this._navigateToProfile(sUserID);
-        return;
-      }
-
-      var oContextRequest = this.oModel.bindContext("/getCurrentUserProfile()");
-      oContextRequest.requestObject().then(function(oData) {
-        if (oData && oData.userID) {
-          this._navigateToProfile(oData.userID);
-        } else {
-          MessageToast.show("Impossible d'ouvrir le profil pour le moment");
-        }
-      }.bind(this)).catch(function() {
-        MessageToast.show("Impossible d'ouvrir le profil pour le moment");
-      });
+      // Own-avatar case: navigate bare, no userID resolved here - same
+      // approach the shared app's own navbar "Profil" link uses.
+      // Profile.controller.js's own _onRouteMatched resolves "who am I"
+      // via PeopleService's getMyUserID(), which is what's actually
+      // authenticated; resolving it here first via FeedService's
+      // getCurrentUserProfile() was the source of the "impossible
+      // d'ouvrir" bug (that function has no @restrict, so it silently
+      // answers for whichever identity happens to be cached - or none -
+      // instead of the one PeopleService actually knows).
+      window.location.href = "/webapp/index.html#/profile";
     },
 
     _navigateToProfile: function(sUserID) {
       if (!sUserID) return;
-      window.location.href = "/profile/webapp/index.html#/profile/" + encodeURIComponent(sUserID);
+      window.location.href = "/webapp/index.html#/profile/" + encodeURIComponent(sUserID);
     },
 
     onNotificationsPress: function() {
-      // Standalone app-to-app navigation: no shared shell/router exists yet
-      // (docs/lot2-analysis.md §6.3 is still an open team decision), so this
-      // is a full page navigation, same as clicking any other module link.
-      window.location.href = "/notifications/webapp/index.html";
+      // Notifications now lives in the shared app/webapp (migrated off its
+      // former standalone app) - still a full navigation, since Feed
+      // remains its own separate app under this shell's own router.
+      window.location.href = "/webapp/index.html#/notifications";
     },
 
     onRoomPress: function(oEvent) {

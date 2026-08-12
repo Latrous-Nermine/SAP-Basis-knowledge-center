@@ -1,0 +1,271 @@
+<mvc:View
+  controllerName="aymax.hub.controller.profile.Profile"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:uxap="sap.uxap"
+  xmlns:f="sap.f"
+  xmlns:card="sap.f.cards"
+  xmlns:form="sap.ui.layout.form"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showNavButton="true" navButtonPress=".onNavBack" busy="{view-profile>/busy}">
+    <headerContent>
+      <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-profile>backToFeed}" press=".onHomePress"/>
+    </headerContent>
+    <content>
+
+      <uxap:ObjectPageLayout id="profileObjectPage" showTitleInHeaderContent="true" class="profilePageContainer">
+
+        <uxap:headerTitle>
+          <uxap:ObjectPageDynamicHeaderTitle>
+            <uxap:heading>
+              <HBox alignItems="Center" class="profileGap16">
+                <Avatar
+                  class="profileHeaderAvatar"
+                  displaySize="XL"
+                  initials="{path:'people>displayName', formatter:'.formatter.initials'}"
+                  backgroundColor="{path:'people>userID', formatter:'.formatter.avatarColorFromID'}"
+                  tooltip="{people>displayName}"/>
+                <VBox class="profileGap4">
+                  <Title text="{people>displayName}" level="H2" wrapping="true"/>
+                  <HBox alignItems="Center" class="profileGap8">
+                    <ObjectStatus text="{path:'people>role', formatter:'.formatter.roleLabel'}" state="Information"/>
+                    <ObjectStatus text="{people>expertiseLevel}" state="Success"/>
+                  </HBox>
+                  <ObjectAttribute text="{people>jobTitle} · {people>department}" class="sapUiTinyMarginTop"/>
+                </VBox>
+              </HBox>
+            </uxap:heading>
+            <uxap:actions>
+              <Button text="{i18n-profile>viewTimeline}" icon="sap-icon://history" press=".onOpenTimeline"/>
+              <Button
+                text="{path:'view-profile>/isFollowedByMe', formatter:'.formatter.followButtonText'}"
+                icon="{path:'view-profile>/isFollowedByMe', formatter:'.formatter.followButtonIcon'}"
+                type="{path:'view-profile>/isFollowedByMe', formatter:'.formatter.followButtonType'}"
+                visible="{= !${view-profile>/isOwnProfile} }"
+                press=".onToggleFollow"/>
+            </uxap:actions>
+          </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
+
+        <uxap:headerContent>
+          <VBox class="profileGap16">
+            <HBox class="profileGap24">
+              <VBox alignItems="Center" width="90px">
+                <Text text="{people>followersCount}" class="profileStatNumber"/>
+                <Text text="{i18n-profile>followers}" class="profileStatLabel"/>
+              </VBox>
+              <VBox alignItems="Center" width="90px">
+                <Text text="{people>followingCount}" class="profileStatNumber"/>
+                <Text text="{i18n-profile>following}" class="profileStatLabel"/>
+              </VBox>
+            </HBox>
+            <Text text="{people>bio}" class="profileBioText"/>
+            <HBox class="profileKpiGrid">
+              <f:Card class="profileKpiCard">
+                <f:header>
+                  <card:NumericHeader
+                    title="{i18n-profile>scoreTotal}"
+                    number="{people>reputation}"
+                    unitOfMeasurement="{i18n-profile>scoreTotalUnit}"/>
+                </f:header>
+              </f:Card>
+              <f:Card class="profileKpiCard">
+                <f:header>
+                  <card:NumericHeader
+                    title="{i18n-profile>scoreBadges}"
+                    number="{view-profile>/scoreBreakdown/badges}"
+                    unitOfMeasurement="{i18n-profile>scoreTotalUnit}"
+                    subtitle="{i18n-profile>scoreBadgesSubtitle}"/>
+                </f:header>
+                <f:content>
+                  <ProgressIndicator
+                    class="sapUiSmallMargin"
+                    displayValue=" "
+                    tooltip="{i18n-profile>badgeProgressTooltip}"
+                    percentValue="{parts:[{path:'view-profile>/scoreBreakdown/badges'},{path:'view-profile>/badgeGoal'}], formatter:'.formatter.badgeProgressPercent'}"/>
+                </f:content>
+              </f:Card>
+              <f:Card class="profileKpiCard">
+                <f:header>
+                  <card:NumericHeader
+                    title="{i18n-profile>scorePublications}"
+                    number="{view-profile>/scoreBreakdown/publications}"
+                    unitOfMeasurement="{i18n-profile>scoreTotalUnit}"
+                    subtitle="{i18n-profile>scorePublicationsSubtitle}"/>
+                </f:header>
+              </f:Card>
+              <f:Card class="profileKpiCard">
+                <f:header>
+                  <card:NumericHeader
+                    title="{i18n-profile>scoreContributions}"
+                    number="{view-profile>/scoreBreakdown/contributions}"
+                    unitOfMeasurement="{i18n-profile>scoreTotalUnit}"
+                    subtitle="{i18n-profile>scoreContributionsSubtitle}"/>
+                </f:header>
+              </f:Card>
+            </HBox>
+          </VBox>
+        </uxap:headerContent>
+
+        <uxap:sections>
+
+          <!-- Personal Information - added on top of the design per explicit
+               instruction; only fields that actually exist elsewhere in the
+               app (no phone/manager/location - not available anywhere yet). -->
+          <uxap:ObjectPageSection title="{i18n-profile>personalInfoTitle}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <form:SimpleForm
+                    editable="false"
+                    layout="ResponsiveGridLayout"
+                    columnsM="2" columnsL="2" columnsXL="2"
+                    labelSpanM="5" labelSpanL="4" labelSpanXL="4"
+                    class="profilePersonalInfoForm">
+                    <Label text="{i18n-profile>fieldFullName}"/>
+                    <Text text="{people>displayName}"/>
+                    <Label text="{i18n-profile>fieldRole}"/>
+                    <Text text="{path:'people>role', formatter:'.formatter.roleLabel'}"/>
+                    <Label text="{i18n-profile>fieldDepartment}"/>
+                    <Text text="{people>department}"/>
+                    <Label text="{i18n-profile>fieldPosition}"/>
+                    <Text text="{people>jobTitle}"/>
+                    <Label text="{i18n-profile>fieldEmail}"/>
+                    <Text text="{people>email}"/>
+                    <Label text="{i18n-profile>fieldAvailability}"/>
+                    <ObjectStatus
+                      text="{path:'people>availability', formatter:'.formatter.availabilityLabel'}"
+                      state="{path:'people>availability', formatter:'.formatter.availabilityState'}"/>
+                    <Label text="{i18n-profile>fieldExperience}"/>
+                    <Text text="{path:'people>yearsOfExperience', formatter:'.formatter.yearsOfExperienceLabel'}"/>
+                  </form:SimpleForm>
+                  <HBox wrap="Wrap" items="{path:'people>technologies', templateShareable:'false'}" visible="{= ${people>technologies}.length > 0 }" class="sapUiSmallMarginTop">
+                    <Text text="{people>technologyName}" class="profileTagChip sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+                  </HBox>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+          <uxap:ObjectPageSection title="{i18n-profile>tabPublications}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <List id="publicationsList" items="{view-profile>/publications}" noDataText="{i18n-profile>noPublications}" showSeparators="None">
+                    <CustomListItem>
+                      <VBox class="profileCard">
+                        <Text text="{view-profile>content}" wrapping="true"/>
+                        <HBox wrap="Wrap" items="{path:'view-profile>tags', templateShareable:'false'}" class="sapUiTinyMarginTop">
+                          <Text text="{view-profile>tag/name}" class="profileTagChip"/>
+                        </HBox>
+                        <Text
+                          text="{parts:[{path:'view-profile>createdAt'},{path:'view-profile>likeCount'}], formatter:'.formatter.postMetaLine'}"
+                          class="profileMetaText sapUiTinyMarginTop"/>
+                      </VBox>
+                    </CustomListItem>
+                  </List>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+          <uxap:ObjectPageSection title="{i18n-profile>tabActivity}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <List items="{view-profile>/activity}" noDataText="{i18n-profile>noActivity}" showSeparators="None">
+                    <CustomListItem>
+                      <HBox class="profileActivityEntry" alignItems="Start">
+                        <core:Icon src="{path:'view-profile>text', formatter:'.formatter.activityIcon'}" class="profileActivityIcon sapUiTinyMarginEnd"/>
+                        <VBox>
+                          <Text text="{view-profile>text}"/>
+                          <Text text="{path:'view-profile>occurredAt', formatter:'.formatter.relativeDateTime'}" class="profileMetaText"/>
+                        </VBox>
+                      </HBox>
+                    </CustomListItem>
+                  </List>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+          <uxap:ObjectPageSection title="{i18n-profile>tabCertifications}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <VBox class="profileGap16">
+                    <Panel headerText="{i18n-profile>certEarned}" class="profileCard">
+                      <List items="{view-profile>/certsEarned}" noDataText="{i18n-profile>noCertEarned}" showSeparators="None">
+                        <StandardListItem
+                          title="{view-profile>certification/name}"
+                          info="{path:'view-profile>earnedDate', formatter:'.formatter.certEarnedOnLabel'}"
+                          infoState="Success"/>
+                      </List>
+                    </Panel>
+                    <Panel headerText="{i18n-profile>certInProgress}" class="profileCard">
+                      <List items="{view-profile>/certsInProgress}" noDataText="{i18n-profile>noCertInProgress}" showSeparators="None">
+                        <StandardListItem
+                          title="{view-profile>certification/name}"
+                          description="{path:'view-profile>certification/provider', formatter:'.formatter.certProviderLabel'}"
+                          info="{path:'view-profile>startDate', formatter:'.formatter.certStartedOnLabel'}"
+                          infoState="Information"/>
+                      </List>
+                    </Panel>
+                    <Panel headerText="{i18n-profile>certRecommended}" class="profileCard">
+                      <List items="{view-profile>/certsRecommended}" noDataText="{i18n-profile>noCertRecommended}" showSeparators="None">
+                        <StandardListItem
+                          title="{view-profile>certification/name}"
+                          description="{view-profile>reason}"
+                          info="{i18n-profile>certRecommended}"
+                          infoState="Warning"/>
+                      </List>
+                    </Panel>
+                  </VBox>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+          <uxap:ObjectPageSection title="{i18n-profile>tabExpertise}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <List items="{people>skills}" noDataText="{i18n-profile>noExpertise}" showSeparators="None">
+                    <CustomListItem>
+                      <VBox class="profileSkillRow">
+                        <HBox justifyContent="SpaceBetween">
+                          <Text text="{people>skillName}"/>
+                          <Text text="{path:'people>level', formatter:'.formatter.starRating'}" class="profileStarText"/>
+                        </HBox>
+                        <ProgressIndicator percentValue="{people>percent}" displayValue=" " class="sapUiTinyMarginTop"/>
+                      </VBox>
+                    </CustomListItem>
+                  </List>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+          <uxap:ObjectPageSection title="{i18n-profile>tabBadges}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <List items="{people>userBadges}" noDataText="{i18n-profile>noBadges}" showSeparators="None">
+                    <StandardListItem
+                      icon="sap-icon://favorite"
+                      title="{people>badge/name}"
+                      description="{people>badge/description}"
+                      info="{path:'people>earnedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
+                  </List>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+        </uxap:sections>
+      </uxap:ObjectPageLayout>
+    </content>
+  </Page>
+</mvc:View>

@@ -1,0 +1,33 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{view-excellence>/selectedActionItem/ID}" contentWidth="28rem">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <HBox justifyContent="SpaceBetween" alignItems="Center">
+          <ObjectStatus
+            text="{path:'view-excellence>/selectedActionItem/priority', formatter:'.formatter.recommendationPriorityText'}"
+            state="{path:'view-excellence>/selectedActionItem/priority', formatter:'.formatter.recommendationPriorityState'}"/>
+          <ObjectStatus
+            text="{path:'view-excellence>/selectedActionItem/status', formatter:'.formatter.actionStatusText'}"
+            state="{path:'view-excellence>/selectedActionItem/status', formatter:'.formatter.actionStatusState'}"/>
+        </HBox>
+
+        <Title text="{view-excellence>/selectedActionItem/title}" level="H4" wrapping="true" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n-excellence>attrOwner}" text="{view-excellence>/selectedActionItem/owner}" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n-excellence>deadlineLabel}" text="{path:'view-excellence>/selectedActionItem/deadline', formatter:'.formatter.dateMedium'}"/>
+
+        <Title text="{i18n-excellence>relatedRecommendationLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+          visible="{= !!${view-excellence>/selectedActionItem/relatedRecommendationTitle} }"/>
+        <Text text="{view-excellence>/selectedActionItem/relatedRecommendationTitle}"
+          visible="{= !!${view-excellence>/selectedActionItem/relatedRecommendationTitle} }"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n-excellence>close}" press=".onCloseActionItemDetail"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

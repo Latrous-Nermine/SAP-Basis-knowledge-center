@@ -1,0 +1,135 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:f="sap.f"
+  xmlns:card="sap.f.cards"
+  xmlns:viz="sap.viz.ui5.controls"
+  xmlns:vizData="sap.viz.ui5.data"
+  xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds">
+
+  <VBox visible="{= ${view-dashboard>/role} === 'DepartmentManager' }" class="dashboardSectionGap">
+
+    <!-- Expertise de l'équipe - real data (UserSkills x People grouped by
+         department, computed in DashboardService). Full width, own row:
+         a bar chart reads better with more horizontal room, and this is
+         the one widget in this fragment that reliably has real content -
+         see the grid rework discussion (this session). -->
+    <f:Card class="dashboardCard">
+      <f:header>
+        <card:Header title="{i18n-dashboard>teamSkillsTitle}"/>
+      </f:header>
+      <f:content>
+        <VBox class="sapUiSmallMargin">
+          <viz:VizFrame
+            vizType="bar"
+            width="100%"
+            height="240px"
+            uiConfig="{applicationSet:'fiori'}" vizProperties="{title:{visible:false}}">
+            <viz:dataset>
+              <vizData:FlattenedDataset data="{view-dashboard>/manager/teamSkills}">
+                <vizData:dimensions>
+                  <vizData:DimensionDefinition name="Compétence" value="{view-dashboard>name}"/>
+                </vizData:dimensions>
+                <vizData:measures>
+                  <vizData:MeasureDefinition name="Experts" value="{view-dashboard>headcount}"/>
+                </vizData:measures>
+              </vizData:FlattenedDataset>
+            </viz:dataset>
+            <viz:feeds>
+              <vizFeeds:FeedItem uid="valueAxis" type="Measure" values="Experts"/>
+              <vizFeeds:FeedItem uid="categoryAxis" type="Dimension" values="Compétence"/>
+            </viz:feeds>
+          </viz:VizFrame>
+          <Text text="{i18n-dashboard>noTeamSkills}" visible="{= ${view-dashboard>/manager/teamSkills}.length === 0 }"/>
+        </VBox>
+      </f:content>
+    </f:Card>
+
+    <!-- Pending Reviews (TODO-INTEGRATION.md I-02) and Questions Monitoring
+         (I-04) are both permanently-empty stubs today - paired into one
+         half/half row instead of either one stretching a full-width row
+         alone, so an empty state never looks disproportionately large. -->
+    <HBox class="dashboardGap16" wrap="Wrap" width="100%">
+      <f:Card class="dashboardCard dashboardHalfCard">
+
+        <f:layoutData>
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="320px"/>
+
+        </f:layoutData>
+        <f:header>
+          <card:Header title="{i18n-dashboard>pendingReviewsTitle}"/>
+        </f:header>
+        <f:content>
+          <VBox class="sapUiSmallMargin">
+            <List items="{view-dashboard>/manager/pendingReviews}" noDataText="{i18n-dashboard>noPendingReviews}" showSeparators="None">
+              <CustomListItem>
+                <HBox alignItems="Center" justifyContent="SpaceBetween" class="dashboardListRow">
+                  <ObjectStatus text="{view-dashboard>category}" state="Information"/>
+                  <Text text="{view-dashboard>title}" class="dashboardFlexGrow"/>
+                  <Text text="{view-dashboard>author}" class="dashboardMetaText"/>
+                  <Button text="{i18n-dashboard>reject}" press=".onRejectReview"/>
+                  <Button text="{i18n-dashboard>approve}" type="Emphasized" press=".onApproveReview"/>
+                </HBox>
+              </CustomListItem>
+            </List>
+            <Link text="{i18n-dashboard>voirTout}" press=".onNavToValidation" class="sapUiTinyMarginTop"/>
+          </VBox>
+        </f:content>
+      </f:Card>
+
+      <f:Card class="dashboardCard dashboardHalfCard">
+
+
+        <f:layoutData>
+
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="320px"/>
+
+
+        </f:layoutData>
+        <f:header>
+          <card:Header title="{i18n-dashboard>questionsMonitoringTitle}"/>
+        </f:header>
+        <f:content>
+          <VBox class="sapUiSmallMargin">
+            <List items="{view-dashboard>/manager/questionsMonitoring}" noDataText="{i18n-dashboard>noQuestionsMonitoring}" showSeparators="None">
+              <CustomListItem>
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="dashboardListRow">
+                  <Text text="{view-dashboard>title}"/>
+                  <ObjectStatus text="{view-dashboard>tagLabel}" state="{view-dashboard>tagState}"/>
+                </HBox>
+              </CustomListItem>
+            </List>
+          </VBox>
+        </f:content>
+      </f:Card>
+    </HBox>
+
+    <!-- Activité des rooms - built for real (TODO-INTEGRATION.md I-03,
+         resolved): last Post per Room + real followersCount. Full width,
+         own row: it reliably has real content, same reasoning as the
+         Team Skills chart above. -->
+    <f:Card class="dashboardCard">
+      <f:header>
+        <card:Header title="{i18n-dashboard>roomActivityTitle}"/>
+      </f:header>
+      <f:content>
+        <VBox class="sapUiSmallMargin">
+          <List items="{view-dashboard>/manager/roomActivity}" noDataText="{i18n-dashboard>noRoomActivity}" showSeparators="None">
+            <CustomListItem type="Navigation" press=".onNavToRoom">
+              <HBox justifyContent="SpaceBetween" alignItems="Center" class="dashboardListRow">
+                <VBox>
+                  <Text text="{view-dashboard>name}"/>
+                  <Text text="{path:'view-dashboard>lastActivity', formatter:'.formatter.relativeDateTime'}" class="dashboardMetaText"/>
+                </VBox>
+                <Text text="{parts:[{path:'view-dashboard>memberCount'}], formatter:'.formatter.membersLabel'}" class="dashboardMetaText"/>
+              </HBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+      </f:content>
+    </f:Card>
+
+  </VBox>
+</core:FragmentDefinition>

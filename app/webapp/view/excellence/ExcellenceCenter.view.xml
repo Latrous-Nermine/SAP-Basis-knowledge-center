@@ -1,0 +1,677 @@
+<mvc:View
+  controllerName="aymax.hub.controller.excellence.ExcellenceCenter"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:card="sap.f.cards"
+  xmlns:uxap="sap.uxap"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <!-- sap.f.FlexibleColumnLayout needs the same height:100% ancestor chain
+       as sap.f.DynamicPage does in Notifications.view.xml - App provides it. -->
+  <App>
+    <f:FlexibleColumnLayout id="fcl" layout="{view-excellence>/fclLayout}">
+
+      <!-- ============================================================
+           BEGIN COLUMN - Projects & Phases (Section 9, this step)
+           ============================================================ -->
+      <f:beginColumnPages>
+        <Page title="{i18n-excellence>appTitle}" showNavButton="false" class="excellenceSidebarPage">
+          <headerContent>
+            <Button
+              icon="sap-icon://home"
+              type="Transparent"
+              tooltip="{i18n-excellence>backToFeed}"
+              press=".onHomePress"/>
+          </headerContent>
+          <content>
+            <List
+              id="projectList"
+              items="{path: 'excellence>/projects', templateShareable: false}"
+              noDataText="{i18n-excellence>noProjects}"
+              showSeparators="None"
+              class="sapUiNoContentPadding">
+              <CustomListItem
+                type="Active"
+                press=".onProjectPress"
+                selected="{= ${excellence>ID} === ${view-excellence>/selectedProjectID} }"
+                class="excellenceProjectCard">
+                <VBox>
+
+                  <HBox justifyContent="SpaceBetween" alignItems="Start" width="100%">
+                    <VBox>
+                      <layoutData>
+                        <FlexItemData growFactor="1" shrinkFactor="1" minWidth="0"/>
+                      </layoutData>
+                      <Title text="{excellence>name}" level="H4" wrapping="true"/>
+                      <Text text="{excellence>client}" class="excellenceMetaText sapUiTinyMarginTop"/>
+                    </VBox>
+                    <core:Icon
+                      src="{parts:[{path:'excellence>ID'},{path:'view-excellence>/selectedProjectID'}], formatter:'.formatter.expandIcon'}"
+                      tooltip="{parts:[{path:'excellence>ID'},{path:'view-excellence>/selectedProjectID'}], formatter:'.formatter.expandCollapseTooltip'}"
+                      decorative="false"
+                      class="excellenceExpandIcon sapUiTinyMarginBegin"/>
+                  </HBox>
+
+                  <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="sapUiTinyMarginTop">
+                    <ObjectStatus
+                      text="{path:'excellence>reviewStatus', formatter:'.formatter.reviewStatusText'}"
+                      state="{path:'excellence>reviewStatus', formatter:'.formatter.reviewStatusValueState'}"/>
+                    <Text text="{path:'excellence>phases', formatter:'.formatter.reviewProgress'}%" class="excellenceProgressText"/>
+                  </HBox>
+
+                  <ProgressIndicator
+                    percentValue="{path:'excellence>phases', formatter:'.formatter.reviewProgress'}"
+                    displayValue=" "
+                    state="{path:'excellence>phases', formatter:'.formatter.reviewProgressState'}"
+                    class="sapUiTinyMarginTop excellenceProgressBar"/>
+
+                  <!-- Accordion: only the selected project's phases render
+                       expanded - see controller's _selectProject notes. -->
+                  <List
+                    items="{path: 'excellence>phases', templateShareable: false}"
+                    visible="{= ${excellence>ID} === ${view-excellence>/selectedProjectID} }"
+                    showSeparators="None"
+                    class="excellencePhaseList sapUiNoContentPadding sapUiTinyMarginTop">
+                    <CustomListItem
+                      type="Active"
+                      press=".onPhasePress"
+                      selected="{= ${excellence>key} === ${view-excellence>/selectedPhaseKey} }"
+                      class="excellencePhaseRow">
+                      <HBox alignItems="Center" width="100%">
+                        <ObjectStatus
+                          icon="{path:'excellence>state', formatter:'.formatter.phaseStateIcon'}"
+                          state="{path:'excellence>state', formatter:'.formatter.phaseStateValueState'}"
+                          tooltip="{path:'excellence>state', formatter:'.formatter.phaseStateText'}"/>
+                        <Text
+                          text="{path:'excellence>key', formatter:'.formatter.phaseName'}"
+                          class="sapUiTinyMarginBegin">
+                          <layoutData>
+                            <FlexItemData growFactor="1" shrinkFactor="1" minWidth="0"/>
+                          </layoutData>
+                        </Text>
+                      </HBox>
+                    </CustomListItem>
+                  </List>
+
+                </VBox>
+              </CustomListItem>
+            </List>
+          </content>
+        </Page>
+      </f:beginColumnPages>
+
+      <!-- ============================================================
+           MID COLUMN - Workspace. Three mutually-exclusive states:
+           1) a project is selected, no phase open -> real Project
+              Overview (Section 11, built this step)
+           2) a phase is open -> honest placeholder (Section 10's
+              per-phase content is not built yet)
+           3) nothing selected (e.g. accordion just collapsed) -> empty state
+           ============================================================ -->
+      <f:midColumnPages>
+        <Page title="{i18n-excellence>workspaceTitle}" showNavButton="false">
+          <content>
+
+            <uxap:ObjectPageLayout
+              id="projectOverviewPage"
+              visible="{= !!${view-excellence>/selectedProjectID} &amp;&amp; !${view-excellence>/selectedPhaseKey} &amp;&amp; ${view-excellence>/workspaceMode} === 'overview' }"
+              showTitleInHeaderContent="true"
+              binding="{view-excellence>/selectedProject}">
+
+              <uxap:headerTitle>
+                <uxap:ObjectPageDynamicHeaderTitle>
+                  <uxap:heading>
+                    <Title text="{view-excellence>name}" wrapping="true"/>
+                  </uxap:heading>
+                </uxap:ObjectPageDynamicHeaderTitle>
+              </uxap:headerTitle>
+
+              <uxap:headerContent>
+                <HBox wrap="Wrap" class="excellenceHeaderMeta" alignItems="Center">
+                  <ObjectStatus
+                    text="{path:'view-excellence>reviewStatus', formatter:'.formatter.reviewStatusText'}"
+                    state="{path:'view-excellence>reviewStatus', formatter:'.formatter.reviewStatusValueState'}"/>
+                  <ObjectAttribute title="{i18n-excellence>attrClient}" text="{view-excellence>client}"/>
+                  <ObjectAttribute title="{i18n-excellence>attrDepartment}" text="{view-excellence>department}"/>
+                  <ObjectAttribute title="{i18n-excellence>attrProjectManager}" text="{view-excellence>projectManager}"/>
+                  <ObjectAttribute
+                    title="{i18n-excellence>attrDates}"
+                    text="{parts:[{path:'view-excellence>startDate'},{path:'view-excellence>endDate'}], formatter:'.formatter.dateRange'}"/>
+                </HBox>
+              </uxap:headerContent>
+
+              <uxap:sections>
+
+                <!-- Aperçu: review progress + planned-vs-actual (§10/§12) -->
+                <uxap:ObjectPageSection title="{i18n-excellence>overviewSectionKpis}">
+                  <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                      <uxap:blocks>
+
+                        <HBox class="sapUiSmallMarginBottom" width="100%">
+                          <f:Card class="excellenceKpiCard">
+                            <f:layoutData>
+                              <FlexItemData growFactor="1" shrinkFactor="1" baseSize="200px" maxWidth="280px"/>
+                            </f:layoutData>
+                            <f:header>
+                              <card:NumericHeader
+                                title="{i18n-excellence>kpiReviewProgress}"
+                                number="{path:'view-excellence>phases', formatter:'.formatter.reviewProgress'}"
+                                unitOfMeasurement="%"/>
+                            </f:header>
+                          </f:Card>
+                        </HBox>
+
+                        <Title text="{i18n-excellence>plannedVsActualTitle}" level="H5" class="sapUiTinyMarginBottom"/>
+
+                        <VBox class="excellenceComparisonRow sapUiSmallMarginBottom">
+                          <Text text="{i18n-excellence>metricBudget}" class="excellenceMetaText"/>
+                          <HBox class="sapUiTinyMarginTop" wrap="Wrap" width="100%">
+                            <VBox>
+                              <layoutData>
+                                <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="120px"/>
+                              </layoutData>
+                              <Text text="{i18n-excellence>planned}" class="excellenceMetaText"/>
+                              <ObjectNumber number="{path:'view-excellence>kpis/budgetPlanned', formatter:'.formatter.currency'}"/>
+                            </VBox>
+                            <VBox>
+                              <layoutData>
+                                <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="120px"/>
+                              </layoutData>
+                              <Text text="{i18n-excellence>actual}" class="excellenceMetaText"/>
+                              <ObjectNumber
+                                number="{path:'view-excellence>kpis/budgetActual', formatter:'.formatter.currency'}"
+                                state="{parts:[{path:'view-excellence>kpis/budgetPlanned'},{path:'view-excellence>kpis/budgetActual'}], formatter:'.formatter.comparisonState'}"/>
+                            </VBox>
+                            <VBox>
+                              <layoutData>
+                                <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="120px"/>
+                              </layoutData>
+                              <Text text="{i18n-excellence>couldHaveBeen}" class="excellenceMetaText"/>
+                              <ObjectNumber number="{path:'view-excellence>kpis/budgetCouldHaveBeen', formatter:'.formatter.currency'}"/>
+                            </VBox>
+                          </HBox>
+                        </VBox>
+
+                        <VBox class="excellenceComparisonRow">
+                          <Text text="{i18n-excellence>metricDuration}" class="excellenceMetaText"/>
+                          <HBox class="sapUiTinyMarginTop" wrap="Wrap" width="100%">
+                            <VBox>
+                              <layoutData>
+                                <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="120px"/>
+                              </layoutData>
+                              <Text text="{i18n-excellence>planned}" class="excellenceMetaText"/>
+                              <ObjectNumber number="{path:'view-excellence>kpis/durationPlannedWeeks', formatter:'.formatter.durationWeeks'}"/>
+                            </VBox>
+                            <VBox>
+                              <layoutData>
+                                <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="120px"/>
+                              </layoutData>
+                              <Text text="{i18n-excellence>actual}" class="excellenceMetaText"/>
+                              <ObjectNumber
+                                number="{path:'view-excellence>kpis/durationActualWeeks', formatter:'.formatter.durationWeeks'}"
+                                state="{parts:[{path:'view-excellence>kpis/durationPlannedWeeks'},{path:'view-excellence>kpis/durationActualWeeks'}], formatter:'.formatter.comparisonState'}"/>
+                            </VBox>
+                            <VBox>
+                              <layoutData>
+                                <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="120px"/>
+                              </layoutData>
+                              <Text text="{i18n-excellence>couldHaveBeen}" class="excellenceMetaText"/>
+                              <ObjectNumber number="{path:'view-excellence>kpis/durationCouldHaveBeenWeeks', formatter:'.formatter.durationWeeks'}"/>
+                            </VBox>
+                          </HBox>
+                        </VBox>
+
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                  </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+                <!-- Équipe: review team vs original project team (§15 preview) -->
+                <uxap:ObjectPageSection title="{i18n-excellence>teamSectionTitle}">
+                  <uxap:subSections>
+                    <uxap:ObjectPageSubSection title="{i18n-excellence>reviewTeamTitle}">
+                      <uxap:blocks>
+                        <List items="{path:'view-excellence>reviewTeam', templateShareable: false}" noDataText=" " showSeparators="None" class="sapUiNoContentPadding">
+                          <StandardListItem icon="sap-icon://person-placeholder" title="{view-excellence>name}" description="{view-excellence>role}"/>
+                        </List>
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                    <uxap:ObjectPageSubSection title="{i18n-excellence>originalTeamTitle}">
+                      <uxap:blocks>
+                        <List items="{path:'view-excellence>originalTeam', templateShareable: false}" noDataText=" " showSeparators="None" class="sapUiNoContentPadding">
+                          <StandardListItem icon="sap-icon://person-placeholder" title="{view-excellence>name}" description="{view-excellence>role}"/>
+                        </List>
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                  </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+                <!-- Constats principaux - preview only, full Findings UI is Section 13 -->
+                <uxap:ObjectPageSection title="{i18n-excellence>findingsSectionTitle}">
+                  <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                      <uxap:blocks>
+                        <List items="{path:'view-excellence>findings', templateShareable: false}" noDataText="{i18n-excellence>noFindings}" showSeparators="None" class="sapUiNoContentPadding">
+                          <StandardListItem
+                            icon="sap-icon://alert"
+                            title="{view-excellence>title}"
+                            info="{path:'view-excellence>severity', formatter:'.formatter.findingSeverityText'}"
+                            infoState="{path:'view-excellence>severity', formatter:'.formatter.findingSeverityState'}"/>
+                        </List>
+                        <Button text="{i18n-excellence>viewAllFindings}" type="Transparent" press=".onShowFindings" class="sapUiTinyMarginTop"/>
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                  </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+                <!-- Recommandations - preview only, full UI is Section 18 -->
+                <uxap:ObjectPageSection title="{i18n-excellence>recommendationsSectionTitle}">
+                  <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                      <uxap:blocks>
+                        <List items="{path:'view-excellence>recommendations', templateShareable: false}" noDataText="{i18n-excellence>noRecommendations}" showSeparators="None" class="sapUiNoContentPadding">
+                          <StandardListItem
+                            icon="sap-icon://lightbulb"
+                            title="{view-excellence>title}"
+                            info="{path:'view-excellence>priority', formatter:'.formatter.recommendationPriorityText'}"
+                            infoState="{path:'view-excellence>priority', formatter:'.formatter.recommendationPriorityState'}"/>
+                        </List>
+                        <Button text="{i18n-excellence>viewAllRecommendations}" type="Transparent" press=".onShowRecommendations" class="sapUiTinyMarginTop"/>
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                  </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+                <!-- Actions - full UI is Section 19 -->
+                <uxap:ObjectPageSection title="{i18n-excellence>actionItemsSectionTitle}">
+                  <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                      <uxap:blocks>
+                        <List items="{path:'view-excellence>actionItems', templateShareable: false}" noDataText="{i18n-excellence>noActionItems}" showSeparators="None" class="sapUiNoContentPadding">
+                          <StandardListItem
+                            icon="sap-icon://task"
+                            title="{view-excellence>title}"
+                            description="{view-excellence>owner}"
+                            info="{path:'view-excellence>status', formatter:'.formatter.actionStatusText'}"
+                            infoState="{path:'view-excellence>status', formatter:'.formatter.actionStatusState'}"/>
+                        </List>
+                        <Button text="{i18n-excellence>viewAllActionItems}" type="Transparent" press=".onShowActionItems" class="sapUiTinyMarginTop"/>
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                  </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+                <!-- Leçons apprises - full UI is Section 20 -->
+                <uxap:ObjectPageSection title="{i18n-excellence>lessonsSectionTitle}">
+                  <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                      <uxap:blocks>
+                        <List items="{path:'view-excellence>lessons', templateShareable: false}" noDataText="{i18n-excellence>noLessons}" showSeparators="None" class="sapUiNoContentPadding">
+                          <StandardListItem
+                            icon="sap-icon://learning-assistant"
+                            title="{view-excellence>title}"
+                            description="{view-excellence>appliesTo}"/>
+                        </List>
+                        <Button text="{i18n-excellence>viewAllLessons}" type="Transparent" press=".onShowLessons" class="sapUiTinyMarginTop"/>
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                  </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+              </uxap:sections>
+            </uxap:ObjectPageLayout>
+
+            <!-- Findings full management (Section 13) - list, filter, view,
+                 add. Reached via "Voir tous les constats" in Overview. Plain
+                 VBox with its own header row, not a nested Page - a second
+                 Page here would stack a second title bar under the mid
+                 column's own (same reasoning as Overview/Phase Detail,
+                 which are bare ObjectPageLayouts for the same reason). -->
+            <VBox
+              id="findingsPage"
+              visible="{= !!${view-excellence>/selectedProjectID} &amp;&amp; !${view-excellence>/selectedPhaseKey} &amp;&amp; ${view-excellence>/workspaceMode} === 'findings' }"
+              binding="{view-excellence>/selectedProject}"
+              class="sapUiResponsiveContentPadding">
+
+              <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="sapUiSmallMarginBottom">
+                <HBox alignItems="Center">
+                  <Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n-excellence>backToOverview}" press=".onBackToOverview"/>
+                  <Title text="{i18n-excellence>findingsSectionTitle}" level="H4" class="sapUiTinyMarginBegin"/>
+                </HBox>
+                <Button text="{i18n-excellence>addFindingButton}" type="Emphasized" icon="sap-icon://add" press=".onAddFinding"/>
+              </HBox>
+
+              <HBox wrap="Wrap" class="sapUiSmallMarginBottom">
+                <Select
+                  selectedKey="{view-excellence>/findingsSeverityFilter}"
+                  change=".onFindingsFilterChange"
+                  class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
+                  width="12rem">
+                  <core:Item key="" text="{i18n-excellence>allSeverities}"/>
+                  <core:Item key="high" text="{i18n-excellence>severity.high}"/>
+                  <core:Item key="medium" text="{i18n-excellence>severity.medium}"/>
+                  <core:Item key="low" text="{i18n-excellence>severity.low}"/>
+                </Select>
+                <Select
+                  selectedKey="{view-excellence>/findingsStatusFilter}"
+                  change=".onFindingsFilterChange"
+                  class="sapUiTinyMarginBottom"
+                  width="12rem">
+                  <core:Item key="" text="{i18n-excellence>allStatuses}"/>
+                  <core:Item key="proposed" text="{i18n-excellence>findingStatus.proposed}"/>
+                  <core:Item key="validated" text="{i18n-excellence>findingStatus.validated}"/>
+                  <core:Item key="resolved" text="{i18n-excellence>findingStatus.resolved}"/>
+                </Select>
+              </HBox>
+
+              <List
+                id="findingsList"
+                items="{path: 'view-excellence>findings', templateShareable: false}"
+                noDataText="{i18n-excellence>noFindingsMatchFilter}"
+                showSeparators="None"
+                class="sapUiNoContentPadding">
+                <StandardListItem
+                  type="Active"
+                  press=".onFindingPress"
+                  icon="sap-icon://alert"
+                  title="{view-excellence>title}"
+                  description="{path:'view-excellence>category', formatter:'.formatter.categoryText'}"
+                  info="{path:'view-excellence>severity', formatter:'.formatter.findingSeverityText'}"
+                  infoState="{path:'view-excellence>severity', formatter:'.formatter.findingSeverityState'}"/>
+              </List>
+            </VBox>
+
+            <!-- Recommendations full management (Section 18) - same shape
+                 as Findings above. -->
+            <VBox
+              id="recommendationsPage"
+              visible="{= !!${view-excellence>/selectedProjectID} &amp;&amp; !${view-excellence>/selectedPhaseKey} &amp;&amp; ${view-excellence>/workspaceMode} === 'recommendations' }"
+              binding="{view-excellence>/selectedProject}"
+              class="sapUiResponsiveContentPadding">
+
+              <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="sapUiSmallMarginBottom">
+                <HBox alignItems="Center">
+                  <Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n-excellence>backToOverview}" press=".onBackToOverview"/>
+                  <Title text="{i18n-excellence>recommendationsSectionTitle}" level="H4" class="sapUiTinyMarginBegin"/>
+                </HBox>
+                <Button text="{i18n-excellence>addRecommendationButton}" type="Emphasized" icon="sap-icon://add" press=".onAddRecommendation"/>
+              </HBox>
+
+              <HBox wrap="Wrap" class="sapUiSmallMarginBottom">
+                <Select
+                  selectedKey="{view-excellence>/recommendationsPriorityFilter}"
+                  change=".onRecommendationsFilterChange"
+                  class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
+                  width="12rem">
+                  <core:Item key="" text="{i18n-excellence>allPriorities}"/>
+                  <core:Item key="high" text="{i18n-excellence>priority.high}"/>
+                  <core:Item key="medium" text="{i18n-excellence>priority.medium}"/>
+                  <core:Item key="low" text="{i18n-excellence>priority.low}"/>
+                </Select>
+                <Select
+                  selectedKey="{view-excellence>/recommendationsStatusFilter}"
+                  change=".onRecommendationsFilterChange"
+                  class="sapUiTinyMarginBottom"
+                  width="12rem">
+                  <core:Item key="" text="{i18n-excellence>allStatuses}"/>
+                  <core:Item key="proposed" text="{i18n-excellence>recommendationStatus.proposed}"/>
+                  <core:Item key="accepted" text="{i18n-excellence>recommendationStatus.accepted}"/>
+                  <core:Item key="implemented" text="{i18n-excellence>recommendationStatus.implemented}"/>
+                </Select>
+              </HBox>
+
+              <List
+                id="recommendationsList"
+                items="{path: 'view-excellence>recommendations', templateShareable: false}"
+                noDataText="{i18n-excellence>noRecommendationsMatchFilter}"
+                showSeparators="None"
+                class="sapUiNoContentPadding">
+                <StandardListItem
+                  type="Active"
+                  press=".onRecommendationPress"
+                  icon="sap-icon://lightbulb"
+                  title="{view-excellence>title}"
+                  description="{view-excellence>owner}"
+                  info="{path:'view-excellence>priority', formatter:'.formatter.recommendationPriorityText'}"
+                  infoState="{path:'view-excellence>priority', formatter:'.formatter.recommendationPriorityState'}"/>
+              </List>
+            </VBox>
+
+            <!-- Action Items full management (Section 19) - same shape again. -->
+            <VBox
+              id="actionItemsPage"
+              visible="{= !!${view-excellence>/selectedProjectID} &amp;&amp; !${view-excellence>/selectedPhaseKey} &amp;&amp; ${view-excellence>/workspaceMode} === 'actionItems' }"
+              binding="{view-excellence>/selectedProject}"
+              class="sapUiResponsiveContentPadding">
+
+              <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="sapUiSmallMarginBottom">
+                <HBox alignItems="Center">
+                  <Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n-excellence>backToOverview}" press=".onBackToOverview"/>
+                  <Title text="{i18n-excellence>actionItemsSectionTitle}" level="H4" class="sapUiTinyMarginBegin"/>
+                </HBox>
+                <Button text="{i18n-excellence>addActionItemButton}" type="Emphasized" icon="sap-icon://add" press=".onAddActionItem"/>
+              </HBox>
+
+              <HBox wrap="Wrap" class="sapUiSmallMarginBottom">
+                <Select
+                  selectedKey="{view-excellence>/actionItemsStatusFilter}"
+                  change=".onActionItemsFilterChange"
+                  class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
+                  width="12rem">
+                  <core:Item key="" text="{i18n-excellence>allStatuses}"/>
+                  <core:Item key="not_started" text="{i18n-excellence>actionStatus.notStarted}"/>
+                  <core:Item key="in_progress" text="{i18n-excellence>actionStatus.inProgress}"/>
+                  <core:Item key="completed" text="{i18n-excellence>actionStatus.completed}"/>
+                  <core:Item key="blocked" text="{i18n-excellence>actionStatus.blocked}"/>
+                </Select>
+                <Select
+                  selectedKey="{view-excellence>/actionItemsPriorityFilter}"
+                  change=".onActionItemsFilterChange"
+                  class="sapUiTinyMarginBottom"
+                  width="12rem">
+                  <core:Item key="" text="{i18n-excellence>allPriorities}"/>
+                  <core:Item key="high" text="{i18n-excellence>priority.high}"/>
+                  <core:Item key="medium" text="{i18n-excellence>priority.medium}"/>
+                  <core:Item key="low" text="{i18n-excellence>priority.low}"/>
+                </Select>
+              </HBox>
+
+              <List
+                id="actionItemsList"
+                items="{path: 'view-excellence>actionItems', templateShareable: false}"
+                noDataText="{i18n-excellence>noActionItemsMatchFilter}"
+                showSeparators="None"
+                class="sapUiNoContentPadding">
+                <StandardListItem
+                  type="Active"
+                  press=".onActionItemPress"
+                  icon="sap-icon://task"
+                  title="{view-excellence>title}"
+                  description="{view-excellence>owner}"
+                  info="{path:'view-excellence>status', formatter:'.formatter.actionStatusText'}"
+                  infoState="{path:'view-excellence>status', formatter:'.formatter.actionStatusState'}"/>
+              </List>
+            </VBox>
+
+            <!-- Lessons Learned full view (Section 20) - view only, plus
+                 Create Knowledge per lesson (frontend-only, see controller). -->
+            <VBox
+              id="lessonsPage"
+              visible="{= !!${view-excellence>/selectedProjectID} &amp;&amp; !${view-excellence>/selectedPhaseKey} &amp;&amp; ${view-excellence>/workspaceMode} === 'lessons' }"
+              binding="{view-excellence>/selectedProject}"
+              class="sapUiResponsiveContentPadding">
+
+              <HBox alignItems="Center" width="100%" class="sapUiSmallMarginBottom">
+                <Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n-excellence>backToOverview}" press=".onBackToOverview"/>
+                <Title text="{i18n-excellence>lessonsSectionTitle}" level="H4" class="sapUiTinyMarginBegin"/>
+              </HBox>
+
+              <List
+                items="{path: 'view-excellence>lessons', templateShareable: false}"
+                noDataText="{i18n-excellence>noLessons}"
+                showSeparators="None"
+                class="sapUiNoContentPadding">
+                <StandardListItem
+                  type="Active"
+                  press=".onLessonPress"
+                  icon="sap-icon://learning-assistant"
+                  title="{view-excellence>title}"
+                  description="{view-excellence>appliesTo}"/>
+              </List>
+            </VBox>
+
+            <!-- Phase detail (Section 10 per-phase content + Section 14
+                 Discussion + Section 21 Evidence) - one generic template
+                 reused for any phase, not 12 hardcoded pages. -->
+            <uxap:ObjectPageLayout
+              id="phaseDetailPage"
+              visible="{= !!${view-excellence>/selectedPhaseKey} }"
+              showTitleInHeaderContent="true"
+              binding="{view-excellence>/selectedPhaseDetail}">
+
+              <uxap:headerTitle>
+                <uxap:ObjectPageDynamicHeaderTitle>
+                  <uxap:heading>
+                    <Title text="{path:'view-excellence>key', formatter:'.formatter.phaseName'}" wrapping="true"/>
+                  </uxap:heading>
+                </uxap:ObjectPageDynamicHeaderTitle>
+              </uxap:headerTitle>
+
+              <uxap:headerContent>
+                <ObjectStatus
+                  icon="{path:'view-excellence>state', formatter:'.formatter.phaseStateIcon'}"
+                  text="{path:'view-excellence>state', formatter:'.formatter.phaseStateText'}"
+                  state="{path:'view-excellence>state', formatter:'.formatter.phaseStateValueState'}"/>
+              </uxap:headerContent>
+
+              <uxap:sections>
+
+                <uxap:ObjectPageSection title="{i18n-excellence>phaseDetailAnalysisTitle}">
+                  <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                      <uxap:blocks>
+                        <Text text="{view-excellence>analysis}" visible="{= !!${view-excellence>analysis} }" class="excellenceArticleText"/>
+                        <Text text="{i18n-excellence>noAnalysisYet}" visible="{= !${view-excellence>analysis} }" class="excellenceMetaText"/>
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                  </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+                <uxap:ObjectPageSection title="{i18n-excellence>evidenceSectionTitle}">
+                  <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                      <uxap:blocks>
+                        <List items="{path:'view-excellence>evidence', templateShareable: false}" noDataText="{i18n-excellence>noEvidence}" showSeparators="None" class="sapUiNoContentPadding">
+                          <StandardListItem icon="sap-icon://attachment" title="{view-excellence>name}"/>
+                        </List>
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                  </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+                <uxap:ObjectPageSection title="{i18n-excellence>discussionSectionTitle}">
+                  <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                      <uxap:blocks>
+                        <List items="{path:'view-excellence>discussion', templateShareable: false}" noDataText="{i18n-excellence>noDiscussion}" showSeparators="None" class="sapUiNoContentPadding">
+                          <StandardListItem
+                            icon="sap-icon://person-placeholder"
+                            title="{view-excellence>author}"
+                            description="{view-excellence>message}"
+                            info="{path:'view-excellence>timestamp', formatter:'.formatter.relativeDateTime'}"
+                            class="excellenceDiscussionCard"/>
+                        </List>
+                        <HBox class="excellenceDiscussionComposer sapUiTinyMarginTop" alignItems="Center" width="100%">
+                          <Input
+                            placeholder="{i18n-excellence>discussionPlaceholder}"
+                            value="{view-excellence>/newDiscussionMessage}"
+                            class="sapUiTinyMarginEnd">
+                            <layoutData>
+                              <FlexItemData growFactor="1" shrinkFactor="1" minWidth="0"/>
+                            </layoutData>
+                          </Input>
+                          <Button text="{i18n-excellence>send}" type="Emphasized" press=".onSendDiscussionMessage"/>
+                        </HBox>
+                      </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                  </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+              </uxap:sections>
+            </uxap:ObjectPageLayout>
+
+            <VBox
+              alignItems="Center" justifyContent="Center"
+              visible="{= !${view-excellence>/selectedProjectID} }"
+              class="excellencePlaceholder sapUiLargeMargin">
+              <core:Icon src="sap-icon://folder" size="3rem" class="excellencePlaceholderIcon sapUiSmallMarginBottom" decorative="true"/>
+              <Title text="{i18n-excellence>selectPhaseTitle}" level="H3"/>
+              <Text text="{i18n-excellence>selectPhaseText}" class="excellenceMetaText sapUiTinyMarginTop" textAlign="Center"/>
+            </VBox>
+
+          </content>
+        </Page>
+      </f:midColumnPages>
+
+      <!-- ============================================================
+           END COLUMN - Members (Section 15) & Activity (Section 16).
+           Reuses the SAME reviewTeam/originalTeam data Overview's Équipe
+           section already shows - one persistent panel, not a duplicated
+           dataset. No role-based visibility filtering yet (Section 22
+           isn't built - this app has no session/role concept of its own
+           to filter by), so every member is shown to every viewer for now.
+           ============================================================ -->
+      <f:endColumnPages>
+        <Page title="{i18n-excellence>teamTitle}" showNavButton="false">
+          <content>
+
+            <IconTabBar
+              visible="{= !!${view-excellence>/selectedProjectID} }"
+              binding="{view-excellence>/selectedProject}"
+              expandable="false"
+              class="sapUiResponsiveContentPadding">
+              <items>
+
+                <IconTabFilter text="{i18n-excellence>teamSectionTitle}" key="team">
+                  <Title text="{i18n-excellence>reviewTeamTitle}" level="H5" class="sapUiTinyMarginBottom"/>
+                  <List items="{path:'view-excellence>reviewTeam', templateShareable: false}" noDataText=" " showSeparators="None" class="sapUiNoContentPadding">
+                    <StandardListItem icon="sap-icon://person-placeholder" title="{view-excellence>name}" description="{view-excellence>role}"/>
+                  </List>
+                  <Title text="{i18n-excellence>originalTeamTitle}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+                  <List items="{path:'view-excellence>originalTeam', templateShareable: false}" noDataText=" " showSeparators="None" class="sapUiNoContentPadding">
+                    <StandardListItem icon="sap-icon://person-placeholder" title="{view-excellence>name}" description="{view-excellence>role}"/>
+                  </List>
+                </IconTabFilter>
+
+                <IconTabFilter text="{i18n-excellence>activityTabTitle}" key="activity">
+                  <List items="{path:'view-excellence>activity', templateShareable: false}" noDataText="{i18n-excellence>noActivity}" showSeparators="None" class="sapUiNoContentPadding">
+                    <StandardListItem
+                      icon="sap-icon://history"
+                      title="{view-excellence>actor}"
+                      description="{view-excellence>description}"
+                      info="{path:'view-excellence>timestamp', formatter:'.formatter.relativeDateTime'}"/>
+                  </List>
+                </IconTabFilter>
+
+              </items>
+            </IconTabBar>
+
+            <VBox
+              alignItems="Center" justifyContent="Center"
+              visible="{= !${view-excellence>/selectedProjectID} }"
+              class="excellencePlaceholder sapUiLargeMargin">
+              <core:Icon src="sap-icon://group" size="3rem" class="excellencePlaceholderIcon sapUiSmallMarginBottom" decorative="true"/>
+              <Title text="{i18n-excellence>teamPlaceholderTitle}" level="H3"/>
+              <Text text="{i18n-excellence>teamPlaceholderText}" class="excellenceMetaText sapUiTinyMarginTop" textAlign="Center"/>
+            </VBox>
+
+          </content>
+        </Page>
+      </f:endColumnPages>
+
+    </f:FlexibleColumnLayout>
+  </App>
+</mvc:View>

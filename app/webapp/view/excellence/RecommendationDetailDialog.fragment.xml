@@ -1,0 +1,42 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{view-excellence>/selectedRecommendation/ID}" contentWidth="32rem" verticalScrolling="true">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <HBox justifyContent="SpaceBetween" alignItems="Center">
+          <ObjectStatus
+            text="{path:'view-excellence>/selectedRecommendation/priority', formatter:'.formatter.recommendationPriorityText'}"
+            state="{path:'view-excellence>/selectedRecommendation/priority', formatter:'.formatter.recommendationPriorityState'}"/>
+          <ObjectStatus
+            text="{path:'view-excellence>/selectedRecommendation/status', formatter:'.formatter.recommendationStatusText'}"
+            state="{path:'view-excellence>/selectedRecommendation/status', formatter:'.formatter.recommendationStatusState'}"/>
+        </HBox>
+
+        <Title text="{view-excellence>/selectedRecommendation/title}" level="H4" wrapping="true" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n-excellence>attrOwner}" text="{view-excellence>/selectedRecommendation/owner}" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n-excellence>targetDateLabel}" text="{path:'view-excellence>/selectedRecommendation/targetDate', formatter:'.formatter.dateMedium'}"/>
+
+        <Title text="{i18n-excellence>descriptionLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedRecommendation/description}"/>
+
+        <Title text="{i18n-excellence>reasonLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedRecommendation/reason}"/>
+
+        <Title text="{i18n-excellence>expectedBenefitLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedRecommendation/expectedBenefit}"/>
+
+        <Title text="{i18n-excellence>relatedFindingLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+          visible="{= !!${view-excellence>/selectedRecommendation/relatedFindingTitle} }"/>
+        <Text text="{view-excellence>/selectedRecommendation/relatedFindingTitle}"
+          visible="{= !!${view-excellence>/selectedRecommendation/relatedFindingTitle} }"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n-excellence>close}" press=".onCloseRecommendationDetail"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

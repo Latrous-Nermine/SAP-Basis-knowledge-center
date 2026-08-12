@@ -1,0 +1,47 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{view-excellence>/selectedFinding/ID}" contentWidth="32rem" verticalScrolling="true">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <HBox justifyContent="SpaceBetween" alignItems="Center">
+          <ObjectStatus
+            text="{path:'view-excellence>/selectedFinding/severity', formatter:'.formatter.findingSeverityText'}"
+            state="{path:'view-excellence>/selectedFinding/severity', formatter:'.formatter.findingSeverityState'}"/>
+          <ObjectStatus
+            text="{path:'view-excellence>/selectedFinding/status', formatter:'.formatter.findingStatusText'}"
+            state="{path:'view-excellence>/selectedFinding/status', formatter:'.formatter.findingStatusState'}"/>
+        </HBox>
+
+        <Title text="{view-excellence>/selectedFinding/title}" level="H4" wrapping="true" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n-excellence>attrCategory}" text="{path:'view-excellence>/selectedFinding/category', formatter:'.formatter.categoryText'}" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n-excellence>attrOwner}" text="{view-excellence>/selectedFinding/owner}"/>
+
+        <Title text="{i18n-excellence>observationLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedFinding/observation}"/>
+
+        <Title text="{i18n-excellence>impactLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedFinding/impact}"/>
+
+        <Title text="{i18n-excellence>rootCauseLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view-excellence>/selectedFinding/rootCause}"/>
+
+        <Title text="{i18n-excellence>contributingFactorsLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+          visible="{path:'view-excellence>/selectedFinding/contributingFactors', formatter:'.formatter.hasItems'}"/>
+        <FormattedText htmlText="{path:'view-excellence>/selectedFinding/contributingFactors', formatter:'.formatter.bulletList'}"
+          visible="{path:'view-excellence>/selectedFinding/contributingFactors', formatter:'.formatter.hasItems'}"/>
+
+        <Title text="{i18n-excellence>relatedRecommendationLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+          visible="{= !!${view-excellence>/selectedFinding/relatedRecommendationTitle} }"/>
+        <Text text="{view-excellence>/selectedFinding/relatedRecommendationTitle}"
+          visible="{= !!${view-excellence>/selectedFinding/relatedRecommendationTitle} }"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n-excellence>close}" press=".onCloseFindingDetail"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

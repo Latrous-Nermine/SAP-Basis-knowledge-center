@@ -1,0 +1,140 @@
+<mvc:View
+  controllerName="aymax.hub.controller.knowledge.KnowledgeDetail"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:uxap="sap.uxap"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showNavButton="true" navButtonPress=".onNavBack">
+    <content>
+
+      <uxap:ObjectPageLayout id="knowledgeObjectPage" showTitleInHeaderContent="true">
+
+        <uxap:headerTitle>
+          <uxap:ObjectPageDynamicHeaderTitle>
+            <uxap:heading>
+              <Title text="{knowledge>title}" wrapping="true"/>
+            </uxap:heading>
+            <uxap:actions>
+              <!-- Submit for review: only action currently implemented. There is
+                   no edit form/route in this app yet, so no Edit button is shown
+                   here - adding one would be a new feature, not a restyle.
+                   ObjectPageLayout keeps this pinned via its own sticky header,
+                   replacing the earlier CSS sticky-toolbar hack. -->
+              <Button
+                text="{i18n-knowledge>submitForReview}"
+                type="Emphasized"
+                press=".onSubmitForReview"
+                visible="{path:'knowledge>status', formatter:'.formatter.canSubmitForReview'}"/>
+            </uxap:actions>
+          </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
+
+        <uxap:headerContent>
+          <HBox wrap="Wrap" class="knowledgeHeaderMeta" alignItems="Center">
+            <ObjectStatus text="{path:'knowledge>category', formatter:'.formatter.categoryLabel'}" state="Information"/>
+            <ObjectStatus
+              visible="{path:'knowledge>status', formatter:'.formatter.isNotApproved'}"
+              text="{path:'knowledge>status', formatter:'.formatter.statusLabel'}"
+              state="{path:'knowledge>status', formatter:'.formatter.statusState'}"/>
+            <ObjectAttribute title="{i18n-knowledge>attrAuthor}" text="{view-knowledge>/contributorsLabel}"/>
+            <ObjectAttribute title="{i18n-knowledge>attrPublished}" text="{path:'knowledge>publishedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
+            <ObjectAttribute title="{i18n-knowledge>attrUpdated}" text="{path:'knowledge>modifiedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
+          </HBox>
+        </uxap:headerContent>
+
+        <uxap:sections>
+
+          <uxap:ObjectPageSection title="{i18n-knowledge>contentTitle}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <!-- The article is the PRIMARY content - deliberately the least
+                       decorated surface on the page, no card framing, so it reads
+                       like a document, not a tile. -->
+                  <Text text="{knowledge>content}" class="knowledgeArticleText"/>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+          <uxap:ObjectPageSection title="{i18n-knowledge>attachmentsTitle}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <List
+                    items="{knowledge>attachments}"
+                    noDataText=" "
+                    showSeparators="None"
+                    class="knowledgeSidePanel sapUiNoContentPadding">
+                    <StandardListItem
+                      icon="sap-icon://attachment"
+                      title="{knowledge>fileName}"
+                      description="{path:'knowledge>fileSize', targetType:'any', formatter:'.formatter.fileSize'}"
+                      type="Active"
+                      press=".onAttachmentPress"/>
+                  </List>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+          <uxap:ObjectPageSection title="{i18n-knowledge>commentsTitle}" visible="{path:'knowledge>status', formatter:'.formatter.canShowComments'}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <List items="{knowledge>comments}" noDataText="{i18n-knowledge>noComments}" showSeparators="None" class="sapUiNoContentPadding">
+                    <StandardListItem
+                      icon="sap-icon://person-placeholder"
+                      title="{knowledge>author_userID}"
+                      description="{knowledge>content}"
+                      info="{path:'knowledge>createdAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"
+                      class="knowledgeCommentCard"/>
+                  </List>
+                  <HBox class="knowledgeCommentComposer sapUiTinyMarginTop" alignItems="Center">
+                    <Input
+                      placeholder="{i18n-knowledge>addCommentPlaceholder}"
+                      value="{view-knowledge>/newCommentText}"
+                      width="100%"
+                      class="sapUiTinyMarginEnd"/>
+                    <Button text="{i18n-knowledge>send}" type="Emphasized" press=".onSubmitComment"/>
+                  </HBox>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+          <uxap:ObjectPageSection title="{i18n-knowledge>contributorsTitle}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <List items="{knowledge>contributors}" noDataText="{i18n-knowledge>noContributors}" showSeparators="None" class="sapUiNoContentPadding">
+                    <StandardListItem
+                      icon="sap-icon://person-placeholder"
+                      title="{knowledge>user_userID}"
+                      description="{path:'knowledge>role', formatter:'.formatter.contributorRoleLabel'}"
+                      class="knowledgeContributorCard"/>
+                  </List>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+          <uxap:ObjectPageSection title="{i18n-knowledge>relatedDocsTitle}" visible="{view-knowledge>/hasRelatedItems}">
+            <uxap:subSections>
+              <uxap:ObjectPageSubSection>
+                <uxap:blocks>
+                  <List items="{view-knowledge>/relatedItems}" noDataText=" " showSeparators="None" class="sapUiNoContentPadding">
+                    <StandardListItem type="Navigation" icon="sap-icon://document-text" title="{view-knowledge>title}" press=".onRelatedItemPress"/>
+                  </List>
+                </uxap:blocks>
+              </uxap:ObjectPageSubSection>
+            </uxap:subSections>
+          </uxap:ObjectPageSection>
+
+        </uxap:sections>
+      </uxap:ObjectPageLayout>
+    </content>
+  </Page>
+</mvc:View>

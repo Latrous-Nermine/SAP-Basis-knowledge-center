@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{i18n-dashboard>timelineDialogTitle}" stretchOnPhone="true" contentWidth="30rem" verticalScrolling="true">
+    <content>
+      <List items="{view-dashboard>/timelineGroups}" showSeparators="None" noDataText="{i18n-dashboard>noTimelineEntries}" class="sapUiContentPadding">
+        <CustomListItem>
+          <VBox class="sapUiSmallMarginBottom">
+            <Text text="{view-dashboard>monthLabel}" class="dashboardTimelineMonthLabel sapUiTinyMarginBottom"/>
+            <List items="{view-dashboard>entries}" showSeparators="None" class="sapUiNoContentPadding">
+              <CustomListItem>
+                <HBox class="dashboardTimelineEntry" alignItems="Start">
+                  <ObjectStatus text="{path:'view-dashboard>points', formatter:'.formatter.plusPoints'}" state="Success" class="sapUiTinyMarginEnd"/>
+                  <Text text="{view-dashboard>label}" wrapping="true" class="dashboardTimelineLabel"/>
+                </HBox>
+              </CustomListItem>
+            </List>
+          </VBox>
+        </CustomListItem>
+      </List>
+    </content>
+    <buttons>
+      <Button text="{i18n-dashboard>close}" press=".onCloseTimelineDialog"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

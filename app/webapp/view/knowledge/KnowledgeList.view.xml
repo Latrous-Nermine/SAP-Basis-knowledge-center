@@ -1,0 +1,79 @@
+<mvc:View
+  controllerName="aymax.hub.controller.knowledge.KnowledgeList"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page title="{i18n-knowledge>pageTitle}" showNavButton="false">
+    <headerContent>
+      <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-knowledge>backToFeed}" press=".onHomePress"/>
+    </headerContent>
+    <content>
+      <!-- Centered, max-width reading column with comfortable margins -
+           per Fiori Horizon guidance, not a full-bleed layout. -->
+      <VBox class="knowledgeContentContainer">
+
+        <VBox class="knowledgeStickyFilters">
+          <!-- Interns are blocked server-side (@restrict on CREATE) - there is
+               no Profile/People service yet to know the caller's role here, so
+               this button stays enabled for everyone; onContribute shows the
+               real 403 if it happens. TODO-INTEGRATION.md I-16. -->
+          <Toolbar>
+            <ToolbarSpacer/>
+            <Button
+              text="{i18n-knowledge>contribute}"
+              type="Emphasized"
+              press=".onContribute"/>
+          </Toolbar>
+
+          <SearchField
+            placeholder="{i18n-knowledge>searchPlaceholder}"
+            liveChange=".onSearch"
+            class="sapUiSmallMarginTop sapUiSmallMarginBottom"/>
+
+          <HBox wrap="Wrap" items="{view-knowledge>/categoryTabs}">
+            <Button
+              text="{view-knowledge>label}"
+              type="{path:'view-knowledge>active', formatter:'.formatter.tabButtonType'}"
+              press=".onCategoryTabPress"
+              class="knowledgeCategoryChip sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+          </HBox>
+        </VBox>
+
+        <List
+          id="knowledgeList"
+          items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors' }, sorter: { path: 'createdAt', descending: true } }"
+          noDataText="{i18n-knowledge>noItems}"
+          showSeparators="None"
+          class="sapUiNoContentPadding">
+          <CustomListItem type="Navigation" press=".onItemPress" class="knowledgeCard">
+            <VBox>
+              <HBox justifyContent="SpaceBetween" alignItems="Center">
+                <ObjectStatus text="{path:'knowledge>category', formatter:'.formatter.categoryLabel'}" state="Information"/>
+                <HBox alignItems="Center">
+                  <ObjectStatus
+                    visible="{path:'knowledge>status', formatter:'.formatter.isNotApproved'}"
+                    text="{path:'knowledge>status', formatter:'.formatter.statusLabel'}"
+                    state="{path:'knowledge>status', formatter:'.formatter.statusState'}"/>
+                  <Button
+                    icon="sap-icon://delete"
+                    type="Transparent"
+                    tooltip="{i18n-knowledge>deleteDraft}"
+                    visible="{path:'knowledge>status', formatter:'.formatter.canSubmitForReview'}"
+                    press=".onDeleteDraft"
+                    class="sapUiTinyMarginBegin"/>
+                </HBox>
+              </HBox>
+              <Title text="{knowledge>title}" wrapping="true" class="sapUiTinyMarginTop"/>
+              <Text text="{knowledge>excerpt}" maxLines="3" class="sapUiTinyMarginTop"/>
+              <Text
+                text="{parts: [{path:'knowledge>contributors'}, {path:'knowledge>createdAt', targetType:'any'}], formatter:'.formatter.metaLine'}"
+                class="sapUiTinyMarginTop"/>
+            </VBox>
+          </CustomListItem>
+        </List>
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

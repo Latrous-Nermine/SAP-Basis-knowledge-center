@@ -1,0 +1,95 @@
+/* Excellence Center - Fiori Horizon layout refinements. Structural only
+   (radius/shadow/spacing) - same values already used across Knowledge/
+   Profile/Dashboard (12px radius, 0 1px 4px shadow) rather than new ones.
+   Colour still comes from ObjectStatus states / CSS vars, never hex. */
+
+.excellenceSidebarPage .sapMPageHeader {
+  border-bottom: 1px solid var(--sapList_BorderColor, #e5e5e5);
+}
+
+.excellenceProjectCard {
+  border-radius: 12px;
+  padding: 16px;
+  margin: 8px 8px 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.excellenceMetaText {
+  opacity: 0.65;
+  font-size: 0.8rem;
+}
+
+.excellenceExpandIcon {
+  opacity: 0.6;
+  font-size: 1rem;
+}
+
+.excellenceProgressText {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.excellenceProgressBar {
+  width: 100%;
+}
+
+/* Indentation is what communicates the project/phase hierarchy (§9/§13 of
+   the design brief) - a left border on the whole nested list groups the
+   phases visually under their project without repeating the border per row. */
+.excellencePhaseList {
+  padding-left: 12px;
+  margin-left: 4px;
+  border-left: 2px solid var(--sapList_BorderColor, #e5e5e5);
+}
+
+.excellencePhaseRow {
+  padding: 6px 4px;
+}
+
+.excellencePlaceholder {
+  text-align: center;
+  min-height: 100%;
+}
+
+.excellencePlaceholderIcon {
+  opacity: 0.35;
+}
+
+/* Project Overview (Section 11) - matches Knowledge Detail's own
+   ObjectPageLayout header-meta gap fix (sapUi*Margin has no container-gap
+   utility), same 12px/16px gap values. */
+.excellenceHeaderMeta {
+  gap: 12px 16px;
+}
+
+.excellenceKpiCard {
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.excellenceComparisonRow {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--sapGroup_ContentBackground, #ffffff);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Phase detail (Section 10/14/21) - same values as Knowledge Detail's
+   article/comment styling, for a consistent "detail page" feel. */
+.excellenceArticleText {
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.excellenceDiscussionCard {
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.excellenceDiscussionComposer {
+  border-top: 1px solid var(--sapList_BorderColor, rgba(0, 0, 0, 0.1));
+  padding-top: 12px;
+}
+

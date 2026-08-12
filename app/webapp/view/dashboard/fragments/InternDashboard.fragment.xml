@@ -1,0 +1,81 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:f="sap.f"
+  xmlns:card="sap.f.cards">
+
+  <VBox visible="{= ${view-dashboard>/role} === 'Intern' }" class="dashboardSectionGap">
+
+    <!-- Overview KPIs already flow through the shared, role-agnostic KPI
+         row above (view-dashboard>/kpis) - TODO-INTEGRATION.md I-09: all 4 are gaps
+         (no internship-duration/reports/files data model exists), so
+         they render as zero there rather than being duplicated here. -->
+
+    <HBox class="dashboardGap16" wrap="Wrap" width="100%">
+      <f:Card class="dashboardCard dashboardQuarterCard">
+
+        <f:layoutData>
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="220px"/>
+
+        </f:layoutData>
+        <f:content>
+          <VBox class="sapUiSmallMargin">
+            <Title text="{i18n-dashboard>quickLinkFeed}" level="H5"/>
+            <Text text="{i18n-dashboard>quickLinkFeedDesc}" class="dashboardMetaText"/>
+            <Link text="{i18n-dashboard>voirTout}" press=".onNavToFeed" class="sapUiTinyMarginTop"/>
+          </VBox>
+        </f:content>
+      </f:Card>
+      <!-- Room Stage / Rapports de stage / Dépôt de projet - Lot 3 pages
+           that don't exist yet (TODO-INTEGRATION.md I-09). Rendered
+           exactly as the design shows them, disabled, no fake link. -->
+      <f:Card class="dashboardCard dashboardQuarterCard dashboardCardDisabled">
+
+        <f:layoutData>
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="220px"/>
+
+        </f:layoutData>
+        <f:content>
+          <VBox class="sapUiSmallMargin">
+            <Title text="{i18n-dashboard>quickLinkRoomStage}" level="H5"/>
+            <Text text="{i18n-dashboard>quickLinkRoomStageDesc}" class="dashboardMetaText"/>
+            <ObjectStatus text="{i18n-dashboard>comingSoon}" state="None" class="sapUiTinyMarginTop"/>
+          </VBox>
+        </f:content>
+      </f:Card>
+      <f:Card class="dashboardCard dashboardQuarterCard dashboardCardDisabled">
+
+        <f:layoutData>
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="220px"/>
+
+        </f:layoutData>
+        <f:content>
+          <VBox class="sapUiSmallMargin">
+            <Title text="{i18n-dashboard>quickLinkReports}" level="H5"/>
+            <Text text="{i18n-dashboard>quickLinkReportsDesc}" class="dashboardMetaText"/>
+            <ObjectStatus text="{i18n-dashboard>comingSoon}" state="None" class="sapUiTinyMarginTop"/>
+          </VBox>
+        </f:content>
+      </f:Card>
+      <f:Card class="dashboardCard dashboardQuarterCard dashboardCardDisabled">
+
+        <f:layoutData>
+
+          <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" minWidth="220px"/>
+
+        </f:layoutData>
+        <f:content>
+          <VBox class="sapUiSmallMargin">
+            <Title text="{i18n-dashboard>quickLinkDeposit}" level="H5"/>
+            <Text text="{i18n-dashboard>quickLinkDepositDesc}" class="dashboardMetaText"/>
+            <ObjectStatus text="{i18n-dashboard>comingSoon}" state="None" class="sapUiTinyMarginTop"/>
+          </VBox>
+        </f:content>
+      </f:Card>
+    </HBox>
+
+  </VBox>
+</core:FragmentDefinition>

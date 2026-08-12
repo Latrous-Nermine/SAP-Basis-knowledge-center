@@ -1,0 +1,38 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{i18n-excellence>addActionItemTitle}" contentWidth="26rem">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <Label text="{i18n-excellence>fieldTitle}" required="true"/>
+        <Input value="{view-excellence>/newActionItem/title}" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n-excellence>attrOwner}"/>
+        <Input value="{view-excellence>/newActionItem/owner}" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n-excellence>prioritySelectLabel}"/>
+        <Select selectedKey="{view-excellence>/newActionItem/priority}" class="sapUiTinyMarginBottom" width="100%">
+          <core:Item key="high" text="{i18n-excellence>priority.high}"/>
+          <core:Item key="medium" text="{i18n-excellence>priority.medium}"/>
+          <core:Item key="low" text="{i18n-excellence>priority.low}"/>
+        </Select>
+
+        <Label text="{i18n-excellence>statusSelectLabel}"/>
+        <Select selectedKey="{view-excellence>/newActionItem/status}" class="sapUiTinyMarginBottom" width="100%">
+          <core:Item key="not_started" text="{i18n-excellence>actionStatus.notStarted}"/>
+          <core:Item key="in_progress" text="{i18n-excellence>actionStatus.inProgress}"/>
+        </Select>
+
+        <Label text="{i18n-excellence>deadlineLabel}"/>
+        <DatePicker value="{path:'view-excellence>/newActionItem/deadline', valueFormat:'yyyy-MM-dd', displayFormat:'medium'}" width="100%"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n-excellence>save}" type="Emphasized" press=".onSaveNewActionItem"/>
+      <Button text="{i18n-excellence>cancel}" press=".onCancelNewActionItem"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

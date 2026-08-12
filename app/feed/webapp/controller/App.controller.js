@@ -71,17 +71,17 @@ sap.ui.define([
 
       if (!sKey || !mRoutes[sKey]) return;
 
-      // Lot 2 modules that exist today are standalone apps (their own
-      // Component.js/router), not routes inside this shared shell yet
-      // (docs/lot2-analysis.md §6.3 - one-app-vs-many is still open) -
-      // full navigation, not router.navTo, until that's resolved.
+      // Lot 2 modules now live in the shared app/webapp (migrated off their
+      // former standalone apps) - still a full navigation, not
+      // router.navTo, since Feed itself remains its own separate app under
+      // this shell's own router.
       if (sKey === "knowledge") {
-        window.location.href = "/knowledge/webapp/index.html";
+        window.location.href = "/webapp/index.html#/knowledge";
         return;
       }
 
       if (sKey === "experts") {
-        window.location.href = "/experts/webapp/index.html";
+        window.location.href = "/webapp/index.html#/experts";
         return;
       }
 
@@ -91,48 +91,32 @@ sap.ui.define([
       }
 
       if (sKey === "dashboard") {
-        window.location.href = "/dashboard/webapp/index.html";
+        window.location.href = "/webapp/index.html#/dashboard";
         return;
       }
 
       if (sKey === "excellenceCenter") {
-        window.location.href = "/excellence-center/webapp/index.html";
+        window.location.href = "/webapp/index.html#/excellence-center";
         return;
       }
 
       this.getOwnerComponent().getRouter().navTo(mRoutes[sKey], {}, true);
     },
 
-    // currentUser.userID (view model) is only populated once
-    // Component.js#_loadCurrentUser()'s async call resolves. Clicking
-    // "Profil" before that finished - or after it silently failed - used
-    // to just do nothing. The cached value is still used when it's already
-    // there (fast path, no behaviour change); otherwise this re-fetches
-    // live instead of leaving the click a no-op, and surfaces a real error
-    // if that fetch fails too.
+    // Navigates bare, no userID resolved here - same approach the shared
+    // app's own navbar "Profil" link uses. Profile.controller.js's own
+    // _onRouteMatched resolves "who am I" via PeopleService's
+    // getMyUserID(), which is what's actually authenticated; resolving it
+    // here first via FeedService's getCurrentUserProfile() was the source
+    // of the "impossible d'ouvrir" bug (that function has no @restrict, so
+    // it silently answers for whichever identity happens to be cached -
+    // or none - instead of the one PeopleService actually knows).
     _navigateToOwnProfile: function() {
-      var oViewModel = this.getOwnerComponent().getModel("view");
-      var sUserID = oViewModel.getProperty("/currentUser/userID");
-
-      if (sUserID) {
-        window.location.href = "/profile/webapp/index.html#/profile/" + encodeURIComponent(sUserID);
-        return;
-      }
-
-      var oContext = this.getOwnerComponent().getModel().bindContext("/getCurrentUserProfile()");
-      oContext.requestObject().then(function(oData) {
-        if (oData && oData.userID) {
-          window.location.href = "/profile/webapp/index.html#/profile/" + encodeURIComponent(oData.userID);
-        } else {
-          MessageToast.show("Impossible d'ouvrir le profil pour le moment");
-        }
-      }).catch(function() {
-        MessageToast.show("Impossible d'ouvrir le profil pour le moment");
-      });
+      window.location.href = "/webapp/index.html#/profile";
     },
 
     onNotificationsPress: function() {
-      window.location.href = "/notifications/webapp/index.html";
+      window.location.href = "/webapp/index.html#/notifications";
     },
 
     onToggleTheme: function() {

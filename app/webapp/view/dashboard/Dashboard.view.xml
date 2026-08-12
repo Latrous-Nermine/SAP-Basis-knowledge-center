@@ -1,0 +1,64 @@
+<mvc:View
+  controllerName="aymax.hub.controller.dashboard.Dashboard"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:card="sap.f.cards"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showNavButton="false" busy="{view-dashboard>/busy}" busyIndicatorDelay="0">
+    <content>
+      <VBox class="dashboardContentContainer">
+
+        <Toolbar class="dashboardHeaderToolbar" height="auto">
+          <VBox class="dashboardGap4">
+            <Title text="{view-dashboard>/title}" level="H2"/>
+            <Text text="{view-dashboard>/subtitle}" class="dashboardSubtitle"/>
+          </VBox>
+          <ToolbarSpacer/>
+          <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-dashboard>backToFeed}" press=".onHomePress"/>
+          <Button text="{i18n-dashboard>refresh}" icon="sap-icon://refresh" press=".onRefresh" tooltip="{i18n-dashboard>refresh}"/>
+        </Toolbar>
+
+        <!-- KPI row - one shared, role-agnostic block. The controller
+             normalises each role's differently-shaped scalar fields into
+             one uniform {label,value,unit,isFirst} array (view-dashboard>/kpis)
+             after getDashboard() resolves, so this markup never changes
+             per role - see Dashboard.controller.js#_buildKpis.
+
+             HBox with flex:1 1 0 tiles (.dashboardKpiTile), NOT
+             GridContainer: every other row on this page uses this exact
+             primitive, which by flexbox definition always fills the full
+             row width - GridContainer's fixed-size auto-fill tiles do
+             not, and were leaving 260-540px of dead space on the right
+             depending on how many KPIs a role has, the single biggest
+             cause of rows not sharing the same right boundary. -->
+        <HBox class="dashboardKpiGrid dashboardGap16" wrap="Wrap" width="100%" items="{view-dashboard>/kpis}">
+          <f:Card class="dashboardKpiCard dashboardKpiTile {= ${view-dashboard>isFirst} ? 'dashboardKpiCardEmphasized' : '' }">
+            <f:layoutData>
+              <FlexItemData growFactor="1" shrinkFactor="1" baseSize="200px" maxWidth="280px"/>
+            </f:layoutData>
+            <f:header>
+              <card:NumericHeader title="{view-dashboard>label}" number="{view-dashboard>value}" unitOfMeasurement="{view-dashboard>unit}" iconSrc="{view-dashboard>icon}" iconVisible="true"/>
+            </f:header>
+          </f:Card>
+        </HBox>
+
+        <MessageStrip
+          visible="{= ${view-dashboard>/role} === 'Intern' }"
+          type="Information"
+          showIcon="true"
+          class="sapUiSmallMarginTop"
+          text="{i18n-dashboard>internBanner}"/>
+
+        <core:Fragment fragmentName="aymax.hub.view.dashboard.fragments.EmployeeDashboard" type="XML"/>
+        <core:Fragment fragmentName="aymax.hub.view.dashboard.fragments.ManagerDashboard" type="XML"/>
+        <core:Fragment fragmentName="aymax.hub.view.dashboard.fragments.HRDashboard" type="XML"/>
+        <core:Fragment fragmentName="aymax.hub.view.dashboard.fragments.AdminDashboard" type="XML"/>
+        <core:Fragment fragmentName="aymax.hub.view.dashboard.fragments.InternDashboard" type="XML"/>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

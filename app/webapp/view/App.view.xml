@@ -1,0 +1,49 @@
+<mvc:View
+  controllerName="aymax.hub.controller.App"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <VBox fitContainer="true">
+    <HBox class="aymaxHeader" alignItems="Center" justifyContent="SpaceBetween">
+      <HBox alignItems="Center">
+        <HBox class="aymaxLogo" alignItems="Center">
+          <Avatar displaySize="XS" initials="A" class="sapUiTinyMarginEnd aymaxLogoAvatar"/>
+          <VBox>
+            <Title text="AYMAX" titleStyle="H5"/>
+            <Text text="knowledge hub" class="aymaxLogoSub"/>
+          </VBox>
+        </HBox>
+
+        <HBox class="aymaxNavLinks sapUiSmallMarginBegin">
+          <Button text="{i18n>navDashboard}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="dashboard"/></customData>
+          </Button>
+          <Button text="{i18n>navFeed}" type="Transparent" press=".onGoToFeed"/>
+          <Button text="{i18n>navNotifications}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="notifications"/></customData>
+          </Button>
+          <Button text="{i18n>navKnowledge}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="knowledge"/></customData>
+          </Button>
+          <Button text="{i18n>navExperts}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="experts"/></customData>
+          </Button>
+          <Button text="{i18n>navProfile}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="profile"/></customData>
+          </Button>
+          <Button text="{i18n>navExcellenceCenter}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="excellenceCenter"/></customData>
+          </Button>
+        </HBox>
+      </HBox>
+    </HBox>
+
+    <!-- Each migrated module's target view gets pushed into this
+         NavContainer by the router; nothing here changes as modules arrive. -->
+    <App>
+      <NavContainer id="appNavContainer"/>
+    </App>
+  </VBox>
+</mvc:View>

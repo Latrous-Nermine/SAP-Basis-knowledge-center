@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{i18n-excellence>addFindingTitle}" contentWidth="28rem">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <Label text="{i18n-excellence>fieldTitle}" required="true"/>
+        <Input value="{view-excellence>/newFinding/title}" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n-excellence>attrCategory}"/>
+        <Select selectedKey="{view-excellence>/newFinding/category}" class="sapUiTinyMarginBottom" width="100%">
+          <core:Item key="financial" text="{i18n-excellence>category.financial}"/>
+          <core:Item key="technical" text="{i18n-excellence>category.technical}"/>
+          <core:Item key="planning" text="{i18n-excellence>category.planning}"/>
+        </Select>
+
+        <Label text="{i18n-excellence>severitySelectLabel}"/>
+        <Select selectedKey="{view-excellence>/newFinding/severity}" class="sapUiTinyMarginBottom" width="100%">
+          <core:Item key="high" text="{i18n-excellence>severity.high}"/>
+          <core:Item key="medium" text="{i18n-excellence>severity.medium}"/>
+          <core:Item key="low" text="{i18n-excellence>severity.low}"/>
+        </Select>
+
+        <Label text="{i18n-excellence>observationLabel}"/>
+        <TextArea value="{view-excellence>/newFinding/observation}" rows="3" width="100%" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n-excellence>impactLabel}"/>
+        <Input value="{view-excellence>/newFinding/impact}" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n-excellence>rootCauseLabel}"/>
+        <TextArea value="{view-excellence>/newFinding/rootCause}" rows="2" width="100%" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n-excellence>attrOwner}"/>
+        <Input value="{view-excellence>/newFinding/owner}"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n-excellence>save}" type="Emphasized" press=".onSaveNewFinding"/>
+      <Button text="{i18n-excellence>cancel}" press=".onCancelNewFinding"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,178 @@
+{
+  "_version": "1.32.0",
+  "sap.app": {
+    "id": "aymax.hub",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "applicationVersion": { "version": "1.0.0" },
+    "dataSources": {
+      "notificationService": {
+        "uri": "/odata/v4/notification/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "knowledgeService": {
+        "uri": "/odata/v4/knowledge/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "peopleService": {
+        "uri": "/odata/v4/people/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "feedService": {
+        "uri": "/odata/v4/feed/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "dashboardService": {
+        "uri": "/odata/v4/dashboard/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      }
+    }
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.f": {},
+        "sap.ui.core": {},
+        "sap.ui.layout": {},
+        "sap.uxap": {},
+        "sap.viz": {}
+      }
+    },
+    "rootView": {
+      "viewName": "aymax.hub.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "aymax.hub.view",
+        "controlId": "appNavContainer",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        { "pattern": ["", "dashboard"], "name": "dashboard", "target": "dashboard" },
+        { "pattern": "notifications", "name": "notifications", "target": "notifications" },
+        { "pattern": ["profile", "profile/{userID}"], "name": "profile", "target": "profile" },
+        { "pattern": "experts", "name": "expertsList", "target": "expertsList" },
+        { "pattern": "knowledge", "name": "knowledgeList", "target": "knowledgeList" },
+        { "pattern": "knowledge/{itemID}", "name": "knowledgeDetail", "target": "knowledgeDetail" },
+        { "pattern": "excellence-center", "name": "excellenceCenter", "target": "excellenceCenter" }
+      ],
+      "targets": {
+        "dashboard": { "viewName": "dashboard.Dashboard", "viewLevel": 1 },
+        "notifications": { "viewName": "notifications.Notifications", "viewLevel": 1 },
+        "profile": { "viewName": "profile.Profile", "viewLevel": 1 },
+        "expertsList": { "viewName": "experts.ExpertsList", "viewLevel": 1 },
+        "knowledgeList": { "viewName": "knowledge.KnowledgeList", "viewLevel": 1 },
+        "knowledgeDetail": { "viewName": "knowledge.KnowledgeDetail", "viewLevel": 2 },
+        "excellenceCenter": { "viewName": "excellence.ExcellenceCenter", "viewLevel": 1 }
+      }
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.i18n" }
+      },
+      "view": { "type": "sap.ui.model.json.JSONModel" },
+
+      "i18n-notifications": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.notifications.i18n" }
+      },
+      "view-notifications": { "type": "sap.ui.model.json.JSONModel" },
+      "notification": {
+        "dataSource": "notificationService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-profile": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.profile.i18n" }
+      },
+      "view-profile": { "type": "sap.ui.model.json.JSONModel" },
+      "people": {
+        "dataSource": "peopleService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "feed": {
+        "dataSource": "feedService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-experts": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.experts.i18n" }
+      },
+      "view-experts": { "type": "sap.ui.model.json.JSONModel" },
+
+      "i18n-knowledge": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.knowledge.i18n" }
+      },
+      "view-knowledge": { "type": "sap.ui.model.json.JSONModel" },
+      "knowledge": {
+        "dataSource": "knowledgeService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-dashboard": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.dashboard.i18n" }
+      },
+      "view-dashboard": { "type": "sap.ui.model.json.JSONModel" },
+      "dashboard": {
+        "dataSource": "dashboardService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-excellence": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.excellence.i18n" }
+      },
+      "view-excellence": { "type": "sap.ui.model.json.JSONModel" }
+    },
+    "resources": {
+      "css": [
+        { "uri": "css/notifications/style.css" },
+        { "uri": "css/profile/style.css" },
+        { "uri": "css/experts/style.css" },
+        { "uri": "css/knowledge/style.css" },
+        { "uri": "css/dashboard/style.css" },
+        { "uri": "css/excellence/style.css" }
+      ]
+    }
+  }
+}

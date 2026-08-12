@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{i18n-profile>timelineDialogTitle}" stretchOnPhone="true" contentWidth="30rem" verticalScrolling="true">
+    <content>
+      <List items="{view-profile>/timelineGroups}" showSeparators="None" noDataText="{i18n-profile>noTimelineEntries}" class="sapUiContentPadding">
+        <CustomListItem>
+          <VBox class="sapUiSmallMarginBottom">
+            <Text text="{view-profile>monthLabel}" class="profileTimelineMonthLabel sapUiTinyMarginBottom"/>
+            <List items="{view-profile>entries}" showSeparators="None" class="sapUiNoContentPadding">
+              <CustomListItem>
+                <HBox class="profileTimelineEntry" alignItems="Start">
+                  <ObjectStatus text="{path:'view-profile>points', formatter:'.formatter.plusPoints'}" state="Success" class="sapUiTinyMarginEnd"/>
+                  <Text text="{view-profile>label}" wrapping="true" class="profileTimelineLabel"/>
+                </HBox>
+              </CustomListItem>
+            </List>
+          </VBox>
+        </CustomListItem>
+      </List>
+    </content>
+    <buttons>
+      <Button text="{i18n-profile>close}" press=".onCloseTimelineDialog"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>
