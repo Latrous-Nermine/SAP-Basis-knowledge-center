@@ -42,6 +42,9 @@
           <Button text="Profil" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="profile"/></customData>
           </Button>
+          <Button text="{i18n>excellenceCenter}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="excellenceCenter"/></customData>
+          </Button>
         </HBox>
       </HBox>
 

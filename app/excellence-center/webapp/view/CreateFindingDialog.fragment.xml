@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{i18n>addFindingTitle}" contentWidth="28rem">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <Label text="{i18n>fieldTitle}" required="true"/>
+        <Input value="{view>/newFinding/title}" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n>attrCategory}"/>
+        <Select selectedKey="{view>/newFinding/category}" class="sapUiTinyMarginBottom" width="100%">
+          <core:Item key="financial" text="{i18n>category.financial}"/>
+          <core:Item key="technical" text="{i18n>category.technical}"/>
+          <core:Item key="planning" text="{i18n>category.planning}"/>
+        </Select>
+
+        <Label text="{i18n>severitySelectLabel}"/>
+        <Select selectedKey="{view>/newFinding/severity}" class="sapUiTinyMarginBottom" width="100%">
+          <core:Item key="high" text="{i18n>severity.high}"/>
+          <core:Item key="medium" text="{i18n>severity.medium}"/>
+          <core:Item key="low" text="{i18n>severity.low}"/>
+        </Select>
+
+        <Label text="{i18n>observationLabel}"/>
+        <TextArea value="{view>/newFinding/observation}" rows="3" width="100%" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n>impactLabel}"/>
+        <Input value="{view>/newFinding/impact}" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n>rootCauseLabel}"/>
+        <TextArea value="{view>/newFinding/rootCause}" rows="2" width="100%" class="sapUiTinyMarginBottom"/>
+
+        <Label text="{i18n>attrOwner}"/>
+        <Input value="{view>/newFinding/owner}"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n>save}" type="Emphasized" press=".onSaveNewFinding"/>
+      <Button text="{i18n>cancel}" press=".onCancelNewFinding"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

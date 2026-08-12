@@ -13,7 +13,8 @@ sap.ui.define([
     "tags": "tags",
     "topics": "topics",
     "experts": "experts",
-    "profile": "profile"
+    "profile": "profile",
+    "excellenceCenter": "excellenceCenter"
   };
 
   var mRoleLabels = {
@@ -91,6 +92,11 @@ sap.ui.define([
 
       if (sKey === "dashboard") {
         window.location.href = "/dashboard/webapp/index.html";
+        return;
+      }
+
+      if (sKey === "excellenceCenter") {
+        window.location.href = "/excellence-center/webapp/index.html";
         return;
       }
 

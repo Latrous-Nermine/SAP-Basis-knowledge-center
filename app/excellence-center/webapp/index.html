@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AYMAX Knowledge Hub — Centre d'excellence</title>
+    <style>
+      html, body { height: 100%; margin: 0; padding: 0; }
+      /* Same height-chain requirement as Knowledge/Notifications' index.html -
+         sap.f.FlexibleColumnLayout also needs a real (non-auto) height at
+         every ancestor level to size itself, not just DynamicPage. */
+      #content, #content > div { height: 100%; }
+      .sapUiComponentContainer, .sapUiComponentContainer > div { height: 100%; }
+    </style>
+    <script id="sap-ui-bootstrap"
+        src="https://sapui5.hana.ondemand.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-resourceroots='{"aymax.excellencecenter": "./"}'
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-async="true"
+        data-sap-ui-frameOptions="trusted"
+        data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
+    </script>
+</head>
+<body class="sapUiBody" id="content">
+    <div data-sap-ui-component
+         data-name="aymax.excellencecenter"
+         data-id="container"
+         data-settings='{"id" : "excellencecenter"}'>
+    </div>
+</body>
+</html>

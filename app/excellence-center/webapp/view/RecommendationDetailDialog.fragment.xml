@@ -1,0 +1,42 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{view>/selectedRecommendation/ID}" contentWidth="32rem" verticalScrolling="true">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <HBox justifyContent="SpaceBetween" alignItems="Center">
+          <ObjectStatus
+            text="{path:'view>/selectedRecommendation/priority', formatter:'.formatter.recommendationPriorityText'}"
+            state="{path:'view>/selectedRecommendation/priority', formatter:'.formatter.recommendationPriorityState'}"/>
+          <ObjectStatus
+            text="{path:'view>/selectedRecommendation/status', formatter:'.formatter.recommendationStatusText'}"
+            state="{path:'view>/selectedRecommendation/status', formatter:'.formatter.recommendationStatusState'}"/>
+        </HBox>
+
+        <Title text="{view>/selectedRecommendation/title}" level="H4" wrapping="true" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n>attrOwner}" text="{view>/selectedRecommendation/owner}" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n>targetDateLabel}" text="{path:'view>/selectedRecommendation/targetDate', formatter:'.formatter.dateMedium'}"/>
+
+        <Title text="{i18n>descriptionLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedRecommendation/description}"/>
+
+        <Title text="{i18n>reasonLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedRecommendation/reason}"/>
+
+        <Title text="{i18n>expectedBenefitLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedRecommendation/expectedBenefit}"/>
+
+        <Title text="{i18n>relatedFindingLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+          visible="{= !!${view>/selectedRecommendation/relatedFindingTitle} }"/>
+        <Text text="{view>/selectedRecommendation/relatedFindingTitle}"
+          visible="{= !!${view>/selectedRecommendation/relatedFindingTitle} }"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n>close}" press=".onCloseRecommendationDetail"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

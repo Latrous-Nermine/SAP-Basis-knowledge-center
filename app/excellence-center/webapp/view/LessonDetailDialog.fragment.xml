@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{view>/selectedLesson/ID}" contentWidth="32rem" verticalScrolling="true">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <Title text="{view>/selectedLesson/title}" level="H4" wrapping="true"/>
+        <ObjectAttribute title="{i18n>appliesToLabel}" text="{view>/selectedLesson/appliesTo}" class="sapUiTinyMarginTop"/>
+
+        <Title text="{i18n>whatHappenedLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedLesson/whatHappened}"/>
+
+        <Title text="{i18n>whyItHappenedLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedLesson/whyItHappened}"/>
+
+        <Title text="{i18n>whatWeLearnedLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedLesson/whatWeLearned}"/>
+
+        <Title text="{i18n>whatShouldChangeLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedLesson/whatShouldChange}"/>
+
+        <Title text="{i18n>relatedRecommendationLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+          visible="{= !!${view>/selectedLesson/recommendation} }"/>
+        <Text text="{view>/selectedLesson/recommendation}"
+          visible="{= !!${view>/selectedLesson/recommendation} }"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n>createKnowledgeButton}" type="Emphasized" icon="sap-icon://add-document" press=".onCreateKnowledge"/>
+      <Button text="{i18n>close}" press=".onCloseLessonDetail"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

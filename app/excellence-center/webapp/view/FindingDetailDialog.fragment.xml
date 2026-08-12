@@ -1,0 +1,47 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{view>/selectedFinding/ID}" contentWidth="32rem" verticalScrolling="true">
+    <content>
+      <VBox class="sapUiContentPadding">
+
+        <HBox justifyContent="SpaceBetween" alignItems="Center">
+          <ObjectStatus
+            text="{path:'view>/selectedFinding/severity', formatter:'.formatter.findingSeverityText'}"
+            state="{path:'view>/selectedFinding/severity', formatter:'.formatter.findingSeverityState'}"/>
+          <ObjectStatus
+            text="{path:'view>/selectedFinding/status', formatter:'.formatter.findingStatusText'}"
+            state="{path:'view>/selectedFinding/status', formatter:'.formatter.findingStatusState'}"/>
+        </HBox>
+
+        <Title text="{view>/selectedFinding/title}" level="H4" wrapping="true" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n>attrCategory}" text="{path:'view>/selectedFinding/category', formatter:'.formatter.categoryText'}" class="sapUiTinyMarginTop"/>
+        <ObjectAttribute title="{i18n>attrOwner}" text="{view>/selectedFinding/owner}"/>
+
+        <Title text="{i18n>observationLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedFinding/observation}"/>
+
+        <Title text="{i18n>impactLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedFinding/impact}"/>
+
+        <Title text="{i18n>rootCauseLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+        <Text text="{view>/selectedFinding/rootCause}"/>
+
+        <Title text="{i18n>contributingFactorsLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+          visible="{path:'view>/selectedFinding/contributingFactors', formatter:'.formatter.hasItems'}"/>
+        <FormattedText htmlText="{path:'view>/selectedFinding/contributingFactors', formatter:'.formatter.bulletList'}"
+          visible="{path:'view>/selectedFinding/contributingFactors', formatter:'.formatter.hasItems'}"/>
+
+        <Title text="{i18n>relatedRecommendationLabel}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+          visible="{= !!${view>/selectedFinding/relatedRecommendationTitle} }"/>
+        <Text text="{view>/selectedFinding/relatedRecommendationTitle}"
+          visible="{= !!${view>/selectedFinding/relatedRecommendationTitle} }"/>
+
+      </VBox>
+    </content>
+    <buttons>
+      <Button text="{i18n>close}" press=".onCloseFindingDetail"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>
