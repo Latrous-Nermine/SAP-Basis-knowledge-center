@@ -31,16 +31,34 @@ service KnowledgeService {
     relatedItems : redirected to KnowledgeRelations
   };
 
+  // Each of these four is a detail table of KnowledgeItems (item_ID FK) -
+  // without its own @restrict, it was directly queryable by any
+  // authenticated user regardless of the parent item's status/confidentiality,
+  // silently defeating the READ rule above via a hand-crafted URL to the
+  // sub-entity instead of KnowledgeItems itself. Same where clause, walked
+  // through the `item` association.
   @readonly
+  @restrict: [
+    { grant: 'READ', where: 'item.status = ''approved'' or exists item.contributors[user_userID = $user.id]' }
+  ]
   entity KnowledgeContributors as projection on kh.KnowledgeContributors;
 
   @readonly
+  @restrict: [
+    { grant: 'READ', where: 'item.status = ''approved'' or exists item.contributors[user_userID = $user.id]' }
+  ]
   entity KnowledgeItemTags as projection on kh.KnowledgeItemTags;
 
   @readonly
+  @restrict: [
+    { grant: 'READ', where: 'item.status = ''approved'' or exists item.contributors[user_userID = $user.id]' }
+  ]
   entity KnowledgeAttachments as projection on kh.KnowledgeAttachments;
 
   @readonly
+  @restrict: [
+    { grant: 'READ', where: 'item.status = ''approved'' or exists item.contributors[user_userID = $user.id]' }
+  ]
   entity KnowledgeRelations as projection on kh.KnowledgeRelations;
 
   @readonly

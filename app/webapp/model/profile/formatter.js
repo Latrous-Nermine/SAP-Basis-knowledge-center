@@ -20,8 +20,8 @@ sap.ui.define([
     Intern: "role.intern"
   };
 
-  // Same three states as the Experts module's formatter (app/experts/webapp/
-  // model/formatter.js) - kept in sync by hand since no shared library
+  // Same three states as the Experts module's formatter (app/webapp/model/
+  // experts/formatter.js) - kept in sync by hand since no shared library
   // exists yet (docs/lot2-analysis.md §6.3, still open).
   var AVAILABILITY_META = {
     available:   { key: "availability.available",   state: "Success" },
