@@ -48,10 +48,19 @@
             <VBox>
               <HBox justifyContent="SpaceBetween" alignItems="Center">
                 <ObjectStatus text="{path:'category', formatter:'.formatter.categoryLabel'}" state="Information"/>
-                <ObjectStatus
-                  visible="{path:'status', formatter:'.formatter.isNotApproved'}"
-                  text="{path:'status', formatter:'.formatter.statusLabel'}"
-                  state="{path:'status', formatter:'.formatter.statusState'}"/>
+                <HBox alignItems="Center">
+                  <ObjectStatus
+                    visible="{path:'status', formatter:'.formatter.isNotApproved'}"
+                    text="{path:'status', formatter:'.formatter.statusLabel'}"
+                    state="{path:'status', formatter:'.formatter.statusState'}"/>
+                  <Button
+                    icon="sap-icon://delete"
+                    type="Transparent"
+                    tooltip="{i18n>deleteDraft}"
+                    visible="{path:'status', formatter:'.formatter.canSubmitForReview'}"
+                    press=".onDeleteDraft"
+                    class="sapUiTinyMarginBegin"/>
+                </HBox>
               </HBox>
               <Title text="{title}" wrapping="true" class="sapUiTinyMarginTop"/>
               <Text text="{excerpt}" maxLines="3" class="sapUiTinyMarginTop"/>

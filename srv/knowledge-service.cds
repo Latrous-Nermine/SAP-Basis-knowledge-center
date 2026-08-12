@@ -20,6 +20,7 @@ service KnowledgeService {
   @restrict: [
     { grant: 'READ',              where: 'status = ''approved'' or exists contributors[user_userID = $user.id]' },
     { grant: ['CREATE', 'UPDATE'], to: ['Employee', 'DepartmentManager', 'Admin'] },
+    { grant: 'DELETE', where: 'status = ''draft'' and exists contributors[user_userID = $user.id]' },
     { grant: 'DELETE',             to: ['Admin'] }
   ]
   entity KnowledgeItems as projection on kh.KnowledgeItems {

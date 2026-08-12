@@ -114,6 +114,27 @@ sap.ui.define([
       }.bind(this)).catch(function() {
         MessageBox.error(this.getText("errorCreate"));
       }.bind(this));
+    },
+
+    // Visible only on drafts (see formatter.canSubmitForReview) - the
+    // @restrict DELETE rule in knowledge-service.cds is the real guard,
+    // this is just the matching affordance.
+    onDeleteDraft: function(oEvent) {
+      var oContext = oEvent.getSource().getBindingContext();
+      var sTitle = oContext.getProperty("title");
+
+      MessageBox.confirm(this.getText("deleteDraftConfirmText", [sTitle]), {
+        title: this.getText("deleteDraftConfirmTitle"),
+        onClose: function(sAction) {
+          if (sAction !== MessageBox.Action.OK) return;
+
+          oContext.delete().then(function() {
+            MessageToast.show(this.getText("draftDeleted"));
+          }.bind(this)).catch(function() {
+            MessageBox.error(this.getText("errorDeleteDraft"));
+          }.bind(this));
+        }.bind(this)
+      });
     }
   });
 });
