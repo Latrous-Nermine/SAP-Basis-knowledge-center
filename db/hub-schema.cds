@@ -6,14 +6,17 @@ using { aymax.db.Employees } from './schema';
 /* ──────────────── SOCIAL FEED ──────────────── */
 
 entity Posts : cuid, managed {
-  title    : String(250);
-  content  : LargeString;
-  author   : Association to Employees;
-  room     : Association to Rooms;
-  likes    : Composition of many Likes on likes.post = $self;
-  comments : Composition of many Comments on comments.post = $self;
-  tags     : Composition of many Tags on tags.post = $self;
-  docs     : Composition of many PostDocuments on docs.post = $self;
+  title       : String(250);
+  content     : LargeString;
+  type        : String(20) enum { knowledge; question; } default 'knowledge';
+  status      : String(20) enum { draft; published; } default 'published';
+  shareCount  : Integer default 0;
+  author      : Association to Employees;
+  room        : Association to Rooms;
+  likes       : Composition of many Likes on likes.post = $self;
+  comments    : Composition of many Comments on comments.post = $self;
+  tags        : Composition of many Tags on tags.post = $self;
+  docs        : Composition of many PostDocuments on docs.post = $self;
 }
 
 entity UserProfiles : cuid {
@@ -28,10 +31,11 @@ entity Tags : cuid {
 }
 
 entity Rooms : cuid {
-  name        : String(100);
-  description : String(250);
-  isPrivate   : Boolean default false;
-  posts       : Association to many Posts on posts.room = $self;
+  name           : String(100);
+  description    : String(250);
+  isPrivate      : Boolean default false;
+  followersCount : Integer default 0;
+  posts          : Association to many Posts on posts.room = $self;
 }
 
 entity Comments : cuid, managed {
@@ -48,5 +52,7 @@ entity Likes : cuid {
 entity PostDocuments : cuid {
   post : Association to Posts;
   name : String(200);
+  size : String(20);   // display string, e.g. "2.4 MB"
+  type : String(10);   // pdf, zip, doc, docx, png, jpg...
   url  : String;
 }

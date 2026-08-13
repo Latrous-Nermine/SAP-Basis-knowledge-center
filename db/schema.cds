@@ -95,8 +95,10 @@ entity ValidationCounts {
 /* ──────────────── Rewards ──────────────── */
 
 entity Rewards : cuid {
-  name   : String(120);
-  points : Integer;
+  name     : String(120);
+  points   : Integer;
+  category : String(60);
+  icon     : String(60);   // sap-icon:// URI
 }
 
 /* ──────────────── Rapports de stage ──────────────── */

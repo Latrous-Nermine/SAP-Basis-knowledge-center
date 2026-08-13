@@ -32,7 +32,7 @@
         <f:actions>
           <SearchField width="320px" placeholder="Rechercher..." search=".onSearch"/>
           <Button icon="sap-icon://bell" type="Transparent"/>
-          <Avatar src="{view>/currentUser/avatarUrl}" displaySize="S"/>
+          <Avatar src="{path:'view>/currentUser/displayName', formatter:'.formatAvatar'}" displaySize="S"/>
         </f:actions>
       </f:DynamicPageTitle>
     </f:title>
@@ -46,9 +46,9 @@
           
           <Panel class="aymaxProfileCard">
             <VBox alignItems="Center" class="sapUiMediumMarginBottom">
-              <Avatar 
-                src="{view>/currentUser/avatarUrl}" 
-                displaySize="XL" 
+              <Avatar
+                src="{path:'view>/currentUser/displayName', formatter:'.formatAvatar'}"
+                displaySize="XL"
                 class="sapUiMediumMarginBottom"/>
               <Title text="{view>/currentUser/displayName}" level="H3"/>
               <Text text="{view>/currentUser/jobTitle} · {view>/currentUser/department}"/>
@@ -87,7 +87,7 @@
           <!-- Champ de publication -->
           <Panel class="aymaxPostCreator">
             <HBox alignItems="Start">
-              <Avatar src="{view>/currentUser/avatarUrl}" displaySize="S" class="sapUiSmallMarginEnd"/>
+              <Avatar src="{path:'view>/currentUser/displayName', formatter:'.formatAvatar'}" displaySize="S" class="sapUiSmallMarginEnd"/>
               <VBox width="100%">
                 <TextArea 
                   value="{view>/postText}" 
@@ -119,9 +119,9 @@
           </OverflowToolbar>
 
           <!-- Liste des Posts -->
-          <List 
-            id="feedList" 
-            items="{path:'/Posts', parameters:{$expand:'author,tags,comments,documents'}}"
+          <List
+            id="feedList"
+            items="{path:'/Posts', parameters:{$expand:'author,tags,comments,docs'}, sorter:{path:'createdAt', descending:true}}"
             growing="true" 
             growingThreshold="10"
             busyIndicatorDelay="0">
@@ -130,13 +130,13 @@
                 
                 <!-- Header Post -->
                 <HBox alignItems="Center" class="sapUiSmallMarginBottom">
-                  <Avatar src="{author/avatarUrl}" displaySize="S" class="sapUiSmallMarginEnd"/>
+                  <Avatar src="{path:'author/name', formatter:'.formatAvatar'}" displaySize="S" class="sapUiSmallMarginEnd"/>
                   <VBox>
                     <HBox>
-                      <Title text="{author/displayName}" level="H5"/>
+                      <Title text="{author/name}" level="H5"/>
                       <Text text="{author/jobTitle}" class="sapUiTinyMarginBegin"/>
                     </HBox>
-                    <Text text="{path:'createdAt', formatter:'.formatDate'}" class="aymaxMetaText"/>
+                    <Text text="{createdAt}" class="aymaxMetaText"/>
                   </VBox>
                   <ToolbarSpacer/>
                   <Button icon="sap-icon://overflow" type="Transparent"/>
@@ -146,18 +146,18 @@
                 <Text text="{content}" class="sapUiSmallMarginBottom aymaxPostContent" wrapping="true"/>
 
                 <!-- Tags -->
-                <HBox wrap="Wrap" visible="{= ${tags}.length > 0}" class="sapUiTinyMarginBottom">
+                <HBox wrap="Wrap" class="sapUiTinyMarginBottom">
                   <Tokenizer tokens="{path:'tags', templateShareable:'false'}">
-                    <Token text="{tag/name}" class="aymaxTag"/>
+                    <Token text="{name}" class="aymaxTag"/>
                   </Tokenizer>
                 </HBox>
 
                 <!-- Documents joints -->
-                <List items="{path:'documents', templateShareable:'false'}" visible="{= ${documents}.length > 0}" showSeparators="None" class="sapUiTinyMarginBottom">
-                  <StandardListItem 
-                    title="{fileName}" 
-                    description="{path:'fileSize', formatter:'.formatFileSize'}"
-                    icon="{path:'fileType', formatter:'.formatFileIcon'}"
+                <List items="{path:'docs', templateShareable:'false'}" showNoData="false" showSeparators="None" class="sapUiTinyMarginBottom">
+                  <StandardListItem
+                    title="{name}"
+                    description="{size}"
+                    icon="{path:'type', formatter:'.formatFileIcon'}"
                     type="Active"/>
                 </List>
 
@@ -176,15 +176,15 @@
                 </HBox>
 
                 <!-- Commentaires -->
-                <VBox visible="{= ${commentCount} > 0}" class="aymaxCommentsSection sapUiSmallMarginTop">
+                <VBox visible="{path:'commentCount', formatter:'.formatHasComments', targetType:'any'}" class="aymaxCommentsSection sapUiSmallMarginTop">
                   <List items="{path:'comments', templateShareable:'false'}" showSeparators="None" class="sapUiNoContentPadding">
                     <CustomListItem>
                       <HBox class="sapUiTinyMarginTop">
-                        <Avatar src="{author/avatarUrl}" displaySize="XS" class="sapUiTinyMarginEnd"/>
+                        <Avatar src="{path:'author/name', formatter:'.formatAvatar'}" displaySize="XS" class="sapUiTinyMarginEnd"/>
                         <VBox>
                           <HBox>
-                            <Text text="{author/displayName}" class="aymaxCommentAuthor"/>
-                            <Text text="{path:'createdAt', formatter:'.formatDate'}" class="aymaxMetaText sapUiTinyMarginBegin"/>
+                            <Text text="{author/name}" class="aymaxCommentAuthor"/>
+                            <Text text="{createdAt}" class="aymaxMetaText sapUiTinyMarginBegin"/>
                           </HBox>
                           <Text text="{content}" wrapping="true"/>
                         </VBox>
@@ -193,8 +193,8 @@
                   </List>
                   
                   <HBox class="sapUiSmallMarginTop" alignItems="Center">
-                    <Avatar src="{view>/currentUser/avatarUrl}" displaySize="XS" class="sapUiTinyMarginEnd"/>
-                    <Input 
+                    <Avatar src="{path:'view>/currentUser/displayName', formatter:'.formatAvatar'}" displaySize="XS" class="sapUiTinyMarginEnd"/>
+                    <Input
                       placeholder="Ajouter un commentaire..." 
                       submit=".onAddComment"
                       width="100%"/>
@@ -213,7 +213,7 @@
             <List items="{/UserProfiles}" showSeparators="None">
               <CustomListItem>
                 <HBox alignItems="Center" class="sapUiTinyMarginBottom">
-                  <Avatar src="{avatarUrl}" displaySize="S" class="sapUiTinyMarginEnd"/>
+                  <Avatar src="{path:'displayName', formatter:'.formatAvatar'}" displaySize="S" class="sapUiTinyMarginEnd"/>
                   <VBox>
                     <Title text="{displayName}" level="H6"/>
                     <Text text="{jobTitle}" class="aymaxMetaText"/>

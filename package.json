@@ -13,23 +13,27 @@
     "@cap-js/sqlite": "^3.0.2",
     "@sap/cds-dk": "^10",
     "@ui5/cli": "^4.0.59",
-    "sqlite3": "^6.0.1"
+    "sql.js": "^1.13.0"
   },
   "scripts": {
     "start": "cds-serve"
   },
- "cds": {
-  "requires": {
-    "[development]": {
-      "db": {
-        "kind": "sqlite",
-        "credentials": { "url": "db/aymax.db" }
+  "cds": {
+    "requires": {
+      "[development]": {
+        "db": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": "db/aymax.db"
+          }
+        }
+      },
+      "[production]": {
+        "auth": "xsuaa",
+        "db": {
+          "kind": "hana"
+        }
       }
-    },
-    "[production]": {
-      "auth": "xsuaa",
-      "db": { "kind": "hana" }
     }
   }
-}
 }

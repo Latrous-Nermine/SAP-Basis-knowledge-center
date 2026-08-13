@@ -1,0 +1,5 @@
+ID;name;description;isPrivate;followersCount
+rm000001-0000-4000-8000-000000000001;SAP BTP & Cloud;Discussions autour de la plateforme cloud SAP BTP et de ses services.;false;34
+rm000001-0000-4000-8000-000000000002;HANA Cloud Migration;Retours d'expérience sur les migrations vers HANA Cloud.;false;21
+rm000001-0000-4000-8000-000000000003;CI/CD & DevOps;Bonnes pratiques d'intégration et de déploiement continu.;false;18
+rm000001-0000-4000-8000-000000000004;Stagiaires;Espace d'échange dédié aux stagiaires du Knowledge Hub.;true;9

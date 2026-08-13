@@ -1,0 +1,5 @@
+ID;post_ID;author_ID;content;createdAt;modifiedAt
+cm000001-0000-4000-8000-000000000001;po000001-0000-4000-8000-000000000001;53e87c61-c776-4b02-874d-a8992d9ef1a5;Merci pour le retour, très utile pour notre migration prévue le mois prochain !;2026-08-09T10:05:00Z;2026-08-09T10:05:00Z
+cm000001-0000-4000-8000-000000000002;po000001-0000-4000-8000-000000000001;d733ace2-e2d1-4828-98db-30a3fc65361b;Vous avez rencontré des soucis avec les vues CDS existantes lors de la bascule ?;2026-08-09T11:40:00Z;2026-08-09T11:40:00Z
+cm000001-0000-4000-8000-000000000003;po000001-0000-4000-8000-000000000002;7f40bd13-49ae-465b-9123-6e45a13aff5a;On applique déjà 3 de ces pratiques, merci pour les 2 autres, ça manquait à notre pipeline.;2026-08-09T15:10:00Z;2026-08-09T15:10:00Z
+cm000001-0000-4000-8000-000000000004;po000001-0000-4000-8000-000000000005;b3494d32-704e-4bda-b3b7-50169e77705d;Excellente check-list, je l'ajoute à notre documentation interne.;2026-08-11T17:00:00Z;2026-08-11T17:00:00Z
