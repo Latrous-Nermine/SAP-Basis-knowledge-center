@@ -29,7 +29,7 @@ export const NOTIFICATION_TYPES = [
 ];
 
 export const NOTIFICATION_SOURCES = [
-  'POST', 'COMMENT', 'ROOM', 'BADGE', 'CERTIFICATION', 'USER', 'SYSTEM',
+  'POST', 'COMMENT', 'ROOM', 'BADGE', 'CERTIFICATION', 'USER', 'SYSTEM', 'KNOWLEDGE',
 ];
 
 /** Types that should stand out in the UI. Everything else is INFO. */

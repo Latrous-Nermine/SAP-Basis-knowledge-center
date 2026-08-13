@@ -1,8 +1,9 @@
 <core:FragmentDefinition
   xmlns="sap.m"
-  xmlns:core="sap.ui.core">
+  xmlns:core="sap.ui.core"
+  xmlns:u="sap.ui.unified">
 
-  <Dialog title="{i18n-knowledge>contribute}" contentWidth="32rem" verticalScrolling="false">
+  <Dialog title="{i18n-knowledge>contribute}" contentWidth="32rem" verticalScrolling="true" busy="{view-knowledge>/newItem/uploading}">
     <content>
       <VBox class="sapUiContentPadding">
         <Label text="{i18n-knowledge>fieldTitle}" labelFor="newItemTitle" class="sapUiTinyMarginBottom"/>
@@ -25,7 +26,42 @@
         <Input id="newItemExcerpt" value="{view-knowledge>/newItem/excerpt}" width="100%" class="sapUiSmallMarginBottom"/>
 
         <Label text="{i18n-knowledge>fieldContent}" labelFor="newItemContent" class="sapUiTinyMarginBottom"/>
-        <TextArea id="newItemContent" value="{view-knowledge>/newItem/content}" rows="7" width="100%"/>
+        <TextArea id="newItemContent" value="{view-knowledge>/newItem/content}" rows="7" width="100%" class="sapUiSmallMarginBottom"/>
+
+        <Label text="{i18n-knowledge>fieldAttachments}" labelFor="newItemAttachments" class="sapUiTinyMarginBottom"/>
+        <!-- Manual mode: no uploadUrl, so nothing auto-uploads on selection -
+             this only grabs File objects. The real upload (metadata CREATE +
+             stream PUT) only happens after the item itself exists, in
+             onSaveNewItem, since an attachment always needs a real item_ID. -->
+        <u:FileUploader
+          id="newItemAttachments"
+          multiple="true"
+          fileType="pdf,docx,xlsx,pptx,png,jpg,jpeg"
+          mimeType="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/png,image/jpeg"
+          buttonText="{i18n-knowledge>chooseFile}"
+          placeholder="{i18n-knowledge>chooseFilePlaceholder}"
+          change=".onAttachmentFilesSelected"
+          width="100%"
+          class="sapUiTinyMarginBottom"/>
+
+        <List
+          items="{view-knowledge>/newItem/pendingAttachments}"
+          noDataText=" "
+          showSeparators="None"
+          class="sapUiNoContentPadding">
+          <CustomListItem>
+            <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiTinyMargin">
+              <HBox alignItems="Center">
+                <core:Icon src="sap-icon://attachment" class="sapUiTinyMarginEnd"/>
+                <VBox>
+                  <Text text="{view-knowledge>fileName}"/>
+                  <Text text="{path:'view-knowledge>fileSize', formatter:'.formatter.fileSize'}" class="knowledgeCardMeta"/>
+                </VBox>
+              </HBox>
+              <Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n-knowledge>removeAttachment}" press=".onRemovePendingAttachment"/>
+            </HBox>
+          </CustomListItem>
+        </List>
       </VBox>
     </content>
     <beginButton>

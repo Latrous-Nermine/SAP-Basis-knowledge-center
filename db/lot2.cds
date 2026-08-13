@@ -62,7 +62,7 @@ type NotificationType : String(30) enum {
 }
 
 type NotificationSource : String(20) enum {
-  POST; COMMENT; ROOM; BADGE; CERTIFICATION; USER; SYSTEM;
+  POST; COMMENT; ROOM; BADGE; CERTIFICATION; USER; SYSTEM; KNOWLEDGE;
 }
 
 type NotificationSeverity : String(10) enum {
@@ -156,6 +156,21 @@ entity KnowledgeItems : cuid, managed {
   publishedAt     : Timestamp;
   viewCount       : Integer64 default 0;
 
+  /** Denormalised vote totals, kept in sync transactionally by the vote
+      action (never computed on read) - same tradeoff already made for
+      Rooms.followersCount/Topics.articleCount/UserProfiles.reputation:
+      ranking needs a real, orderable column, not a value that only
+      exists after the row is already fetched.
+      netScore IS also stored, not computed in the ORDER BY: standard
+      OData $orderby has no expression syntax (only property paths), and
+      sorting by upvoteCount/downvoteCount as two separate keys is NOT
+      the same as sorting by (upvotes - downvotes) - a 10up/8down item
+      would wrongly outrank a 5up/0down one. Kept in sync alongside the
+      two counters in the same transaction, never independently. */
+  upvoteCount     : Integer default 0;
+  downvoteCount   : Integer default 0;
+  netScore        : Integer default 0;
+
   /** Set together when promoteQuestion() creates this row from a
       solved Question (Lot 3, not built yet - TODO-INTEGRATION.md I-07).
       fromQuestion drives the mock's checkmark icon; sourceQuestionID is
@@ -168,6 +183,8 @@ entity KnowledgeItems : cuid, managed {
   contributors    : Composition of many KnowledgeContributors on contributors.item = $self;
   attachments     : Composition of many KnowledgeAttachments on attachments.item = $self;
   relatedItems    : Composition of many KnowledgeRelations   on relatedItems.item = $self;
+  votes           : Composition of many KnowledgeVotes       on votes.item = $self;
+  contributions   : Composition of many KnowledgeContributions on contributions.item = $self;
 
   /** Reverse side of `extend Comments with { knowledgeItem }` below -
       without this, the detail page has no way to navigate item -> comments. */
@@ -188,14 +205,44 @@ entity KnowledgeContributors : cuid {
   role : String(20) enum { author; contributor; reviewer } default 'author';
 }
 
-/** Metadata + a URL only - the binary itself is never stored in HANA.
-    Same choice Lot 1 already made for PostDocuments; stay consistent. */
+/** Real upload (Knowledge Centre feature evolution, 2026-08) - a genuine
+    OData V4 media entity, not a URL reference like Lot 1's PostDocuments.
+    `content` streams via the entity's own .../content endpoint (CAP's
+    native @Core.MediaType support); no BTP object-store binding needed,
+    works identically against SQLite locally and HANA Cloud in production.
+    Validation (allowed types/max size) lives in one module -
+    srv/domain/knowledge/AttachmentValidation.js - not scattered here. */
 entity KnowledgeAttachments : cuid, managed {
   item     : Association to KnowledgeItems;
   fileName : String(255);
-  fileUrl  : String(1000);
   fileType : String(50);
   fileSize : Integer;
+  content  : LargeBinary @Core.MediaType: fileType;
+}
+
+/** One active vote per (user, item) - uniqueness enforced in the domain
+    layer (VotingRules.js), not left to the frontend. value is +1 or -1;
+    there is no "0" row - removing a vote deletes this row entirely. */
+entity KnowledgeVotes : cuid, managed {
+  item  : Association to KnowledgeItems @mandatory;
+  user  : Association to UserProfiles   @mandatory;
+  value : Integer;
+}
+
+/** A proposed addition to an ALREADY APPROVED item - distinct from
+    creating a brand-new KnowledgeItem, which keeps working exactly as
+    it does today. Approving a contribution never touches
+    KnowledgeItems.content (preserved verbatim) - it only (a) marks this
+    row approved and (b) appends the submitter to KnowledgeContributors
+    if not already present. Merging the proposed text into the article
+    itself is a deliberately separate, not-yet-built capability. */
+entity KnowledgeContributions : cuid, managed {
+  item        : Association to KnowledgeItems @mandatory;
+  content     : LargeString @mandatory;
+  status      : String(20) enum { pending; approved; rejected } default 'pending';
+  submittedBy : Association to UserProfiles @mandatory;
+  decidedBy   : Association to UserProfiles;
+  decidedAt   : Timestamp;
 }
 
 /** The mock's "Documents liés" sidebar - a curated many-to-many,

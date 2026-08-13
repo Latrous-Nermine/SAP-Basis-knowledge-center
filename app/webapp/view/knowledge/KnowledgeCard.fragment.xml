@@ -1,0 +1,52 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <!-- Shared between the My Knowledge and Community Knowledge lists
+       (KnowledgeList.view.xml) - identical card, different source list,
+       so this only ever needs to change in one place. -->
+  <CustomListItem type="Navigation" press=".onItemPress" class="knowledgeCard">
+    <VBox class="knowledgeCardBody">
+      <HBox justifyContent="SpaceBetween" alignItems="Center" class="knowledgeCardStatusRow">
+        <ObjectStatus text="{path:'knowledge>category', formatter:'.formatter.categoryLabel'}" state="Information"/>
+        <HBox alignItems="Center" class="knowledgeCardStatusRow">
+          <ObjectStatus
+            visible="{path:'knowledge>status', formatter:'.formatter.isNotApproved'}"
+            text="{path:'knowledge>status', formatter:'.formatter.statusLabel'}"
+            state="{path:'knowledge>status', formatter:'.formatter.statusState'}"/>
+          <Button
+            icon="sap-icon://delete"
+            type="Transparent"
+            tooltip="{i18n-knowledge>deleteDraft}"
+            visible="{path:'knowledge>status', formatter:'.formatter.canSubmitForReview'}"
+            press=".onDeleteDraft"/>
+        </HBox>
+      </HBox>
+      <Title text="{knowledge>title}" wrapping="true"/>
+      <Text text="{knowledge>excerpt}" maxLines="3" class="knowledgeCardExcerpt"/>
+      <Text
+        text="{parts: [{path:'knowledge>contributors'}, {path:'knowledge>createdAt', targetType:'any'}], formatter:'.formatter.metaLine'}"
+        class="knowledgeCardMeta"/>
+      <HBox
+        alignItems="Center"
+        visible="{path:'knowledge>status', formatter:'.formatter.canVote'}"
+        class="knowledgeVoteControls">
+        <ToggleButton
+          icon="sap-icon://thumb-up"
+          text="{knowledge>upvoteCount}"
+          pressed="{path:'knowledge>myVote', formatter:'.formatter.isUpvoted'}"
+          tooltip="{i18n-knowledge>upvote}"
+          type="Transparent"
+          press=".onUpvotePress"/>
+        <ToggleButton
+          icon="sap-icon://thumb-down"
+          text="{knowledge>downvoteCount}"
+          pressed="{path:'knowledge>myVote', formatter:'.formatter.isDownvoted'}"
+          tooltip="{i18n-knowledge>downvote}"
+          type="Transparent"
+          press=".onDownvotePress"
+          class="sapUiTinyMarginBegin"/>
+      </HBox>
+    </VBox>
+  </CustomListItem>
+</core:FragmentDefinition>

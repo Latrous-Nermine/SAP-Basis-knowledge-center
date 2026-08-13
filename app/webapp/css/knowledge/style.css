@@ -26,7 +26,7 @@
 
 .knowledgeCard {
   border-radius: 12px;
-  padding: 20px 24px;
+  padding: 24px;
   margin-bottom: 16px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   cursor: pointer;
@@ -37,6 +37,36 @@
 .knowledgeCard:hover {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
   transform: translateY(-2px) scale(1.01);
+}
+
+/* One deliberate vertical rhythm for the card's own content (status row /
+   title / excerpt / meta line), replacing a per-element sapUiTinyMarginTop
+   chain that produced the same flat ~4px gap everywhere regardless of how
+   related each pair of elements actually was. Same "UI5 has no gap
+   utility class" fix already applied once below for .knowledgeHeaderMeta. */
+.knowledgeCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.knowledgeCardStatusRow {
+  gap: 8px;
+}
+
+/* Secondary content - one step down from the title, one step up from
+   the meta line. Same opacity-based de-emphasis already used for
+   .knowledgeContributorRole below, not a new visual language. */
+.knowledgeCardExcerpt {
+  color: var(--sapContent_LabelColor, rgba(0, 0, 0, 0.6));
+}
+
+/* Tertiary - contributors + date. Smaller and more muted than the
+   excerpt so the hierarchy (title > excerpt > meta) is visible at a
+   glance, not just implied by document order. */
+.knowledgeCardMeta {
+  color: var(--sapContent_LabelColor, rgba(0, 0, 0, 0.55));
+  font-size: 0.8rem;
 }
 
 @keyframes knowledgeCardFadeIn {

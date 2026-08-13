@@ -1,9 +1,10 @@
 sap.ui.define([
   "../BaseController",
   "../../model/knowledge/formatter",
+  "../../model/knowledge/VotingHelper",
   "sap/m/MessageToast",
   "sap/m/MessageBox"
-], function(BaseController, formatter, MessageToast, MessageBox) {
+], function(BaseController, formatter, VotingHelper, MessageToast, MessageBox) {
   "use strict";
 
   return BaseController.extend("aymax.hub.controller.knowledge.KnowledgeDetail", {
@@ -57,7 +58,7 @@ sap.ui.define([
     _setContributorsLabel: function() {
       var oData = this.getView().getBindingContext("knowledge").getObject();
       var aContributors = (oData && oData.contributors) || [];
-      var sLabel = aContributors.map(function(c) { return c.user_userID; }).join(", ");
+      var sLabel = aContributors.map(function(c) { return c.displayName || c.user_userID; }).join(", ");
       this.getViewModel().setProperty("/contributorsLabel", sLabel);
     },
 
@@ -77,9 +78,35 @@ sap.ui.define([
       this.getRouter().navTo("knowledgeDetail", { itemID: sItemID });
     },
 
+    // fileUrl doesn't exist anymore (Knowledge Centre feature evolution,
+    // 2026-08: attachments became a real OData V4 media entity - see
+    // db/lot2.cds's KnowledgeAttachments). The file lives at the row's
+    // own .../content stream endpoint instead of an external URL.
     onAttachmentPress: function(oEvent) {
-      var sUrl = oEvent.getSource().getBindingContext("knowledge").getProperty("fileUrl");
-      if (sUrl) window.open(sUrl, "_blank");
+      var sAttachmentID = oEvent.getSource().getBindingContext("knowledge").getProperty("ID");
+      if (sAttachmentID) window.open("/odata/v4/knowledge/KnowledgeAttachments(" + sAttachmentID + ")/content", "_blank");
+    },
+
+    onUpvotePress: function() {
+      this._onVotePress(1);
+    },
+
+    onDownvotePress: function() {
+      this._onVotePress(-1);
+    },
+
+    _onVotePress: function(iValue) {
+      var oContext = this.getView().getBindingContext("knowledge");
+      var oDecision = VotingHelper.resolveVoteAction(oContext.getProperty("myVote"), iValue);
+
+      var oParams = Object.assign({ itemID: this._sItemID }, oDecision.params);
+      var oActionContext = this.oModel.bindContext("/" + oDecision.action)(oParams);
+
+      oActionContext.execute().then(function() {
+        this.getView().getElementBinding().refresh();
+      }.bind(this)).catch(function(oError) {
+        MessageBox.error((oError && oError.message) || this.getText("errorVote"));
+      }.bind(this));
     },
 
     onSubmitForReview: function() {
@@ -106,7 +133,13 @@ sap.ui.define([
 
       oActionContext.execute().then(function() {
         this.getViewModel().setProperty("/newCommentText", "");
-        this.getView().getElementBinding().refresh();
+        // Refreshing the parent element binding does NOT reliably re-fetch
+        // a nested $expand'd collection like `comments` - a known OData V4
+        // model nuance, not something specific to this app. Refresh the
+        // comments list's OWN binding directly instead - it's the one
+        // that actually needs new data, and doing this targets exactly
+        // that instead of hoping a parent refresh cascades correctly.
+        this.byId("commentsList").getBinding("items").refresh();
       }.bind(this)).catch(function() {
         MessageBox.error(this.getText("errorAddComment"));
       }.bind(this));

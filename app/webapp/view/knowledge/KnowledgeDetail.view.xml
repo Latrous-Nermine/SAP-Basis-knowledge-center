@@ -9,6 +9,13 @@
   <Page showNavButton="true" navButtonPress=".onNavBack">
     <content>
 
+      <!-- Same max-width/centering/padding container KnowledgeList.view.xml
+           already uses - without it, this was the only page in the module
+           with content running edge-to-edge instead of matching the list's
+           margins. Purely a width constraint (max-width/margin/padding) -
+           no height/flex properties, so it doesn't interfere with
+           ObjectPageLayout's own internal scroll management. -->
+      <VBox class="knowledgeContentContainer">
       <uxap:ObjectPageLayout id="knowledgeObjectPage" showTitleInHeaderContent="true">
 
         <uxap:headerTitle>
@@ -17,6 +24,24 @@
               <Title text="{knowledge>title}" wrapping="true"/>
             </uxap:heading>
             <uxap:actions>
+              <HBox
+                alignItems="Center"
+                visible="{path:'knowledge>status', formatter:'.formatter.canVote'}"
+                class="knowledgeVoteControls sapUiTinyMarginEnd">
+                <ToggleButton
+                  icon="sap-icon://thumb-up"
+                  text="{knowledge>upvoteCount}"
+                  pressed="{path:'knowledge>myVote', formatter:'.formatter.isUpvoted'}"
+                  tooltip="{i18n-knowledge>upvote}"
+                  press=".onUpvotePress"/>
+                <ToggleButton
+                  icon="sap-icon://thumb-down"
+                  text="{knowledge>downvoteCount}"
+                  pressed="{path:'knowledge>myVote', formatter:'.formatter.isDownvoted'}"
+                  tooltip="{i18n-knowledge>downvote}"
+                  press=".onDownvotePress"
+                  class="sapUiTinyMarginBegin"/>
+              </HBox>
               <!-- Submit for review: only action currently implemented. There is
                    no edit form/route in this app yet, so no Edit button is shown
                    here - adding one would be a new feature, not a restyle.
@@ -84,7 +109,7 @@
             <uxap:subSections>
               <uxap:ObjectPageSubSection>
                 <uxap:blocks>
-                  <List items="{knowledge>comments}" noDataText="{i18n-knowledge>noComments}" showSeparators="None" class="sapUiNoContentPadding">
+                  <List id="commentsList" items="{knowledge>comments}" noDataText="{i18n-knowledge>noComments}" showSeparators="None" class="sapUiNoContentPadding">
                     <StandardListItem
                       icon="sap-icon://person-placeholder"
                       title="{knowledge>author_userID}"
@@ -112,7 +137,7 @@
                   <List items="{knowledge>contributors}" noDataText="{i18n-knowledge>noContributors}" showSeparators="None" class="sapUiNoContentPadding">
                     <StandardListItem
                       icon="sap-icon://person-placeholder"
-                      title="{knowledge>user_userID}"
+                      title="{knowledge>displayName}"
                       description="{path:'knowledge>role', formatter:'.formatter.contributorRoleLabel'}"
                       class="knowledgeContributorCard"/>
                   </List>
@@ -135,6 +160,7 @@
 
         </uxap:sections>
       </uxap:ObjectPageLayout>
+      </VBox>
     </content>
   </Page>
 </mvc:View>

@@ -41,38 +41,59 @@
           </HBox>
         </VBox>
 
-        <List
-          id="knowledgeList"
-          items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors' }, sorter: { path: 'createdAt', descending: true } }"
-          noDataText="{i18n-knowledge>noItems}"
-          showSeparators="None"
-          class="sapUiNoContentPadding">
-          <CustomListItem type="Navigation" press=".onItemPress" class="knowledgeCard">
-            <VBox>
-              <HBox justifyContent="SpaceBetween" alignItems="Center">
-                <ObjectStatus text="{path:'knowledge>category', formatter:'.formatter.categoryLabel'}" state="Information"/>
-                <HBox alignItems="Center">
-                  <ObjectStatus
-                    visible="{path:'knowledge>status', formatter:'.formatter.isNotApproved'}"
-                    text="{path:'knowledge>status', formatter:'.formatter.statusLabel'}"
-                    state="{path:'knowledge>status', formatter:'.formatter.statusState'}"/>
-                  <Button
-                    icon="sap-icon://delete"
-                    type="Transparent"
-                    tooltip="{i18n-knowledge>deleteDraft}"
-                    visible="{path:'knowledge>status', formatter:'.formatter.canSubmitForReview'}"
-                    press=".onDeleteDraft"
-                    class="sapUiTinyMarginBegin"/>
-                </HBox>
-              </HBox>
-              <Title text="{knowledge>title}" wrapping="true" class="sapUiTinyMarginTop"/>
-              <Text text="{knowledge>excerpt}" maxLines="3" class="sapUiTinyMarginTop"/>
-              <Text
-                text="{parts: [{path:'knowledge>contributors'}, {path:'knowledge>createdAt', targetType:'any'}], formatter:'.formatter.metaLine'}"
-                class="sapUiTinyMarginTop"/>
-            </VBox>
-          </CustomListItem>
-        </List>
+        <!-- MY KNOWLEDGE - author or contributor, any status. Sub-filters
+             (All/Approved/Pending/Draft) are client-side, same Filter
+             pattern the category tabs above already use. -->
+        <VBox class="knowledgeSection">
+          <Title text="{i18n-knowledge>myKnowledgeTitle}" level="H3" class="sapUiSmallMarginBottom"/>
+          <HBox wrap="Wrap" items="{view-knowledge>/myKnowledgeStatusTabs}" class="sapUiSmallMarginBottom">
+            <Button
+              text="{view-knowledge>label}"
+              type="{path:'view-knowledge>active', formatter:'.formatter.tabButtonType'}"
+              press=".onMyKnowledgeStatusPress"
+              class="knowledgeCategoryChip sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+          </HBox>
+          <List
+            id="myKnowledgeList"
+            items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors' }, sorter: { path: 'createdAt', descending: true } }"
+            noDataText="{i18n-knowledge>noMyKnowledgeItems}"
+            showSeparators="None"
+            class="sapUiNoContentPadding">
+            <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
+          </List>
+        </VBox>
+
+        <!-- COMMUNITY KNOWLEDGE - approved only, never anyone else's
+             draft/pending/rejected content, never my own items again
+             (avoids the confusing "why is my own article also over
+             here" duplication). -->
+        <VBox class="knowledgeSection sapUiLargeMarginTop">
+          <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
+            <Title text="{i18n-knowledge>communityKnowledgeTitle}" level="H3"/>
+            <HBox alignItems="Center">
+              <Label text="{i18n-knowledge>sortLabel}" class="sapUiTinyMarginEnd" labelFor="communitySortSelect"/>
+              <Select id="communitySortSelect" selectedKey="{view-knowledge>/communitySortKey}" change=".onCommunitySortChange">
+                <items>
+                  <core:Item key="relevant" text="{i18n-knowledge>sortRelevant}"/>
+                  <core:Item key="recent" text="{i18n-knowledge>sortRecent}"/>
+                  <core:Item key="upvoted" text="{i18n-knowledge>sortUpvoted}"/>
+                </items>
+              </Select>
+            </HBox>
+          </HBox>
+          <!-- No client-side `sorter` here (unlike My Knowledge below) -
+               ranking is entirely server-side (?sort=, see
+               onCommunitySortChange); a client sorter would silently
+               re-sort whatever the server returns and undo it. -->
+          <List
+            id="communityKnowledgeList"
+            items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors' } }"
+            noDataText="{i18n-knowledge>noCommunityItems}"
+            showSeparators="None"
+            class="sapUiNoContentPadding">
+            <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
+          </List>
+        </VBox>
       </VBox>
     </content>
   </Page>

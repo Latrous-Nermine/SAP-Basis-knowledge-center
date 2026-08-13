@@ -55,12 +55,31 @@ sap.ui.define([
     return sStatus !== "draft";
   }
 
-  // Card metadata line ("author · relative date"). No Profile/People service
-  // yet to resolve display names (TODO-INTEGRATION.md I-16), so user IDs are
-  // shown as-is.
+  // Voting is only allowed on approved items (spec requirement) - the
+  // backend is the real enforcement (voteItem rejects otherwise), this
+  // just avoids showing a control that would always 403.
+  function canVote(sStatus) {
+    return sStatus === "approved";
+  }
+
+  // myVote is +1 / -1 / null - a server-computed virtual field (batched
+  // after-READ hook, see knowledge-service.js), not an expanded
+  // association - a plain value, not an array to inspect.
+  function isUpvoted(iMyVote) {
+    return iMyVote === 1;
+  }
+
+  function isDownvoted(iMyVote) {
+    return iMyVote === -1;
+  }
+
+  // Card metadata line ("author · relative date"). displayName is resolved
+  // server-side (knowledge-service.js's after-READ hook, batched with
+  // myVote) - falls back to the raw ID there if a profile can't be found,
+  // never here (single source of truth for the fallback).
   function metaLine(aContributors, vCreatedAt) {
     var sAuthor = (aContributors && aContributors.length)
-      ? aContributors.map(function(c) { return c.user_userID; }).join(", ")
+      ? aContributors.map(function(c) { return c.displayName || c.user_userID; }).join(", ")
       : "";
     var sDate = relativeDateTime(vCreatedAt);
     return sAuthor ? (sAuthor + " · " + sDate) : sDate;
@@ -111,6 +130,9 @@ sap.ui.define([
     isNotApproved: isNotApproved,
     canSubmitForReview: canSubmitForReview,
     canShowComments: canShowComments,
+    canVote: canVote,
+    isUpvoted: isUpvoted,
+    isDownvoted: isDownvoted,
     metaLine: metaLine,
     relativeDateTime: relativeDateTime,
 
