@@ -1,0 +1,31 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Dialog id="documentPreviewDialog" contentWidth="720px" contentHeight="560px" resizable="true" stretch="false">
+    <customHeader>
+      <Bar>
+        <contentLeft>
+          <core:Icon src="sap-icon://document-text" class="sapUiSmallMarginBegin"/>
+          <Title id="previewTitle" text="" level="H4" class="sapUiTinyMarginBegin"/>
+        </contentLeft>
+        <contentRight>
+          <Button id="previewDownloadBtn" icon="sap-icon://download" tooltip="Télécharger" press=".onPreviewDownload"/>
+        </contentRight>
+      </Bar>
+    </customHeader>
+    <content>
+      <VBox width="100%" height="100%" class="sapUiContentPadding">
+        <Image id="previewImage" visible="false" width="100%" class="sapUiMediumMarginTopBottom"/>
+        <core:HTML id="previewPdfHost" visible="false"/>
+        <VBox id="previewOtherBox" visible="false" alignItems="Center" justifyContent="Center" class="sapUiLargeMarginTop">
+          <core:Icon src="sap-icon://attachment" size="4rem" color="#1E3A8A"/>
+          <Text text="Aperçu non disponible pour ce type de fichier. Utilisez le bouton de téléchargement." class="sapUiMediumMarginTop"/>
+        </VBox>
+      </VBox>
+    </content>
+    <endButton>
+      <Button text="Fermer" press=".onCloseDocumentPreview"/>
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

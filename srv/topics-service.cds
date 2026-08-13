@@ -1,0 +1,26 @@
+using { aymax.knowledgehub as kh } from '../db/schema';
+
+@path: '/odata/v4/topics'
+service TopicsService {
+
+  entity Topics        as projection on kh.Topics;
+  entity PostTopics    as projection on kh.PostTopics;
+  entity RoomTopics    as projection on kh.RoomTopics;
+  entity QuestionTopics as projection on kh.QuestionTopics;
+  entity UserProfiles  as projection on kh.UserProfiles;
+
+  // --- ACTIONS TOPICS ---
+  action createTopic(name : String, description : String, color : String, icon : String) returns Topics;
+  action updateTopic(topicID : UUID, name : String, description : String, color : String, icon : String) returns Boolean;
+  action deleteTopic(topicID : UUID)                                               returns Boolean;
+  action addTopicToPost(topicID : UUID, postID : UUID)                            returns Boolean;
+  action removeTopicFromPost(topicID : UUID, postID : UUID)                       returns Boolean;
+  action addTopicToRoom(topicID : UUID, roomID : UUID)                            returns Boolean;
+  action removeTopicFromRoom(topicID : UUID, roomID : UUID)                       returns Boolean;
+  action addTopicToQuestion(topicID : UUID, questionID : UUID)                    returns Boolean;
+  action removeTopicFromQuestion(topicID : UUID, questionID : UUID)               returns Boolean;
+
+  // --- FONCTIONS ---
+  function getTopicStats(topicID : UUID) returns Topics;
+  function getPopularTopics(limit : Integer) returns many Topics;
+}

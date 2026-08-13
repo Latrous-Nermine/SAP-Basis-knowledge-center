@@ -1,0 +1,519 @@
+[cds] - loaded model from 7 file(s):
+ 
+  srv\topics-service.cds
+  srv\tags-service.cds
+  srv\rooms-service.cds
+  srv\questions-service.cds
+  srv\feed-service.cds
+  db\schema.cds
+  node_modules\@sap\cds\common.cds
+
+[cds] - connect to db > sqlite { url: 'sqlite.db' }
+[cds] - using auth strategy {
+  kind: 'mocked',
+  impl: 'node_modules\\@sap\\cds\\lib\\srv\\middlewares\\auth\\basic-auth.js'
+}
+[cds] - serving FeedService {
+  at: [ '/odata/v4/feed' ],
+  decl: 'srv\\feed-service.cds:4',
+  impl: 'srv\\feed-service.js'
+}
+[cds] - serving QuestionsService {
+  at: [ '/odata/v4/questions' ],
+  decl: 'srv\\questions-service.cds:4',
+  impl: 'srv\\questions-service.js'
+}
+[cds] - serving RoomsService {
+  at: [ '/odata/v4/rooms' ],
+  decl: 'srv\\rooms-service.cds:4',
+  impl: 'srv\\rooms-service.js'
+}
+[cds] - serving TagsService {
+  at: [ '/odata/v4/tags' ],
+  decl: 'srv\\tags-service.cds:4',
+  impl: 'srv\\tags-service.js'
+}
+[cds] - serving TopicsService {
+  at: [ '/odata/v4/topics' ],
+  decl: 'srv\\topics-service.cds:4',
+  impl: 'srv\\topics-service.js'
+}
+[cds] - server listening on { url: 'http://localhost:4004' }
+[cds] - server v10.0.4 launched in 1154 ms
+[odata] - GET /odata/v4/questions/Questions$top=1&$expand=author,answers 
+[odata] - GET /odata/v4/tags/Tags$top=3 
+[odata] - GET /odata/v4/questions/Questions { '$top': '1', '$expand': 'author,answers' }
+[odata] - GET /odata/v4/tags/Tags { '$top': '3' }
+[odata] - POST /odata/v4/topics/createTopic 
+[odata] - POST /odata/v4/topics/deleteTopic 
+[odata] - GET /odata/v4/feed/Posts {
+  '$top': '2',
+  '$expand': 'author,tags,comments($expand=author),documents,repostOf($expand=author)',
+  '$orderby': 'createdAt desc'
+}
+[odata] - HEAD /odata/v4/feed/ 
+[odata] - GET /odata/v4/feed/$metadata { 'sap-language': 'FR' }
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - > GET /getMyShortcuts() 
+[odata] - > GET /getTrendingTags() 
+[odata] - > GET /UserProfiles {
+  '$select': 'avatarUrl,displayName,jobTitle,reputation,userID',
+  '$skip': '0',
+  '$top': '5'
+}
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - > GET /Rooms { '$select': 'ID,memberCount,name', '$skip': '0', '$top': '100' }
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /likePost 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(c0000000-0000-0000-0000-000000000005) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /repostPost 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /addComment 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(c0000000-0000-0000-0000-000000000005) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - GET /odata/v4/feed/Posts {
+  '$top': '2',
+  '$expand': 'author,tags,comments($expand=author),documents,repostOf($expand=author)',
+  '$orderby': 'createdAt desc'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Rooms {
+  '$select': 'ID,avatarUrl,category,description,memberCount,name,postCount,questionCount,visibility',
+  '$skip': '0',
+  '$top': '12'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /Posts 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(e42ac336-45d7-445a-8bf2-299e5fd1db34) 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /uploadDocument 
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /searchTags(query='CAP') 
+[odata] - GET /odata/v4/tags/$metadata { 'sap-language': 'FR' }
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > POST /addTagToPost 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - > GET /getMyShortcuts() 
+[odata] - > GET /getTrendingTags() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /likePost 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(e42ac336-45d7-445a-8bf2-299e5fd1db34) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /repostPost 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - GET /odata/v4/questions/$metadata { 'sap-language': 'FR' }
+[odata] - POST /odata/v4/questions/$batch 
+[odata] - > GET /Questions {
+  '$select': 'ID,answerCount,content,createdAt,status,title,viewCount,voteCount',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - GET /odata/v4/rooms/$metadata { 'sap-language': 'FR' }
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /RoomMembers { '$select': 'ID,joinedAt,role,userID', '$skip': '0', '$top': '20' }
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > GET /Rooms(11111111-1111-1111-1111-111111111111) 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /Posts 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(8ea3ff98-f3ca-4489-ba15-e60b284594c9) 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,userID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isLikedByMe,likeCount,shareCount',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > DELETE /Posts(e42ac336-45d7-445a-8bf2-299e5fd1db34) 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - > GET /getMyShortcuts() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > DELETE /Posts(8ea3ff98-f3ca-4489-ba15-e60b284594c9) 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - > GET /getMyShortcuts() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /Posts 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(0c4f48ad-a8cc-4142-9fce-b013ed1f18d1) 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - > GET /getMyShortcuts() 
+[odata] - > GET /getTrendingTags() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /repostPost 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /addComment 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(8ff9e1b8-e45f-4869-b7c7-088edd0141fc) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /addFavorite 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(8ff9e1b8-e45f-4869-b7c7-088edd0141fc) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - > GET /getMyShortcuts() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /addFavorite 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(0c4f48ad-a8cc-4142-9fce-b013ed1f18d1) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - > GET /getMyShortcuts() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /addFavorite 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(c0000000-0000-0000-0000-000000000005) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - > GET /getMyShortcuts() 
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > POST /Rooms 
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > GET /Rooms(38210e8d-8f77-4415-8a0b-a0603c2f184e) 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Rooms {
+  '$select': 'ID,avatarUrl,category,description,memberCount,name,postCount,questionCount,visibility',
+  '$skip': '0',
+  '$top': '12'
+}
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > GET /Rooms(38210e8d-8f77-4415-8a0b-a0603c2f184e) 
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > POST /joinRoom 
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > GET /Rooms(38210e8d-8f77-4415-8a0b-a0603c2f184e) 
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > POST /leaveRoom 
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > GET /Rooms(38210e8d-8f77-4415-8a0b-a0603c2f184e) 
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > GET /Rooms { '$select': 'ID,name', '$skip': '0', '$top': '100' }
+[odata] - POST /odata/v4/questions/$batch 
+[odata] - > POST /createQuestion 
+[odata] - POST /odata/v4/questions/$batch 
+[odata] - > GET /Questions {
+  '$select': 'ID,answerCount,content,createdAt,status,title,viewCount,voteCount',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - POST /odata/v4/questions/$batch 
+[odata] - > GET /Questions {
+  '$select': 'ID,answerCount,content,createdAt,status,title,viewCount,voteCount',
+  '$filter': "(contains(title,'CAP') or contains(content,'CAP'))",
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - POST /odata/v4/questions/$batch 
+[odata] - > GET /Questions {
+  '$select': 'ID,answerCount,content,createdAt,status,title,viewCount,voteCount',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - POST /odata/v4/questions/$batch 
+[odata] - > GET /Questions {
+  '$select': 'ID,answerCount,content,createdAt,status,title,viewCount,voteCount',
+  '$filter': "status eq 'resolved'",
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - POST /odata/v4/questions/$batch 
+[odata] - > GET /Questions {
+  '$select': 'ID,answerCount,content,createdAt,status,title,viewCount,voteCount',
+  '$filter': "status eq 'open'",
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - POST /odata/v4/questions/$batch 
+[odata] - > GET /Questions {
+  '$select': 'ID,answerCount,content,createdAt,status,title,viewCount,voteCount',
+  '$filter': "status eq 'open' and (contains(title,'test') or contains(content,'test'))",
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '10',
+  '$top': '10'
+}
+[odata] - HEAD /odata/v4/feed/ 
+[odata] - GET /odata/v4/feed/$metadata { 'sap-language': 'FR' }
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - > GET /getMyShortcuts() 
+[odata] - > GET /getTrendingTags() 
+[odata] - > GET /UserProfiles {
+  '$select': 'avatarUrl,displayName,jobTitle,reputation,userID',
+  '$skip': '0',
+  '$top': '5'
+}
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - > GET /Rooms { '$select': 'ID,memberCount,name', '$skip': '0', '$top': '100' }
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /addComment 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(8ff9e1b8-e45f-4869-b7c7-088edd0141fc) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /removeFavorite 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(8ff9e1b8-e45f-4869-b7c7-088edd0141fc) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - > GET /getMyShortcuts() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > POST /removeFavorite 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /Posts(c0000000-0000-0000-0000-000000000005) {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type'
+}
+[odata] - > GET /getMyShortcuts() 
+[odata] - GET /odata/v4/tags/$metadata { 'sap-language': 'FR' }
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - > GET /Tags { '$select': 'ID,name,usageCount', '$skip': '0', '$top': '100' }
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags { '$select': 'ID,name', '$skip': '0', '$top': '100' }
+[odata] - > GET /Tags { '$select': 'ID,name,usageCount', '$skip': '0', '$top': '100' }
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > POST /createTag 
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > POST /deleteTag 
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$filter': "(contains(name,'XSUAA') or contains(description,'XSUAA'))",
+  '$orderby': 'name',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$filter': "(contains(name,'OData V4') or contains(description,'OData V4'))",
+  '$orderby': 'name',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$filter': "(contains(name,'ABAP Cloud') or contains(description,'ABAP Cloud'))",
+  '$orderby': 'name',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$filter': "(contains(name,'ABAP Cloud') or contains(description,'ABAP Cloud'))",
+  '$orderby': 'usageCount desc',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$filter': "(contains(name,'ABAP Cloud') or contains(description,'ABAP Cloud'))",
+  '$orderby': 'name',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$orderby': 'name',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$orderby': 'usageCount desc',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - POST /odata/v4/tags/$batch 
+[odata] - > GET /Tags {
+  '$select': 'ID,description,name,usageCount',
+  '$orderby': 'name',
+  '$skip': '0',
+  '$top': '15'
+}
+[odata] - GET /odata/v4/rooms/$metadata { 'sap-language': 'FR' }
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /RoomMembers { '$select': 'ID,joinedAt,role,userID', '$skip': '0', '$top': '20' }
+[odata] - POST /odata/v4/rooms/$batch 
+[odata] - > GET /Rooms(11111111-1111-1111-1111-111111111111) 
+[odata] - HEAD /odata/v4/feed/ 
+[odata] - GET /odata/v4/feed/$metadata { 'sap-language': 'FR' }
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - > GET /getMyShortcuts() 
+[odata] - > GET /getTrendingTags() 
+[odata] - > GET /UserProfiles {
+  '$select': 'avatarUrl,displayName,jobTitle,reputation,userID',
+  '$skip': '0',
+  '$top': '5'
+}
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - > GET /Rooms { '$select': 'ID,memberCount,name', '$skip': '0', '$top': '100' }
+[odata] - HEAD /odata/v4/feed/ 
+[odata] - GET /odata/v4/feed/$metadata { 'sap-language': 'FR' }
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - > GET /getMyShortcuts() 
+[odata] - > GET /getTrendingTags() 
+[odata] - > GET /UserProfiles {
+  '$select': 'avatarUrl,displayName,jobTitle,reputation,userID',
+  '$skip': '0',
+  '$top': '5'
+}
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - > GET /Rooms { '$select': 'ID,memberCount,name', '$skip': '0', '$top': '100' }
+[odata] - GET /odata/v4/feed/$metadata { 'sap-language': 'EN' }
+[odata] - HEAD /odata/v4/feed/ 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - POST /odata/v4/feed/$batch 
+[odata] - > GET /getCurrentUserProfile() 
+[odata] - > GET /getMyShortcuts() 
+[odata] - > GET /getTrendingTags() 
+[odata] - > GET /UserProfiles {
+  '$select': 'avatarUrl,displayName,jobTitle,reputation,userID',
+  '$skip': '0',
+  '$top': '5'
+}
+[odata] - > GET /Posts {
+  '$expand': 'author($select=avatarUrl,displayName,jobTitle,userID),comments($expand=author($select=avatarUrl,displayName,userID);$select=ID,content,createdAt),documents($select=ID,fileName,fileSize,fileType,fileUrl),repostOf($expand=author($select=displayName,userID);$select=ID),tags($select=ID;$expand=tag($select=ID,name))',
+  '$orderby': 'createdAt desc',
+  '$select': 'ID,commentCount,content,createdAt,isFavoritedByMe,isLikedByMe,isRepostedByMe,likeCount,shareCount,summary,title,type',
+  '$skip': '0',
+  '$top': '10'
+}
+[odata] - > GET /Rooms { '$select': 'ID,memberCount,name', '$skip': '0', '$top': '100' }

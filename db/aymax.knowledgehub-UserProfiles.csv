@@ -1,0 +1,8 @@
+userID,email,displayName,avatarUrl,department,jobTitle,reputation,badgesCount,isActive
+sami.ben.youssef,sami.ben.youssef@aymax.fr,Sami Ben Youssef,https://ui-avatars.com/api/?name=Sami+Ben+Youssef&background=1E3A8A&color=fff,SAP Basis,Architecte SAP Basis,1450,12,true
+nadia.ferchichi,nadia.ferchichi@aymax.fr,Nadia Ferchichi,https://ui-avatars.com/api/?name=Nadia+Ferchichi&background=0284C7&color=fff,Digital Dev,Lead Developer SAP BTP,1280,9,true
+karim.trabelsi,karim.trabelsi@aymax.fr,Karim Trabelsi,https://ui-avatars.com/api/?name=Karim+Trabelsi&background=0D9488&color=fff,Digital Dev,Consultant UI5 / Fiori,940,6,true
+yassine.gharbi,yassine.gharbi@aymax.fr,Yassine Gharbi,https://ui-avatars.com/api/?name=Yassine+Gharbi&background=6366F1&color=fff,SAP Basis,Stagiaire SAP Basis,320,3,true
+fatima.benali,fatima.benali@aymax.fr,Fatima Ben Ali,https://ui-avatars.com/api/?name=Fatima+Ben+Ali&background=EC4899&color=fff,Digital Dev,Développeuse CAP Node.js,870,7,true
+mehdi.khelifi,mehdi.khelifi@aymax.fr,Mehdi Khelifi,https://ui-avatars.com/api/?name=Mehdi+Khelifi&background=F59E0B&color=fff,SAP Basis,Consultant SAP HANA,1120,8,true
+leila.mansouri,leila.mansouri@aymax.fr,Leila Mansouri,https://ui-avatars.com/api/?name=Leila+Mansouri&background=10B981&color=fff,Digital Dev,Architecte Solution BTP,1380,11,true

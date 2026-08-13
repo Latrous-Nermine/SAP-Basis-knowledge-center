@@ -1,6 +1,64 @@
 {
-  "scopes": [],
-  "attributes": [],
-  "role-templates": [],
-  "authorities-inheritance": false
+  "xsappname": "SAP-Basis-knowledge-center",
+  "tenant-mode": "dedicated",
+  "description": "Security configuration for SAP Basis Knowledge Center",
+  "scopes": [
+    {
+      "name": "$XSROLEDATA.Employee",
+      "description": "Scope pour le rôle Employé"
+    },
+    {
+      "name": "$XSROLEDATA.Manager",
+      "description": "Scope pour le rôle Manager"
+    },
+    {
+      "name": "$XSROLEDATA.HR",
+      "description": "Scope pour le rôle RH"
+    },
+    {
+      "name": "$XSROLEDATA.Administrator",
+      "description": "Scope pour le rôle Administrateur"
+    },
+    {
+      "name": "$XSROLEDATA.Intern",
+      "description": "Scope pour le rôle Stagiaire"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Employee",
+      "description": "Rôle Employé",
+      "scope-references": [
+        "$XSROLEDATA.Employee"
+      ]
+    },
+    {
+      "name": "Manager",
+      "description": "Rôle Manager",
+      "scope-references": [
+        "$XSROLEDATA.Manager"
+      ]
+    },
+    {
+      "name": "HR",
+      "description": "Rôle RH",
+      "scope-references": [
+        "$XSROLEDATA.HR"
+      ]
+    },
+    {
+      "name": "Administrator",
+      "description": "Rôle Administrateur",
+      "scope-references": [
+        "$XSROLEDATA.Administrator"
+      ]
+    },
+    {
+      "name": "Intern",
+      "description": "Rôle Stagiaire",
+      "scope-references": [
+        "$XSROLEDATA.Intern"
+      ]
+    }
+  ]
 }

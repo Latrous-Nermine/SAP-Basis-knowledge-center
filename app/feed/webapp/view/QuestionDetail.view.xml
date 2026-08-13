@@ -1,0 +1,81 @@
+<mvc:View
+  controllerName="aymax.feed.controller.QuestionDetail"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  displayBlock="true">
+
+  <f:DynamicPage id="questionDetailPage" headerExpanded="true">
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:heading>
+          <HBox alignItems="Center">
+            <Button icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiSmallMarginEnd"/>
+            <Title text="{view>/question/title}" titleStyle="H3" wrapping="true"/>
+          </HBox>
+        </f:heading>
+        <f:actions>
+          <ObjectStatus text="{path:'view>/question/status', formatter:'.formatter.formatQuestionStatusText'}" state="{path:'view>/question/status', formatter:'.formatter.formatQuestionStatusState'}"/>
+          <Button text="Marquer résolue" type="Accept" press=".onResolveQuestion" visible="{= ${view>/question/status} !== 'resolved'}"/>
+          <Button text="Fermer" type="Reject" press=".onCloseQuestion" visible="{= ${view>/question/status} === 'open'}"/>
+        </f:actions>
+      </f:DynamicPageTitle>
+    </f:title>
+
+    <f:content>
+      <VBox class="sapUiContentPadding">
+        <!-- DETAIL DE LA QUESTION -->
+        <Panel class="aymaxCard sapUiMediumMarginBottom">
+          <HBox alignItems="Start">
+            <VBox alignItems="Center" class="sapUiMediumMarginEnd">
+              <Button icon="sap-icon://navigation-up-arrow" type="Transparent" press=".onVoteQuestionUp"/>
+              <Title text="{path:'view>/question/voteCount', formatter:'.formatter.formatVoteCount'}" level="H3"/>
+              <Button icon="sap-icon://navigation-down-arrow" type="Transparent" press=".onVoteQuestionDown"/>
+            </VBox>
+            <VBox width="100%">
+              <FormattedText htmlText="{view>/question/content}" class="sapUiSmallMarginBottom"/>
+              <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxPostActions">
+                <Text text="Demandé le {path:'view>/question/createdAt', formatter:'.formatter.formatDate'}" class="aymaxMeta"/>
+                <Text text="{view>/question/viewCount} vues" class="aymaxMeta"/>
+              </HBox>
+            </VBox>
+          </HBox>
+        </Panel>
+
+        <!-- ZONE DE REPONSE -->
+        <Panel headerText="Ajouter votre réponse" class="aymaxCard sapUiMediumMarginBottom">
+          <VBox>
+            <TextArea value="{view>/newAnswerText}" rows="5" placeholder="Rédigez votre réponse détaillée..." width="100%"/>
+            <HBox justifyContent="End" class="sapUiSmallMarginTop">
+              <Button text="Publier la réponse" type="Emphasized" press=".onPostAnswer"/>
+            </HBox>
+          </VBox>
+        </Panel>
+
+        <!-- LISTE DES REPONSES -->
+        <Title text="{view>/answersCount} Réponses" titleStyle="H4" class="sapUiSmallMarginBottom"/>
+        <List id="answersList" items="{view>/answers}">
+          <CustomListItem>
+            <VBox class="aymaxCard sapUiMediumMarginBottom" style="padding: 16px;">
+              <HBox alignItems="Start">
+                <VBox alignItems="Center" class="sapUiMediumMarginEnd">
+                  <Button icon="sap-icon://navigation-up-arrow" type="Transparent" press=".onVoteAnswerUp"/>
+                  <Title text="{path:'voteCount', formatter:'.formatter.formatVoteCount'}" level="H4"/>
+                  <Button icon="sap-icon://navigation-down-arrow" type="Transparent" press=".onVoteAnswerDown"/>
+                  <Icon src="sap-icon://accept" color="Positive" size="1.5rem" visible="{isAccepted}" tooltip="Réponse acceptée"/>
+                </VBox>
+                <VBox width="100%">
+                  <Text text="{content}" class="sapUiSmallMarginBottom" wrapping="true"/>
+                  <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxPostActions">
+                    <Text text="Répondu le {path:'createdAt', formatter:'.formatter.formatDate'}" class="aymaxMeta"/>
+                    <Button text="Accepter cette réponse" type="Accept" press=".onAcceptAnswer" visible="{= !${isAccepted}}"/>
+                  </HBox>
+                </VBox>
+              </HBox>
+            </VBox>
+          </CustomListItem>
+        </List>
+      </VBox>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>

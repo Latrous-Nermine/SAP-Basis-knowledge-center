@@ -23,13 +23,84 @@
 
 /* ===== PAGE CONTAINER ===== */
 .aymaxPage {
-  background: var(--aymax-bg);
+  background: #f3f2ef;
 }
 
 /* ===== NAVBAR MENU BUTTON ===== */
 .aymaxHeader .sapMBtnTransparent {
   color: var(--aymax-text);
   font-weight: 500;
+}
+
+/* ===== MODERN PUBLISH DIALOG ===== */
+.aymaxPublishDialog .sapMDialogContent {
+  padding: 0 !important;
+}
+
+.aymaxPublishDialogContent {
+  padding: 24px !important;
+}
+
+.aymaxPublishTextArea {
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  font-size: 0.9375rem !important;
+  line-height: 1.5 !important;
+  resize: none;
+}
+
+.aymaxPublishTextArea:focus {
+  border-color: #0a66c2 !important;
+  box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1) !important;
+}
+
+.aymaxPublishToolbar {
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px 12px !important;
+  background: #fafafa;
+  border-radius: 6px !important;
+}
+
+.aymaxPublishToolbarBtn.sapMBtn {
+  background: transparent !important;
+  border: none !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+  min-width: 40px !important;
+  height: 36px !important;
+  border-radius: 4px !important;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.aymaxPublishToolbarBtn.sapMBtn:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.aymaxPublishToolbarBtn.sapMBtn .sapMBtnIcon {
+  font-size: 1.2rem !important;
+}
+
+.aymaxPublishVisibilitySelect {
+  background: #ffffff !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 4px !important;
+}
+
+.aymaxPublishMultiInput {
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
+}
+
+.aymaxPublishBtn.sapMBtn {
+  background: #0a66c2 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  min-width: 100px;
 }
 
 /* ===== TRANSITIONS FLUIDES ===== */
@@ -43,18 +114,75 @@
 
 /* ===== CARDS ===== */
 .aymaxCard {
-  background: var(--aymax-surface);
-  border-radius: var(--aymax-radius-md);
-  border: 1px solid var(--aymax-border);
-  box-shadow: var(--aymax-shadow-sm);
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e6e9ee;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.aymaxFeedColumn {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: flex-start;
 }
 
 .aymaxPostCard {
-  background: var(--aymax-surface);
-  border-radius: var(--aymax-radius-md);
-  border: 1px solid var(--aymax-border);
-  box-shadow: var(--aymax-shadow-sm);
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01), 0 2px 4px rgba(0, 0, 0, 0.08);
   margin-bottom: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.aymaxPostCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.aymaxPostCardHeaderContent {
+  padding: 12px 16px 4px 16px;
+}
+
+/* Custom author header formatting for LinkedIn style */
+.aymaxAuthorName .sapMTitle {
+  font-weight: 600 !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+  font-size: 0.875rem !important;
+}
+
+.aymaxHeadline {
+  font-size: 0.75rem !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.aymaxPublicIcon {
+  color: rgba(0, 0, 0, 0.5) !important;
+  margin-left: 4px;
+}
+
+.aymaxPostTitle .sapMTitle {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.aymaxPostContentText {
+  font-size: 0.875rem !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+  line-height: 1.42857 !important;
+}
+
+/* ===== Vignette pièce jointe (image) ===== */
+.aymaxDocThumb .sapMImg {
+  border-radius: 6px;
+  border: 1px solid var(--aymax-border);
+  object-fit: cover;
 }
 
 .aymaxRoomCard {
@@ -107,10 +235,120 @@
   font-size: 12px;
 }
 
-/* ===== POST ACTIONS ===== */
+/* ===== COMMENTAIRE — auteur ===== */
+.aymaxCommentAuthor {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.aymaxActionSheet .sapMBtn {
+  justify-content: flex-start;
+}
+
+/* ===== POST STATS & ACTIONS (LINKEDIN STYLE) ===== */
+.aymaxPostStats {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 8px 16px;
+  margin-top: 4px;
+}
+
+.aymaxReactionIconContainerLike {
+  background: #0a66c2;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.aymaxStatIconLike {
+  color: #ffffff !important;
+}
+
+.aymaxReactionIconContainerDislike {
+  background: #df4930;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -4px; /* overlapping icons like LinkedIn */
+  z-index: 1;
+}
+
+.aymaxStatIconDislike {
+  color: #ffffff !important;
+}
+
 .aymaxPostActions {
-  border-top: 1px solid var(--aymax-border-subtle);
-  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 4px 12px;
+  background: #ffffff;
+  gap: 4px;
+}
+
+.aymaxPostActions .sapMBtn {
+  min-height: 2.25rem;
+  border-radius: 4px !important;
+}
+
+.aymaxSoftActionButton.sapMBtn {
+  background: transparent !important;
+  border: none !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-weight: 600 !important;
+  font-size: 0.825rem !important;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.aymaxSoftActionButton.sapMBtn .sapMBtnIcon {
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-size: 1rem !important;
+}
+
+/* Hover state */
+.aymaxSoftActionButton.sapMBtn:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.aymaxSoftActionButton.sapMBtn:hover .sapMBtnIcon {
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Like active state */
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxLiked,
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxLiked:hover {
+  background: transparent !important;
+  color: #0a66c2 !important;
+}
+
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxLiked .sapMBtnIcon,
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxLiked:hover .sapMBtnIcon {
+  color: #0a66c2 !important;
+}
+
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxLiked:hover {
+  background: rgba(10, 102, 194, 0.08) !important;
+}
+
+/* Dislike active state */
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxDisliked,
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxDisliked:hover {
+  background: transparent !important;
+  color: #df4930 !important;
+}
+
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxDisliked .sapMBtnIcon,
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxDisliked:hover .sapMBtnIcon {
+  color: #df4930 !important;
+}
+
+.aymaxSoftActionButton.sapMBtnEmphasized.aymaxDisliked:hover {
+  background: rgba(223, 73, 48, 0.08) !important;
 }
 
 /* ===== SCROLLBAR ===== */
@@ -128,6 +366,15 @@
 }
 
 /* ===== RESPONSIVE ===== */
+ #mainLayout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 @media (max-width: 1200px) {
   #mainLayout {
     flex-direction: column !important;
@@ -136,4 +383,293 @@
     width: 100% !important;
     margin-right: 0 !important;
   }
+}
+
+/* ===== ZONE PUBLICATION ===== */
+.aymaxPublishCard {
+  border: 1px solid #e6e9ee;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.aymaxPublishCard:focus-within {
+  border-color: #0a66c2;
+  box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.12), 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+/* Bouton trombone FileUploader */
+.sapUiUnifiedFileUploaderSimple .sapMBtn {
+  color: var(--aymax-text-muted) !important;
+  transition: color 0.15s ease;
+}
+
+.sapUiUnifiedFileUploaderSimple .sapMBtn:hover {
+  color: var(--aymax-primary) !important;
+}
+
+/* Zone fichiers joints */
+.aymaxFileItem {
+  background: color-mix(in srgb, var(--aymax-primary) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--aymax-primary) 20%, transparent);
+  border-radius: var(--aymax-radius-sm);
+  padding: 6px 12px;
+  margin-bottom: 4px;
+}
+
+/* Raccourcis avec compteur */
+.sapMLIBTypeNavigation .sapMLIBInfo {
+  font-weight: 600;
+  border-radius: 999px;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Badge type post */
+.aymaxPostTypeBadge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* ===== ENCADRÉ RÉSUMÉ IA ===== */
+.aymaxAiSummaryBox {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.06) 0%, rgba(6, 182, 212, 0.08) 100%) !important;
+  border: 1px solid color-mix(in srgb, #6366F1 30%, transparent) !important;
+  border-left: 4px solid #6366F1 !important;
+  border-radius: var(--aymax-radius-md, 8px) !important;
+  padding: 12px 16px !important;
+  margin-top: 8px;
+}
+
+.aymaxAiIcon {
+  color: #6366F1 !important;
+  font-size: 1rem !important;
+}
+
+.aymaxAiSummaryTitle .sapMTitle {
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  color: #4338CA !important;
+  letter-spacing: 0.02em;
+}
+
+.aymaxAiSummaryText {
+  color: #1E1B4B !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+.aymaxAiConfigBox {
+  background: var(--aymax-neutral-100, #F8FAFC);
+  border: 1px solid var(--aymax-border, #E2E8F0);
+  border-radius: var(--aymax-radius-md, 8px);
+  padding: 12px;
+}
+
+.aymaxAiSummaryLabel .sapMLabel {
+  font-weight: 600;
+  color: #4338CA;
+  font-size: 12px;
+}
+
+/* ===== ZONE DE PUBLICATION MODERNE ===== */
+.aymaxPublishCard .sapMPanelContent {
+  padding: 0 !important;
+}
+
+.aymaxPublishCard,
+.aymaxFeedColumn > .sapMPanel,
+.aymaxFeedColumn > .sapMList {
+  margin-bottom: 0;
+}
+
+.aymaxFeedColumn > .sapMPanel + .sapMList,
+.aymaxFeedColumn > .sapMPanel + .sapMPanel,
+.aymaxFeedColumn > .sapMList + .sapMPanel {
+  margin-top: 0;
+}
+
+.aymaxPublishTextArea .sapMTextAreaInner {
+  border: 1px solid #dce1e7;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  resize: none;
+  background: #ffffff;
+}
+
+.aymaxPublishTextArea .sapMTextAreaInner:focus {
+  border-color: #0a66c2;
+  box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.12);
+}
+
+.aymaxTypeSegmentedButton .sapMSegBBtn {
+  border-radius: 999px;
+}
+
+.aymaxPublishBtn.sapMBtn {
+  border-radius: 999px;
+  padding-left: 24px;
+  padding-right: 24px;
+  font-weight: 600;
+}
+
+.aymaxFileListItem {
+  background: color-mix(in srgb, var(--aymax-primary) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--aymax-primary) 20%, transparent);
+  border-radius: var(--aymax-radius-sm, 8px);
+  padding: 8px 12px;
+}
+
+.aymaxFileListItem:hover {
+  border-color: var(--aymax-primary);
+}
+
+.colorPrimary { color: var(--aymax-primary) !important; }
+.fontBold     { font-weight: 600; }
+.btnDelete.sapMBtn { color: var(--aymax-text-muted) !important; }
+.btnDelete.sapMBtn:hover { color: #DB1F2A !important; }
+
+/* ===== BANNIÈRE REPUBLICATION ===== */
+.aymaxRepostBanner {
+  background: color-mix(in srgb, var(--aymax-neutral-100) 60%, transparent);
+  border: 1px dashed var(--aymax-border);
+  border-radius: var(--aymax-radius-sm, 8px);
+  padding: 6px 10px;
+}
+
+.aymaxRepostLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--aymax-text-muted);
+}
+
+/* ===== SECTION COMMENTAIRES ===== */
+.aymaxCommentsSection {
+  border-top: 1px solid var(--aymax-border-subtle);
+  margin-top: 8px;
+  padding-top: 10px;
+}
+
+.aymaxCommentDialog .sapMDialogSection {
+  border-radius: 12px;
+}
+
+.aymaxCommentDialogBody {
+  min-height: 420px;
+}
+
+.aymaxReplyBanner,
+.aymaxCommentComposer,
+.aymaxCommentItem,
+.aymaxReplyContext {
+  border-radius: 14px;
+}
+
+.aymaxReplyBanner {
+  background: #f6f8fa;
+  border: 1px solid #e6e9ee;
+  padding: 12px 14px;
+}
+
+.aymaxCommentComposer {
+  background: #ffffff;
+  border: 1px solid #e6e9ee;
+  padding: 14px;
+}
+
+.aymaxCommentComposer .sapMTextAreaInner {
+  border-radius: 10px;
+  border: 1px solid #dce1e7;
+  background: #ffffff;
+}
+
+.aymaxCommentComposer .sapMBtn {
+  border-radius: 999px;
+}
+
+.aymaxCommentComposer .sapMBtnEmphasized,
+.aymaxCommentComposer .sapMBtnTransparent {
+  background: #ffffff !important;
+  border: 1px solid #dce1e7 !important;
+}
+
+.aymaxCommentItem {
+  padding: 10px 0;
+}
+
+.aymaxCommentItem .sapMBtnTransparent {
+  color: #0a66c2;
+  border-radius: 999px;
+  padding-left: 12px;
+  padding-right: 12px;
+  background: #f3f6f8;
+}
+
+.aymaxCommentItem .sapMBtnTransparent:hover {
+  background: #eaf3fb;
+}
+
+.aymaxReplyContext {
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--aymax-primary) 6%, transparent);
+  border-left: 3px solid var(--aymax-primary);
+}
+
+.aymaxCommentReplyLabel {
+  font-weight: 600;
+}
+
+.aymaxCommentsHeader {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--aymax-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ===== PIÈCE JOINTE CARD ===== */
+.aymaxDocItem {
+  background: color-mix(in srgb, var(--aymax-primary) 4%, transparent);
+  border: 1px solid var(--aymax-border-subtle);
+  border-radius: var(--aymax-radius-sm, 8px);
+  padding: 6px 10px;
+}
+
+.aymaxDocItem:hover {
+  border-color: var(--aymax-primary);
+  background: color-mix(in srgb, var(--aymax-primary) 8%, transparent);
+}
+
+/* Bouton J'aime actif et plus soft */
+.sapMBtn.aymaxLiked .sapMBtnContent,
+.sapMBtn.aymaxLiked .sapMBtnIcon {
+  color: #0a66c2 !important;
+  font-weight: 600 !important;
+}
+
+.sapMBtn.aymaxLiked {
+  background: rgba(10, 102, 194, 0.06) !important;
+}
+
+.sapMBtn.aymaxLiked:hover {
+  background: rgba(10, 102, 194, 0.12) !important;
+}
+
+/* Bouton J'aime pas actif et plus soft */
+.sapMBtn.aymaxDisliked .sapMBtnContent,
+.sapMBtn.aymaxDisliked .sapMBtnIcon {
+  color: #d93838 !important;
+  font-weight: 600 !important;
+}
+
+.sapMBtn.aymaxDisliked {
+  background: rgba(217, 56, 56, 0.06) !important;
+}
+
+.sapMBtn.aymaxDisliked:hover {
+  background: rgba(217, 56, 56, 0.12) !important;
 }

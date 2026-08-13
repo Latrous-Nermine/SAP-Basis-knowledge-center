@@ -1,0 +1,10 @@
+ID,name,color,icon,description,usageCount
+a0000000-0000-0000-0000-000000000001,SAP BTP,#1E3A8A,sap-icon://cloud,SAP Business Technology Platform,24
+a0000000-0000-0000-0000-000000000002,CAP,#0284C7,sap-icon://source-code,Cloud Application Programming Model,18
+a0000000-0000-0000-0000-000000000003,SAPUI5,#0D9488,sap-icon://dimension,Framework Frontend SAPUI5,15
+a0000000-0000-0000-0000-000000000004,HANA Cloud,#6366F1,sap-icon://database,Base de données in-memory SAP HANA,12
+a0000000-0000-0000-0000-000000000005,XSUAA,#D97706,sap-icon://key,Service d'authentification et sécurité BTP,9
+a0000000-0000-0000-0000-000000000006,OData V4,#059669,sap-icon://connected,Protocole OData Version 4,14
+a0000000-0000-0000-0000-000000000007,Docker,#2563EB,sap-icon://sys-enter,Conteneurs et déploiement,8
+a0000000-0000-0000-0000-000000000008,ABAP Cloud,#9333EA,sap-icon://developer-settings,ABAP RESTful Application Programming,11
+a0000000-0000-0000-0000-000000000009,CI/CD,#DC2626,sap-icon://process,Intégration et Déploiement Continu,7

@@ -1,0 +1,137 @@
+<mvc:View
+  controllerName="aymax.feed.controller.Questions"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:layout="sap.ui.layout"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+
+      <!-- Conteneur centré -->
+      <layout:HorizontalLayout class="aymaxQuestionsWrapper">
+        <layout:VerticalLayout width="100%" class="aymaxQuestionsCenter">
+
+          <!-- En-tête -->
+          <HBox class="sapUiLargeMarginBottom" alignItems="Center" justifyContent="SpaceBetween">
+            <VBox>
+              <Title text="Questions &amp; Réponses" titleStyle="H2" class="aymaxQuestionsTitle"/>
+              <Text text="Trouvez des réponses d'experts ou posez vos questions techniques" class="aymaxMeta"/>
+            </VBox>
+            <Button
+              icon="sap-icon://add"
+              text="Poser une question"
+              type="Emphasized"
+              press=".onCreateQuestion"
+              class="aymaxQuestionsAskBtn"/>
+          </HBox>
+
+          <!-- Barre de recherche + filtres sur même ligne -->
+          <HBox class="sapUiMediumMarginBottom aymaxQuestionsToolbar" justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap">
+
+            <!-- Recherche texte -->
+            <HBox alignItems="Center" class="aymaxSearchGroup">
+              <SearchField
+                id="questionSearchField"
+                width="260px"
+                placeholder="Rechercher une question..."
+                search=".onSearchQuestions"
+                class="sapUiSmallMarginEnd"/>
+
+              <!-- Recherche par tag -->
+              <SearchField
+                id="tagSearchField"
+                width="200px"
+                placeholder="Rechercher par tag..."
+                search=".onSearchByTag"
+                class="sapUiSmallMarginEnd"/>
+            </HBox>
+
+            <!-- Filtres statut -->
+            <HBox alignItems="Center" class="aymaxFilterGroup">
+              <Button
+                id="filterAll"
+                icon="sap-icon://list"
+                text="Toutes"
+                type="{view>/questionFilter === 'all' ? 'Emphasized' : 'Transparent'}"
+                press=".onFilterAll"
+                class="aymaxFilterBtn aymaxFilterActive"/>
+              <Button
+                id="filterResolved"
+                icon="sap-icon://accept"
+                text="Résolues"
+                type="Transparent"
+                press=".onFilterResolved"
+                class="aymaxFilterBtn"/>
+              <Button
+                id="filterOpen"
+                icon="sap-icon://sys-help-2"
+                text="Ouvertes"
+                type="Transparent"
+                press=".onFilterOpen"
+                class="aymaxFilterBtn"/>
+            </HBox>
+
+          </HBox>
+
+          <!-- Tag actif (filtre en cours) -->
+          <HBox id="activeTagFilterBox" visible="false" class="sapUiSmallMarginBottom" alignItems="Center">
+            <Text text="Tag filtré : " class="aymaxMeta sapUiTinyMarginEnd"/>
+            <Token id="activeTagToken" text="" delete=".onClearTagFilter"/>
+          </HBox>
+
+          <!-- Liste des questions -->
+          <List
+            id="questionsList"
+            items="{questions>/Questions}"
+            growing="true"
+            growingThreshold="10"
+            showSeparators="None"
+            noDataText="Aucune question trouvée — posez la première !">
+            <CustomListItem type="Active" press=".onQuestionPress" class="sapUiTinyMarginBottom">
+              <HBox class="aymaxQuestionCard" alignItems="Center">
+
+                <!-- Votes -->
+                <VBox class="aymaxVoteBox sapUiSmallMarginEnd" alignItems="Center">
+                  <core:Icon src="sap-icon://thumb-up" size="1rem" class="aymaxVoteIcon"/>
+                  <Title text="{path:'questions>voteCount', formatter:'.formatter.formatVoteCount'}" level="H4"/>
+                  <Text text="votes" class="aymaxMeta"/>
+                </VBox>
+
+                <!-- Réponses -->
+                <VBox class="aymaxVoteBox sapUiSmallMarginEnd" alignItems="Center">
+                  <core:Icon src="sap-icon://comment" size="1rem" class="aymaxVoteIcon"/>
+                  <Title text="{questions>answerCount}" level="H4"/>
+                  <Text text="réponses" class="aymaxMeta"/>
+                </VBox>
+
+                <!-- Contenu -->
+                <VBox width="100%">
+                  <HBox justifyContent="SpaceBetween" alignItems="Center">
+                    <Title text="{questions>title}" level="H4" wrapping="true" class="aymaxQuestionTitle"/>
+                    <ObjectStatus
+                      text="{path:'questions>status', formatter:'.formatter.formatQuestionStatusText'}"
+                      state="{path:'questions>status', formatter:'.formatter.formatQuestionStatusState'}"
+                      class="aymaxStatusBadge"/>
+                  </HBox>
+                  <Text text="{questions>content}" maxLines="2" class="aymaxMeta sapUiTinyMarginTop" wrapping="true"/>
+                  <HBox class="sapUiSmallMarginTop" justifyContent="SpaceBetween" alignItems="Center">
+                    <Text text="{path:'questions>createdAt', formatter:'.formatter.formatRelativeTime'}" class="aymaxMeta"/>
+                    <HBox alignItems="Center">
+                      <core:Icon src="sap-icon://visits" size="0.75rem" class="aymaxMeta sapUiTinyMarginEnd"/>
+                      <Text text="{questions>viewCount} vues" class="aymaxMeta"/>
+                    </HBox>
+                  </HBox>
+                </VBox>
+
+              </HBox>
+            </CustomListItem>
+          </List>
+
+        </layout:VerticalLayout>
+      </layout:HorizontalLayout>
+
+    </content>
+  </Page>
+</mvc:View>

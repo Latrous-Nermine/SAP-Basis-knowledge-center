@@ -1,0 +1,140 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:form="sap.ui.layout.form"
+  xmlns:unified="sap.ui.unified"
+  xmlns:l="sap.ui.layout">
+
+  <Dialog id="postCreateDialog" title="Nouvelle publication" contentWidth="600px" resizable="false" class="aymaxPublishDialog">
+    <content>
+      <VBox class="aymaxPublishDialogContent sapUiContentPadding">
+
+        <!-- Contenu principal (TextArea) -->
+        <TextArea
+          id="postContentArea"
+          value="{view>/postDialog/content}"
+          placeholder="Partagez une connaissance, posez une question, publiez une annonce..."
+          rows="6"
+          growing="true"
+          growingMaxLines="10"
+          width="100%"
+          class="aymaxPublishTextArea"/>
+
+        <!-- Barre d'outils pour ajouter des fichiers/tags -->
+        <HBox class="aymaxPublishToolbar sapUiSmallMarginTop sapUiSmallMarginBottom" alignItems="Center">
+          <HBox alignItems="Center" class="aymaxPublishToolbarLeft">
+            <Button
+              icon="sap-icon://image"
+              type="Transparent"
+              tooltip="Ajouter une image"
+              press=".onAddImageClick"
+              class="aymaxPublishToolbarBtn"/>
+            <Button
+              icon="sap-icon://attachment"
+              type="Transparent"
+              tooltip="Ajouter un document"
+              press=".onAddDocumentClick"
+              class="aymaxPublishToolbarBtn"/>
+            <Button
+              icon="sap-icon://tag"
+              type="Transparent"
+              tooltip="Ajouter des tags"
+              press=".onAddTagsClick"
+              class="aymaxPublishToolbarBtn"/>
+          </HBox>
+          <ToolbarSpacer/>
+          <!-- Sélecteur de visibilité -->
+          <Select
+            id="postVisibilitySelect"
+            selectedKey="{view>/postDialog/visibility}"
+            width="140px"
+            class="aymaxPublishVisibilitySelect">
+            <items>
+              <core:Item key="interne"     text="Interne"/>
+              <core:Item key="department"  text="Département"/>
+              <core:Item key="public"      text="Public"/>
+            </items>
+          </Select>
+        </HBox>
+
+        <!-- Pièces jointes en attente (optionnel) -->
+        <VBox visible="{= ${view>/postDialog/pendingFiles}.length > 0}" class="sapUiSmallMarginBottom">
+          <List
+            items="{view>/postDialog/pendingFiles}"
+            showSeparators="None">
+            <CustomListItem>
+              <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiTinyMarginTopBottom">
+                <HBox alignItems="Center">
+                  <core:Icon
+                    src="{path:'fileType', formatter:'.formatFileIcon'}"
+                    size="1.2rem"
+                    class="sapUiSmallMarginEnd"/>
+                  <VBox>
+                    <Text text="{name}" class="fontBold"/>
+                    <Text text="{path:'size', formatter:'.formatFileSize'}" class="aymaxMeta"/>
+                  </VBox>
+                </HBox>
+                <Button
+                  icon="sap-icon://delete"
+                  type="Transparent"
+                  press=".onRemovePendingFile"
+                  tooltip="Supprimer"
+                  class="btnDelete"/>
+              </HBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+        <!-- Tags MultiInput (optionnel) -->
+        <VBox visible="{= ${view>/postDialog/showTagInput}}" class="sapUiSmallMarginBottom">
+          <MultiInput
+            id="postTagInput"
+            placeholder="Tapez un tag et appuyez sur Entrée (ex: SAP, ABAP)..."
+            showSuggestion="true"
+            suggestionItems="{view>/tagSuggestions}"
+            maxTokens="15"
+            width="100%"
+            tokenUpdate=".onTagTokenUpdate"
+            liveChange=".onTagLiveChange"
+            class="aymaxPublishMultiInput">
+            <suggestionItems>
+              <core:Item key="{view>ID}" text="{view>name}"/>
+            </suggestionItems>
+            <customData>
+              <core:CustomData key="tagPath" value="/postDialog/tags"/>
+            </customData>
+          </MultiInput>
+        </VBox>
+
+        <!-- Upload de fichier (hidden) -->
+        <unified:FileUploader
+          id="postFileUploader"
+          name="postFile"
+          multiple="true"
+          fileType="pdf,doc,docx,xls,xlsx,png,jpg,jpeg,webp"
+          maximumFileSize="10"
+          buttonOnly="true"
+          buttonText="Ajouter un fichier"
+          hidden="true"
+          change=".onFileSelected"
+          typeMissmatch=".onFileTypeMismatch"
+          fileSizeExceed=".onFileSizeExceed"/>
+
+      </VBox>
+    </content>
+
+    <beginButton>
+      <Button
+        id="postSubmitBtn"
+        text="Publier"
+        type="Emphasized"
+        enabled="{= !!${view>/postDialog/content} &amp;&amp; ${view>/postDialog/content}.trim().length > 0 }"
+        press=".onConfirmCreatePost"
+        class="aymaxPublishBtn"/>
+    </beginButton>
+    <endButton>
+      <Button text="Annuler" press=".onCancelCreatePost"/>
+    </endButton>
+  </Dialog>
+
+</core:FragmentDefinition>

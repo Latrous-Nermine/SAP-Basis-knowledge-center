@@ -2,62 +2,97 @@
   controllerName="aymax.feed.controller.Rooms"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:layout="sap.ui.layout"
   displayBlock="true">
 
   <Page showHeader="false" class="aymaxPage">
     <content>
-      <VBox class="sapUiContentPadding">
-        <HBox class="sapUiMediumMarginBottom" alignItems="Center" justifyContent="SpaceBetween">
-          <Title text="Rooms" titleStyle="H3"/>
-          <Button icon="sap-icon://add" text="Créer une room" type="Emphasized" press=".onCreateRoom"/>
-        </HBox>
 
-        <HBox class="sapUiMediumMarginBottom">
-          <SegmentedButton selectedKey="{view>/roomFilter}" selectionChange=".onFilterChange">
-            <items>
-              <SegmentedButtonItem text="Toutes" key="all"/>
-              <SegmentedButtonItem text="Publiques" key="public"/>
-              <SegmentedButtonItem text="Privées" key="private"/>
-              <SegmentedButtonItem text="Stage" key="stage"/>
-              <SegmentedButtonItem text="Mes rooms" key="myrooms"/>
-            </items>
-          </SegmentedButton>
-        </HBox>
+      <!-- Conteneur centré -->
+      <layout:HorizontalLayout class="aymaxPageWrapper">
+        <layout:VerticalLayout width="100%" class="aymaxPageCenter">
 
-        <List id="roomsList"
-              items="{path:'/Rooms', templateShareable:'false'}"
-              growing="true"
-              growingThreshold="12">
-          <CustomListItem>
-            <HBox class="aymaxRoomCard sapUiMediumMargin" alignItems="Start">
-              <Avatar
-                src="{parts:[{path:'avatarUrl'},{path:'name'}], formatter:'.formatAvatar'}"
-                displaySize="L"
-                class="sapUiMediumMarginEnd"/>
-              <VBox width="100%">
-                <HBox justifyContent="SpaceBetween" alignItems="Center">
-                  <VBox>
-                    <Title text="{name}" level="H4"/>
-                    <Text text="{description}" class="aymaxMeta sapUiTinyMarginTop" maxLines="2"/>
-                  </VBox>
-                  <HBox>
-                    <Token text="{category}" class="aymaxTagAccent"/>
-                    <Button icon="sap-icon://arrow-right" type="Transparent" press=".onRoomPress" tooltip="Entrer"/>
-                  </HBox>
-                </HBox>
-                <HBox class="sapUiSmallMarginTop" alignItems="Center">
-                  <Text text="{memberCount} membres" class="aymaxMeta"/>
-                  <Text text=" · " class="aymaxMeta sapUiTinyMarginBeginEnd"/>
-                  <Text text="{postCount} publications" class="aymaxMeta"/>
-                  <ToolbarSpacer/>
-                  <Button text="Rejoindre" type="Emphasized" press=".onJoinRoom" visible="{= !${isFollowed}}"/>
-                  <Button text="Quitter" type="Transparent" press=".onLeaveRoom" visible="{isFollowed}"/>
-                </HBox>
-              </VBox>
+          <!-- En-tête -->
+          <HBox class="sapUiLargeMarginBottom" alignItems="Center" justifyContent="SpaceBetween">
+            <VBox>
+              <Title text="Rooms" titleStyle="H2" class="aymaxPageTitle"/>
+              <Text text="Espaces de collaboration autour de vos sujets SAP" class="aymaxMeta"/>
+            </VBox>
+            <Button
+              icon="sap-icon://add"
+              text="Créer une room"
+              type="Emphasized"
+              press=".onCreateRoom"/>
+          </HBox>
+
+          <!-- Barre recherche + filtres -->
+          <HBox class="sapUiMediumMarginBottom aymaxQuestionsToolbar" justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap">
+            <SearchField
+              id="roomSearchField"
+              width="280px"
+              placeholder="Rechercher une room..."
+              search=".onSearchRooms"/>
+            <HBox alignItems="Center" class="aymaxFilterGroup">
+              <Button id="filterRoomAll"     icon="sap-icon://list" text="Toutes"   type="Emphasized"  press=".onFilterRoomAll"    class="aymaxFilterBtn"/>
+              <Button id="filterRoomPublic"  icon="sap-icon://world" text="Publiques" type="Transparent" press=".onFilterRoomPublic" class="aymaxFilterBtn"/>
+              <Button id="filterRoomPrivate" icon="sap-icon://lock" text="Privées"   type="Transparent" press=".onFilterRoomPrivate" class="aymaxFilterBtn"/>
+              <Button id="filterRoomStage"   icon="sap-icon://education" text="Stage" type="Transparent" press=".onFilterRoomStage"  class="aymaxFilterBtn"/>
+              <Button id="filterRoomMine"    icon="sap-icon://favorite" text="Mes rooms" type="Transparent" press=".onFilterRoomMine" class="aymaxFilterBtn"/>
             </HBox>
-          </CustomListItem>
-        </List>
-      </VBox>
+          </HBox>
+
+          <!-- Grille des rooms -->
+          <List
+            id="roomsList"
+            items="{path:'/Rooms', templateShareable:'false'}"
+            growing="true"
+            growingThreshold="12"
+            showSeparators="None"
+            noDataText="Aucune room trouvée">
+            <CustomListItem class="sapUiTinyMarginBottom">
+              <HBox class="aymaxRoomCard" alignItems="Start">
+                <Avatar
+                  src="{parts:[{path:'avatarUrl'},{path:'name'}], formatter:'.formatAvatar'}"
+                  displaySize="L"
+                  class="sapUiMediumMarginEnd aymaxRoomAvatar"/>
+                <VBox width="100%">
+                  <HBox justifyContent="SpaceBetween" alignItems="Center">
+                    <VBox>
+                      <Title text="{name}" level="H4" class="aymaxRoomName"/>
+                      <Text text="{description}" class="aymaxMeta sapUiTinyMarginTop" maxLines="2" wrapping="true"/>
+                    </VBox>
+                    <HBox alignItems="Center">
+                      <Token text="{category}" class="aymaxTagAccent sapUiSmallMarginEnd"/>
+                      <ObjectStatus
+                        text="{path:'visibility', formatter:'.formatVisibility'}"
+                        state="{path:'visibility', formatter:'.formatVisibilityState'}"
+                        class="sapUiSmallMarginEnd"/>
+                      <Button
+                        icon="sap-icon://arrow-right"
+                        type="Transparent"
+                        press=".onRoomPress"
+                        tooltip="Ouvrir la room"/>
+                    </HBox>
+                  </HBox>
+                  <HBox class="sapUiSmallMarginTop aymaxRoomStats" alignItems="Center">
+                    <core:Icon src="sap-icon://group" size="0.8rem" class="aymaxMeta sapUiTinyMarginEnd"/>
+                    <Text text="{memberCount} membres" class="aymaxMeta sapUiSmallMarginEnd"/>
+                    <core:Icon src="sap-icon://post" size="0.8rem" class="aymaxMeta sapUiTinyMarginEnd"/>
+                    <Text text="{postCount} publications" class="aymaxMeta sapUiSmallMarginEnd"/>
+                    <core:Icon src="sap-icon://question-mark" size="0.8rem" class="aymaxMeta sapUiTinyMarginEnd"/>
+                    <Text text="{questionCount} questions" class="aymaxMeta"/>
+                    <ToolbarSpacer/>
+                    <Button text="Rejoindre" type="Emphasized" press=".onJoinRoom" class="aymaxJoinBtn"/>
+                  </HBox>
+                </VBox>
+              </HBox>
+            </CustomListItem>
+          </List>
+
+        </layout:VerticalLayout>
+      </layout:HorizontalLayout>
+
     </content>
   </Page>
 </mvc:View>

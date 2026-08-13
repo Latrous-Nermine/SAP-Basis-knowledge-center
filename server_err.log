@@ -1,0 +1,82 @@
+(node:3952) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[odata] - 404 - Error: Invalid resource path "QuestionsService.Questions$top=1&$expand=author,answers"
+    at module.exports [as afterburner] (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\parse\afterburner.js:944:11)
+    at _enhanceCqn (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\index.js:73:19)
+    at Object.parse (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\index.js:125:13)
+    at parse_odata_url (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\middleware\parse.js:19:28)
+    at Layer.handleRequest (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\index.js:342:13)
+    at C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\index.js:297:9
+    at processParams (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\index.js:582:12)
+    at next (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\index.js:291:5)
+    at log_request (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\ODataAdapter.js:51:5) {
+  status: 404,
+  code: '404'
+}
+[odata] - 404 - Error: Invalid resource path "TagsService.Tags$top=3"
+    at module.exports [as afterburner] (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\parse\afterburner.js:944:11)
+    at _enhanceCqn (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\index.js:73:19)
+    at Object.parse (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\index.js:125:13)
+    at parse_odata_url (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\middleware\parse.js:19:28)
+    at Layer.handleRequest (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\index.js:342:13)
+    at C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\index.js:297:9
+    at processParams (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\index.js:582:12)
+    at next (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\router\index.js:291:5)
+    at log_request (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\ODataAdapter.js:51:5) {
+  status: 404,
+  code: '404'
+}
+[odata] - 405 - Error: Entity "FeedService.RoomMembers" is not explicitly exposed as part of the service
+    at FeedHandler.check_autoexposed (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\generic\auth\autoexpose.js:12:46)
+    at FeedHandler.handle_authorization (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\generic\auth\index.js:76:23)
+    at FeedHandler.handle (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\Service.js:73:47)
+    at FeedHandler.dispatch (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:32:17)
+    at C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:20:50
+    at FeedHandler.run (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\cds.Service.js:171:44)
+    at FeedHandler.dispatch (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:20:36)
+    at C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\middleware\read.js:258:24
+    at FeedHandler.run (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\cds.Service.js:171:44)
+    at odata_read (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\middleware\read.js:257:8) {
+  code: 'ENTITY_IS_AUTOEXPOSED',
+  args: [ 'FeedService.RoomMembers' ],
+  status: 405,
+  _i18n: 1
+}
+[odata] - 404 - Error: Not Found
+    at Function.new_behavior [as _handle_result] (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\generic\crud.js:59:57)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async FeedHandler.handle_crud_requests (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\generic\crud.js:25:12)
+    at async next (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:57:19)
+    at async FeedHandler.handle (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:55:12) {
+  code: '404',
+  status: 404,
+  _i18n: 1
+}
+[odata] - 404 - Error: Not Found
+    at Function.new_behavior [as _handle_result] (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\generic\crud.js:59:57)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async FeedHandler.handle_crud_requests (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\generic\crud.js:25:12)
+    at async next (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:57:19)
+    at async FeedHandler.handle (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:55:12) {
+  code: '404',
+  status: 404,
+  _i18n: 1
+}
+[odata] - 405 - Error: Entity "FeedService.RoomMembers" is not explicitly exposed as part of the service
+    at FeedHandler.check_autoexposed (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\generic\auth\autoexpose.js:12:46)
+    at FeedHandler.handle_authorization (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\generic\auth\index.js:76:23)
+    at FeedHandler.handle (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\_runtime\common\Service.js:73:47)
+    at FeedHandler.dispatch (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:32:17)
+    at C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:20:50
+    at FeedHandler.run (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\cds.Service.js:171:44)
+    at FeedHandler.dispatch (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\srv-dispatch.js:20:36)
+    at C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\middleware\read.js:258:24
+    at FeedHandler.run (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\lib\srv\cds.Service.js:171:44)
+    at odata_read (C:\Users\latro\Downloads\SAP-Basis-knowledge-center_L\node_modules\@sap\cds\libx\odata\middleware\read.js:257:8) {
+  code: 'ENTITY_IS_AUTOEXPOSED',
+  args: [ 'FeedService.RoomMembers' ],
+  status: 405,
+  _i18n: 1
+}
