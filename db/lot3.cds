@@ -54,7 +54,7 @@ using {
 
 extend UserProfiles with {
   /** Riadh's Employees.level ("Contributeur"/"Expert"...) - distinct
-      from UserProfiles.role (Employee/DepartmentManager/HR/Admin/Intern,
+      from UserProfiles.role (Employee/Manager/HR/Admin/Intern,
       an RBAC role) and from Experts' expertiseLevel (computed from
       reputation) - this is a separate, HR-assigned rating. */
   hrLevel            : String(40);

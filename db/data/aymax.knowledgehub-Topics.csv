@@ -1,4 +1,5 @@
-ID,name,description,department,articleCount,questionCount
-6b2c0001-0000-4000-8000-000000000001,SAP BTP,"Cloud Foundry, CAP, HANA, Build Apps, Workflow",SAP Technical,4,2
-6b2c0001-0000-4000-8000-000000000002,Solutions SAP,"Fiori, reporting et solutions métier SAP",SAP Basis,1,0
-6b2c0001-0000-4000-8000-000000000003,Développement Digital,"Portails clients, CI/CD, architecture applicative",SAP Technical,2,0
+ID,name,description,color,icon,postCount,questionCount,roomCount
+b0000000-0000-0000-0000-000000000001,Architecture & Administration,Sujets relatifs à l'architecture globale SAP et administration Basis,#1E3A8A,sap-icon://checklist-item,15,8,3
+b0000000-0000-0000-0000-000000000002,Développement & Frameworks,Tutoriels et partages sur SAPUI5, CAP, ABAP Cloud,#0284C7,sap-icon://code,22,14,4
+b0000000-0000-0000-0000-000000000003,Sécurité & Intégration,Sécurité XSUAA, OAuth2, IAS et intégration BTP,#D97706,sap-icon://security-high,10,5,2
+b0000000-0000-0000-0000-000000000004,Base de données & Performance,SAP HANA Cloud, requêtes SQLScript, indexation et performance,#6366F1,sap-icon://database,12,7,2

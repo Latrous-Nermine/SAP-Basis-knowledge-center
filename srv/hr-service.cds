@@ -25,7 +25,7 @@ service HRService {
       followersCount/expertiseLevel. */
   @readonly
   @restrict: [
-    { grant: 'READ', to: ['DepartmentManager', 'HR', 'Admin'] }
+    { grant: 'READ', to: ['Manager', 'HR', 'Administrator'] }
   ]
   entity Employees as projection on kh.UserProfiles {
     key userID,
@@ -44,14 +44,14 @@ service HRService {
   entity Skills as projection on kh.UserSkills;
 
   @restrict: [
-    { grant: 'READ',                        to: ['DepartmentManager', 'HR', 'Admin'] },
-    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['HR', 'Admin'] }
+    { grant: 'READ',                        to: ['Manager', 'HR', 'Administrator'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['HR', 'Administrator'] }
   ]
   entity Objectives as projection on kh.Objectives;
 
   @restrict: [
-    { grant: 'READ',                        to: ['DepartmentManager', 'HR', 'Admin'] },
-    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['HR', 'Admin'] }
+    { grant: 'READ',                        to: ['Manager', 'HR', 'Administrator'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['HR', 'Administrator'] }
   ]
   entity SkillGaps as projection on kh.SkillGaps;
 }

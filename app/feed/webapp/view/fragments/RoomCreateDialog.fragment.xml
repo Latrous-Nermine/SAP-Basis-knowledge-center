@@ -1,0 +1,37 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:form="sap.ui.layout.form">
+
+  <Dialog id="roomCreateDialog" title="Créer une Room de collaboration" contentWidth="500px">
+    <content>
+      <form:SimpleForm editable="true" layout="ColumnLayout">
+        <form:content>
+          <Label text="Nom de la Room" required="true"/>
+          <Input value="{view>/roomDialog/name}" placeholder="Ex: SAP BTP Development"/>
+
+          <Label text="Catégorie"/>
+          <Input value="{view>/roomDialog/category}" placeholder="Ex: SAP Basis, UI5, Security..."/>
+
+          <Label text="Visibilité"/>
+          <Select selectedKey="{view>/roomDialog/visibility}">
+            <items>
+              <core:Item key="public" text="Publique — Ouverte à tous"/>
+              <core:Item key="private" text="Privée — Sur invitation"/>
+              <core:Item key="stage" text="Stage — Workflow guidé par étapes"/>
+            </items>
+          </Select>
+
+          <Label text="Description"/>
+          <TextArea value="{view>/roomDialog/description}" rows="3" placeholder="Objectif et description de la room..."/>
+        </form:content>
+      </form:SimpleForm>
+    </content>
+    <beginButton>
+      <Button text="Créer la Room" type="Emphasized" press=".onConfirmCreateRoom"/>
+    </beginButton>
+    <endButton>
+      <Button text="Annuler" press=".onCancelCreateRoom"/>
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

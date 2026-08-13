@@ -1,0 +1,79 @@
+/* ===== LAYOUT CENTRÉ COMMUN (Rooms, Tags, Questions) ===== */
+.aymaxPageWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 32px 24px;
+  box-sizing: border-box;
+}
+
+.aymaxPageCenter {
+  max-width: 900px;
+  width: 100%;
+}
+
+.aymaxPageTitle .sapMTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--aymax-primary);
+}
+
+/* ===== ROOMS ===== */
+.aymaxRoomCard {
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md);
+  border: 1px solid var(--aymax-border);
+  padding: 16px 20px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+
+.aymaxRoomCard:hover {
+  border-color: var(--aymax-primary);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--aymax-primary) 10%, transparent);
+  transform: translateY(-1px);
+}
+
+.aymaxRoomAvatar {
+  flex-shrink: 0;
+}
+
+.aymaxRoomName .sapMTitle {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.aymaxRoomStats {
+  border-top: 1px solid var(--aymax-border-subtle);
+  padding-top: 10px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.aymaxJoinBtn {
+  margin-left: auto;
+}
+
+/* ===== ROOM DETAIL TABS ===== */
+.aymaxMemberRow {
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md);
+  border: 1px solid var(--aymax-border);
+}
+
+.sapMITBContent {
+  background: transparent !important;
+  border-bottom: none !important;
+}
+
+.sapMITBHead {
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md) var(--aymax-radius-md) 0 0;
+  border: 1px solid var(--aymax-border);
+  border-bottom: none;
+  padding: 0 8px;
+}
+
+.sapMITBSelected {
+  border-bottom: 2px solid var(--aymax-primary) !important;
+}

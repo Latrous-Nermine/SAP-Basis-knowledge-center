@@ -120,7 +120,12 @@ entity Notifications : cuid {
 // analysis (docs/lot2-analysis.md §7.2) — not invented here.
 // ============================================================
 
-entity Topics : cuid {
+/** Knowledge Center's own category taxonomy (docs/design/Knowledge-Center.md) -
+    named KnowledgeTopics, not Topics: Lot 1's schema.cds (nermine) has its
+    own, differently-shaped Topics entity (cross-cutting Post/Room/Question
+    themes with color/icon) that this would otherwise collide with. Two
+    genuinely different concepts that happened to share a name. */
+entity KnowledgeTopics : cuid {
   name          : String(100) @assert.unique;   // 'SAP BTP'
   description   : String(500);
   department    : String(100);
@@ -141,7 +146,7 @@ entity KnowledgeItems : cuid, managed {
 
   excerpt         : String(500);
   content         : LargeString;
-  topic           : Association to Topics;
+  topic           : Association to KnowledgeTopics;
 
   /** Business status (draft -> pending -> approved/rejected), enforced
       by srv/domain/KnowledgeWorkflow.js. Deliberately NOT CAP's
@@ -274,11 +279,11 @@ extend Comments with {
 // ============================================================
 
 extend UserProfiles with {
-  /** Application role (Employee/DepartmentManager/HR/Admin/Intern).
+  /** Application role (Employee/Manager/HR/Administrator/Intern).
       Distinct from jobTitle ("Consultant SAP BTP") - req.user.is()
       only resolves the CALLER's role, never an arbitrary viewed
       user's, so this must be queryable data for anyone's profile. */
-  role             : String(20) enum { Employee; DepartmentManager; HR; Admin; Intern };
+  role             : String(20) enum { Employee; Manager; HR; Administrator; Intern };
 
   bio              : String(1000);
 

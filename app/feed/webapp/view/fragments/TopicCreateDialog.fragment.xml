@@ -1,0 +1,31 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:form="sap.ui.layout.form">
+
+  <Dialog id="topicCreateDialog" title="Créer / Modifier un Topic" contentWidth="450px">
+    <content>
+      <form:SimpleForm editable="true" layout="ColumnLayout">
+        <form:content>
+          <Label text="Nom du Topic" required="true"/>
+          <Input value="{view>/topicDialog/name}" placeholder="Ex: Performance HANA"/>
+
+          <Label text="Couleur Hex"/>
+          <Input value="{view>/topicDialog/color}" placeholder="#1E3A8A"/>
+
+          <Label text="Icône Fiori"/>
+          <Input value="{view>/topicDialog/icon}" placeholder="sap-icon://tag"/>
+
+          <Label text="Description"/>
+          <TextArea value="{view>/topicDialog/description}" rows="3" placeholder="Description du thème..."/>
+        </form:content>
+      </form:SimpleForm>
+    </content>
+    <beginButton>
+      <Button text="Enregistrer" type="Emphasized" press=".onConfirmSaveTopic"/>
+    </beginButton>
+    <endButton>
+      <Button text="Annuler" press=".onCancelTopicDialog"/>
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

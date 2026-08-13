@@ -7,7 +7,7 @@
   xmlns:vizData="sap.viz.ui5.data"
   xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds">
 
-  <VBox visible="{= ${view-dashboard>/role} === 'DepartmentManager' }" class="dashboardSectionGap">
+  <VBox visible="{= ${view-dashboard>/role} === 'Manager' }" class="dashboardSectionGap">
 
     <!-- Expertise de l'équipe - real data (UserSkills x People grouped by
          department, computed in DashboardService). Full width, own row:

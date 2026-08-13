@@ -19,10 +19,10 @@ service RapportsStageService {
 
   @restrict: [
     { grant: 'READ',   where: 'intern_userID = $user.id or tutor_userID = $user.id' },
-    { grant: 'READ',                to: ['DepartmentManager', 'HR', 'Admin'] },
+    { grant: 'READ',                to: ['Manager', 'HR', 'Administrator'] },
     { grant: 'CREATE',              to: ['Intern'] },
     { grant: 'UPDATE', where: 'intern_userID = $user.id and status = ''draft''' },
-    { grant: 'UPDATE',              to: ['DepartmentManager', 'HR', 'Admin'] }
+    { grant: 'UPDATE',              to: ['Manager', 'HR', 'Administrator'] }
   ]
   entity Rapports as projection on kh.Rapports {
     *,
@@ -31,7 +31,7 @@ service RapportsStageService {
 
   @restrict: [
     { grant: 'READ', where: 'rapport.intern_userID = $user.id or rapport.tutor_userID = $user.id' },
-    { grant: 'READ', to: ['DepartmentManager', 'HR', 'Admin'] }
+    { grant: 'READ', to: ['Manager', 'HR', 'Administrator'] }
   ]
   entity RapportHistory as projection on kh.RapportHistory;
 

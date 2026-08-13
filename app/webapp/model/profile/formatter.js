@@ -14,9 +14,9 @@ sap.ui.define([
 
   var ROLE_KEYS = {
     Employee: "role.employee",
-    DepartmentManager: "role.departmentManager",
+    Manager: "role.departmentManager",
     HR: "role.hr",
-    Admin: "role.admin",
+    Administrator: "role.admin",
     Intern: "role.intern"
   };
 

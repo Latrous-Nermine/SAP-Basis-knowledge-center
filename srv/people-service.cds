@@ -20,7 +20,7 @@ service PeopleService {
 
   @readonly
   @restrict: [
-    { grant: 'READ', to: ['Employee', 'DepartmentManager', 'HR', 'Admin', 'Intern'] }
+    { grant: 'READ', to: ['Employee', 'Manager', 'HR', 'Administrator', 'Intern'] }
   ]
   entity People as projection on kh.UserProfiles {
     *,

@@ -1,0 +1,114 @@
+<mvc:View
+  controllerName="aymax.feed.controller.Tags"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:layout="sap.ui.layout"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+
+      <!-- Conteneur centré -->
+      <layout:HorizontalLayout class="aymaxPageWrapper">
+        <layout:VerticalLayout width="100%" class="aymaxPageCenter">
+
+          <!-- En-tête -->
+          <HBox class="sapUiLargeMarginBottom" alignItems="Center" justifyContent="SpaceBetween">
+            <VBox>
+              <Title text="Tags" titleStyle="H2" class="aymaxPageTitle"/>
+              <Text text="Mots-clés pour catégoriser vos publications et questions" class="aymaxMeta"/>
+            </VBox>
+            <HBox alignItems="Center">
+              <Button
+                icon="sap-icon://combine"
+                text="Fusionner"
+                type="Transparent"
+                press=".onMergeTagsDialog"
+                class="sapUiSmallMarginEnd"
+                visible="{= ${view>/currentUser/role} === 'Manager' || ${view>/currentUser/role} === 'Administrator'}"/>
+              <Button
+                icon="sap-icon://add"
+                text="Créer un Tag"
+                type="Emphasized"
+                press=".onCreateTag"
+                visible="{= ${view>/currentUser/role} === 'Manager' || ${view>/currentUser/role} === 'Administrator'}"/>
+            </HBox>
+          </HBox>
+
+          <!-- Barre recherche + filtres -->
+          <HBox class="sapUiMediumMarginBottom aymaxQuestionsToolbar" justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap">
+            <SearchField
+              id="tagSearchField"
+              width="280px"
+              placeholder="Rechercher un tag..."
+              search=".onSearchTags"/>
+            <HBox alignItems="Center" class="aymaxFilterGroup">
+              <Button id="filterTagAll"     icon="sap-icon://list" text="Tous"          type="Emphasized"  press=".onFilterTagAll"     class="aymaxFilterBtn"/>
+              <Button id="filterTagPopular" icon="sap-icon://favorite" text="Populaires" type="Transparent" press=".onFilterTagPopular" class="aymaxFilterBtn"/>
+            </HBox>
+          </HBox>
+
+          <!-- Nuage de tags tendance -->
+          <Panel class="aymaxCard sapUiMediumMarginBottom aymaxTagCloudPanel">
+            <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+              <core:Icon src="sap-icon://tag" class="sapUiTinyMarginEnd aymaxTagCloudIcon"/>
+              <Title text="Tags tendance" level="H5"/>
+            </HBox>
+            <HBox wrap="Wrap" items="{tags>/Tags}" class="aymaxTagCloud">
+              <Button
+                text="{parts:[{path:'tags>name'},{path:'tags>usageCount'}], formatter:'.formatter.formatTagPill'}"
+                type="Transparent"
+                press=".onSelectTag"
+                class="aymaxTagPill"/>
+            </HBox>
+          </Panel>
+
+          <!-- Tableau des tags -->
+          <Table
+            id="tagsTable"
+            items="{tags>/Tags}"
+            growing="true"
+            growingThreshold="15"
+            showSeparators="Row"
+            class="aymaxCard aymaxTagsTable"
+            noDataText="Aucun tag trouvé">
+            <columns>
+              <Column width="30%"><Text text="Tag"/></Column>
+              <Column width="45%"><Text text="Description"/></Column>
+              <Column hAlign="Center" width="15%"><Text text="Utilisations"/></Column>
+              <Column hAlign="End" width="10%"><Text text=""/></Column>
+            </columns>
+            <items>
+              <ColumnListItem>
+                <cells>
+                  <!-- Nom du tag avec couleur -->
+                  <HBox alignItems="Center">
+                    <core:Icon src="sap-icon://tag" size="0.875rem" class="sapUiTinyMarginEnd aymaxTagRowIcon"/>
+                    <Token text="{tags>name}" class="aymaxTag"/>
+                  </HBox>
+                  <Text text="{tags>description}" maxLines="2"/>
+                  <!-- Compteur avec barre de popularité -->
+                  <VBox alignItems="Center">
+                    <Text text="{tags>usageCount}" class="aymaxTagUsageCount"/>
+                    <Text text="utilisations" class="aymaxMeta"/>
+                  </VBox>
+                  <HBox justifyContent="End">
+                    <Button
+                      icon="sap-icon://delete"
+                      type="Transparent"
+                      press=".onDeleteTag"
+                      tooltip="Supprimer ce tag"
+                      visible="{= ${view>/currentUser/role} === 'Manager' || ${view>/currentUser/role} === 'Administrator'}"/>
+                  </HBox>
+                </cells>
+              </ColumnListItem>
+            </items>
+          </Table>
+
+        </layout:VerticalLayout>
+      </layout:HorizontalLayout>
+
+    </content>
+  </Page>
+</mvc:View>

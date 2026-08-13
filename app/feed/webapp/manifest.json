@@ -6,10 +6,40 @@
     "i18n": "i18n/i18n.properties",
     "title": "AYMAX Knowledge Hub",
     "description": "Centralized SAP Knowledge Management",
-    "applicationVersion": { "version": "1.0.0" },
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
     "dataSources": {
       "feedService": {
         "uri": "/odata/v4/feed/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      },
+      "roomsService": {
+        "uri": "/odata/v4/rooms/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      },
+      "topicsService": {
+        "uri": "/odata/v4/topics/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      },
+      "tagsService": {
+        "uri": "/odata/v4/tags/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      },
+      "questionsService": {
+        "uri": "/odata/v4/questions/",
         "type": "OData",
         "settings": {
           "odataVersion": "4.0"
@@ -24,7 +54,8 @@
         "sap.m": {},
         "sap.f": {},
         "sap.ui.core": {},
-        "sap.ui.layout": {}
+        "sap.ui.layout": {},
+        "sap.ui.unified": {}
       }
     },
     "rootView": {
@@ -32,22 +63,6 @@
       "type": "XML",
       "async": true,
       "id": "app"
-    },
-    "routing": {
-      "config": {
-        "routerClass": "sap.m.routing.Router",
-        "viewType": "XML",
-        "viewPath": "aymax.feed.view",
-        "controlId": "app",
-        "controlAggregation": "pages",
-        "async": true
-      },
-      "routes": [
-        { "pattern": "", "name": "feed", "target": "feed" }
-      ],
-      "targets": {
-        "feed": { "viewName": "Feed", "viewLevel": 1 }
-      }
     },
     "models": {
       "": {
@@ -60,11 +75,158 @@
           "earlyRequests": true
         }
       },
+      "rooms": {
+        "dataSource": "roomsService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "topics": {
+        "dataSource": "topicsService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "tags": {
+        "dataSource": "tagsService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "questions": {
+        "dataSource": "questionsService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
-        "settings": { "bundleName": "aymax.feed.i18n.i18n" }
+        "settings": {
+          "bundleName": "aymax.feed.i18n.i18n"
+        }
       },
-      "view": { "type": "sap.ui.model.json.JSONModel" }
+      "view": {
+        "type": "sap.ui.model.json.JSONModel"
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        },
+        {
+          "uri": "css/rooms.css"
+        },
+        {
+          "uri": "css/header.css"
+        },
+        {
+          "uri": "css/topics.css"
+        },
+        {
+          "uri": "css/tags.css"
+        },
+        {
+          "uri": "css/questions.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "aymax.feed.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "feed",
+          "target": "feed"
+        },
+        {
+          "pattern": "rooms",
+          "name": "rooms",
+          "target": "rooms"
+        },
+        {
+          "pattern": "rooms/{roomId}",
+          "name": "roomDetail",
+          "target": "roomDetail"
+        },
+        {
+          "pattern": "topics",
+          "name": "topics",
+          "target": "topics"
+        },
+        {
+          "pattern": "tags",
+          "name": "tags",
+          "target": "tags"
+        },
+        {
+          "pattern": "questions",
+          "name": "questions",
+          "target": "questions"
+        },
+        {
+          "pattern": "questions/{questionId}",
+          "name": "questionDetail",
+          "target": "questionDetail"
+        }
+      ],
+      "targets": {
+        "feed": {
+          "viewName": "Feed",
+          "viewId": "feed",
+          "viewLevel": 1
+        },
+        "rooms": {
+          "viewName": "Rooms",
+          "viewId": "rooms",
+          "viewLevel": 1
+        },
+        "roomDetail": {
+          "viewName": "RoomDetail",
+          "viewId": "roomDetail",
+          "viewLevel": 2
+        },
+        "topics": {
+          "viewName": "Topics",
+          "viewId": "topics",
+          "viewLevel": 1
+        },
+        "tags": {
+          "viewName": "Tags",
+          "viewId": "tags",
+          "viewLevel": 1
+        },
+        "questions": {
+          "viewName": "Questions",
+          "viewId": "questions",
+          "viewLevel": 1
+        },
+        "questionDetail": {
+          "viewName": "QuestionDetail",
+          "viewId": "questionDetail",
+          "viewLevel": 2
+        }
+      }
     }
   }
 }

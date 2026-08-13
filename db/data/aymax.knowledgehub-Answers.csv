@@ -1,0 +1,5 @@
+ID,question_ID,author_userID,content,voteCount,isAccepted,createdAt
+e0000000-0000-0000-0000-000000000001,d0000000-0000-0000-0000-000000000001,karim,"Vous pouvez utiliser oOperation.execute().catch(...) ou bindContext avec gestion d'erreurs centrale via un helper ODataService.",4,true,2026-07-28T12:30:00Z
+e0000000-0000-0000-0000-000000000002,d0000000-0000-0000-0000-000000000001,nadia,"En OData V4, vous devez aussi vérifier oOperation.getBoundContext() et récupérer le message d'erreur retourné dans la réponse JSON du serveur.",2,false,2026-07-28T14:15:00Z
+e0000000-0000-0000-0000-000000000003,d0000000-0000-0000-0000-000000000002,sami,"Dans le handler JS CAP, vous pouvez utiliser req.user.has('Manager') ou vérifier req.user.roles pour valider les droits dynamiquement.",3,false,2026-08-02T17:00:00Z
+e0000000-0000-0000-0000-000000000004,d0000000-0000-0000-0000-000000000003,sami,"Pour la production sur HANA Cloud, il est très fortement recommandé d'utiliser SAP DMS (Document Management Service) ou d'encoder en base64 pour les fichiers légers de test.",4,false,2026-08-06T15:00:00Z

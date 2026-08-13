@@ -23,7 +23,7 @@ export default class AdminDashboardStrategy {
     return {
       totalUsers: allPeople.length,
       activeUsers,
-      // Employee/DepartmentManager/HR/Admin/Intern - fixed enum, not an
+      // Employee/Manager/HR/Admin/Intern - fixed enum, not an
       // admin-configurable list yet, so this is a constant, not a query.
       rolesConfigured: 5,
       // No historical tracking model exists anywhere in this schema.

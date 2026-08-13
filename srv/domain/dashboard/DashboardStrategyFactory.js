@@ -10,9 +10,9 @@ const repository = new DashboardRepository();
 // Adding a 6th role is one new strategy file + one new entry here - zero
 // edits to any existing strategy (Open/Closed Principle).
 const STRATEGIES = {
-  Admin: () => new AdminDashboardStrategy(repository),
+  Administrator: () => new AdminDashboardStrategy(repository),
   HR: () => new HRDashboardStrategy(repository),
-  DepartmentManager: () => new ManagerDashboardStrategy(repository),
+  Manager: () => new ManagerDashboardStrategy(repository),
   Intern: () => new InternDashboardStrategy(),
   Employee: () => new EmployeeDashboardStrategy(repository)
 };

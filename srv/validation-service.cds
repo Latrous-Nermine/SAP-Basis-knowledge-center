@@ -18,9 +18,9 @@ service ValidationService {
 
   @restrict: [
     { grant: 'READ',   where: 'author_userID = $user.id' },
-    { grant: 'READ',                to: ['DepartmentManager', 'HR', 'Admin'] },
-    { grant: 'CREATE',              to: ['Employee', 'Intern', 'DepartmentManager', 'HR', 'Admin'] },
-    { grant: 'UPDATE', where: 'status = ''pending''', to: ['DepartmentManager', 'Admin'] }
+    { grant: 'READ',                to: ['Manager', 'HR', 'Administrator'] },
+    { grant: 'CREATE',              to: ['Employee', 'Intern', 'Manager', 'HR', 'Administrator'] },
+    { grant: 'UPDATE', where: 'status = ''pending''', to: ['Manager', 'Administrator'] }
   ]
   entity ValidationItems as projection on kh.ValidationItems {
     *,
@@ -37,7 +37,7 @@ service ValidationService {
       manually kept in sync in SQLite - replaced with a computed
       function (same approach Knowledge Center already uses for
       getCategoryCounts()) so there's nothing to drift out of sync. */
-  @requires: ['DepartmentManager', 'HR', 'Admin']
+  @requires: ['Manager', 'HR', 'Administrator']
   function getValidationCounts() returns {
     pending  : Integer;
     approved : Integer;

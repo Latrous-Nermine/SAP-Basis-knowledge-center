@@ -20,13 +20,13 @@ service KnowledgeService {
   @restrict: [
     { grant: 'READ',              where: 'status = ''approved'' or exists contributors[user_userID = $user.id]' },
     // Knowledge Centre feature evolution (2026-08): without this, a manager
-    // could approve/reject (already @requires: 'DepartmentManager' below)
+    // could approve/reject (already @requires: 'Manager' below)
     // but never SEE a pending item to act on unless they happened to also
     // be a contributor - purely additive, the rule above is untouched.
-    { grant: 'READ',               where: 'status = ''pending''', to: ['DepartmentManager', 'Admin'] },
-    { grant: ['CREATE', 'UPDATE'], to: ['Employee', 'DepartmentManager', 'Admin'] },
+    { grant: 'READ',               where: 'status = ''pending''', to: ['Manager', 'Administrator'] },
+    { grant: ['CREATE', 'UPDATE'], to: ['Employee', 'Manager', 'Administrator'] },
     { grant: 'DELETE', where: 'status = ''draft'' and exists contributors[user_userID = $user.id]' },
-    { grant: 'DELETE',             to: ['Admin'] }
+    { grant: 'DELETE',             to: ['Administrator'] }
   ]
   entity KnowledgeItems as projection on kh.KnowledgeItems {
     *,
@@ -84,10 +84,10 @@ service KnowledgeService {
   // attachment's bytes but not tampering with someone else's.
   @restrict: [
     { grant: 'READ',   where: 'item.status = ''approved'' or exists item.contributors[user_userID = $user.id]' },
-    { grant: 'CREATE', to: ['Employee', 'DepartmentManager', 'Admin'] },
+    { grant: 'CREATE', to: ['Employee', 'Manager', 'Administrator'] },
     { grant: 'UPDATE', where: 'exists item.contributors[user_userID = $user.id]' },
     { grant: 'DELETE', where: 'exists item.contributors[user_userID = $user.id]' },
-    { grant: 'DELETE', to: ['Admin'] }
+    { grant: 'DELETE', to: ['Administrator'] }
   ]
   entity KnowledgeAttachments as projection on kh.KnowledgeAttachments;
 
@@ -113,12 +113,12 @@ service KnowledgeService {
   @readonly
   @restrict: [
     { grant: 'READ', where: 'submittedBy_userID = $user.id or exists item.contributors[user_userID = $user.id]' },
-    { grant: 'READ', to: ['DepartmentManager', 'Admin'] }
+    { grant: 'READ', to: ['Manager', 'Administrator'] }
   ]
   entity KnowledgeContributions as projection on kh.KnowledgeContributions;
 
   @readonly
-  entity Topics as projection on kh.Topics;
+  entity Topics as projection on kh.KnowledgeTopics;
 
   /** Category tab counts, computed after the same @restrict filtering
       as the list itself — never before (CLAUDE.md §7 rule 6). */
@@ -137,9 +137,9 @@ service KnowledgeService {
   action submitForReview(itemID : UUID) returns Boolean;
 
   /** pending -> approved / rejected. Knowledge.Approve scope only. */
-  @requires: 'DepartmentManager'
+  @requires: 'Manager'
   action approveItem(itemID : UUID) returns Boolean;
-  @requires: 'DepartmentManager'
+  @requires: 'Manager'
   action rejectItem(itemID : UUID) returns Boolean;
 
   /** Comment thread on a Knowledge Center item (Contract B - extends
@@ -161,9 +161,9 @@ service KnowledgeService {
   /** Marks the contribution approved and appends submittedBy to
       KnowledgeContributors if not already present. Never touches
       KnowledgeItems.content. */
-  @requires: 'DepartmentManager'
+  @requires: 'Manager'
   action approveContribution(contributionID : UUID) returns Boolean;
-  @requires: 'DepartmentManager'
+  @requires: 'Manager'
   action rejectContribution(contributionID : UUID) returns Boolean;
 
   /**
@@ -172,6 +172,6 @@ service KnowledgeService {
    * "not yet available" error rather than silently doing nothing -
    * CLAUDE.md §10: no placeholder logic that fails silently.
    */
-  @requires: 'DepartmentManager'
+  @requires: 'Manager'
   action promoteQuestion(questionID : UUID) returns UUID;
 }

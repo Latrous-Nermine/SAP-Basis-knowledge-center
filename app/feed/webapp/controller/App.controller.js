@@ -13,12 +13,11 @@ sap.ui.define([
     "tags": "tags",
     "topics": "topics",
     "experts": "experts",
-    "profile": "profile",
-    "excellenceCenter": "excellenceCenter"
+    "profile": "profile"
   };
 
   var mRoleLabels = {
-    "Admin": "Administrateur",
+    "Administrator": "Administrateur",
     "Manager": "Manager",
     "Employee": "Employé",
     "Intern": "Stagiaire",
@@ -61,7 +60,7 @@ sap.ui.define([
       var oButton = oEvent.getSource();
       var aCustomData = oButton.getCustomData();
       var sKey = null;
-
+      
       for (var i = 0; i < aCustomData.length; i++) {
         if (aCustomData[i].getKey() === "navKey") {
           sKey = aCustomData[i].getValue();
@@ -71,52 +70,12 @@ sap.ui.define([
 
       if (!sKey || !mRoutes[sKey]) return;
 
-      // Lot 2 modules now live in the shared app/webapp (migrated off their
-      // former standalone apps) - still a full navigation, not
-      // router.navTo, since Feed itself remains its own separate app under
-      // this shell's own router.
-      if (sKey === "knowledge") {
-        window.location.href = "/webapp/index.html#/knowledge";
-        return;
-      }
-
-      if (sKey === "experts") {
-        window.location.href = "/webapp/index.html#/experts";
-        return;
-      }
-
-      if (sKey === "profile") {
-        this._navigateToOwnProfile();
-        return;
-      }
-
-      if (sKey === "dashboard") {
-        window.location.href = "/webapp/index.html#/dashboard";
-        return;
-      }
-
-      if (sKey === "excellenceCenter") {
-        window.location.href = "/webapp/index.html#/excellence-center";
+      if (sKey === "dashboard" || sKey === "experts" || sKey === "profile" || sKey === "knowledge") {
+        MessageToast.show("Page en cours de développement (Lot 2)");
         return;
       }
 
       this.getOwnerComponent().getRouter().navTo(mRoutes[sKey], {}, true);
-    },
-
-    // Navigates bare, no userID resolved here - same approach the shared
-    // app's own navbar "Profil" link uses. Profile.controller.js's own
-    // _onRouteMatched resolves "who am I" via PeopleService's
-    // getMyUserID(), which is what's actually authenticated; resolving it
-    // here first via FeedService's getCurrentUserProfile() was the source
-    // of the "impossible d'ouvrir" bug (that function has no @restrict, so
-    // it silently answers for whichever identity happens to be cached -
-    // or none - instead of the one PeopleService actually knows).
-    _navigateToOwnProfile: function() {
-      window.location.href = "/webapp/index.html#/profile";
-    },
-
-    onNotificationsPress: function() {
-      window.location.href = "/webapp/index.html#/notifications";
     },
 
     onToggleTheme: function() {
@@ -132,6 +91,7 @@ sap.ui.define([
 
     formatAvatar: function(sUrl, sName) {
       if (sUrl && sUrl !== "null" && sUrl !== "") return sUrl;
+      var initials = sName ? sName.replace(/[^A-Z]/g, "").substring(0, 2) : "AY";
       return "https://ui-avatars.com/api/?name=" + encodeURIComponent(sName || "AYMAX") + "&background=1E3A8A&color=fff&size=128";
     }
   });

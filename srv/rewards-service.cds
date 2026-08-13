@@ -12,8 +12,8 @@ using { aymax.knowledgehub as kh } from '../db/lot3';
 service RewardsService {
 
   @restrict: [
-    { grant: 'READ',                        to: ['Employee', 'Intern', 'DepartmentManager', 'HR', 'Admin'] },
-    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['HR', 'Admin'] }
+    { grant: 'READ',                        to: ['Employee', 'Intern', 'Manager', 'HR', 'Administrator'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['HR', 'Administrator'] }
   ]
   entity Rewards as projection on kh.Rewards;
 }

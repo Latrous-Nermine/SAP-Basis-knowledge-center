@@ -323,8 +323,8 @@ export default class KnowledgeService extends cds.ApplicationService {
       // facade CLAUDE.md describes doesn't exist as a file yet, see
       // TODO-INTEGRATION.md I-12). Plain cds.connect.to()+.send() does NOT
       // run as 'internal-user' automatically - it propagates the ACTUAL
-      // caller (a DepartmentManager here), which raise()'s own
-      // @requires: ['internal-user','Admin'] correctly rejects.
+      // caller (a Manager here), which raise()'s own
+      // @requires: ['internal-user','Administrator'] correctly rejects.
       // cds.spawn(..., cds.User.privileged) is CAP's documented mechanism
       // for exactly this: a detached transaction running as that elevated
       // identity - NOT cds.tx(), which nests inside the current request's

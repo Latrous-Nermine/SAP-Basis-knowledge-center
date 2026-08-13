@@ -1,0 +1,130 @@
+<mvc:View
+  controllerName="aymax.feed.controller.RoomDetail"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:layout="sap.ui.layout"
+  displayBlock="true">
+
+  <f:DynamicPage id="roomDetailPage" headerExpanded="true">
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:heading>
+          <HBox alignItems="Center">
+            <Button icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiSmallMarginEnd"/>
+            <Avatar src="{parts:[{path:'view>/room/avatarUrl'},{path:'view>/room/name'}], formatter:'.formatAvatar'}" displaySize="M" class="sapUiSmallMarginEnd"/>
+            <VBox>
+              <Title text="{view>/room/name}" titleStyle="H3"/>
+              <Text text="{view>/room/description}" class="aymaxMeta"/>
+            </VBox>
+          </HBox>
+        </f:heading>
+        <f:actions>
+          <Token text="{view>/room/category}" class="aymaxTagAccent"/>
+          <Text text="{view>/room/memberCount} membres" class="aymaxMeta sapUiSmallMarginBegin"/>
+          <Button text="Rejoindre" type="Emphasized" press=".onJoinRoom" visible="{= !${view>/room/isFollowed}}"/>
+          <Button text="Quitter" type="Transparent" press=".onLeaveRoom" visible="{view>/room/isFollowed}"/>
+        </f:actions>
+      </f:DynamicPageTitle>
+    </f:title>
+
+    <f:header>
+      <f:DynamicPageHeader>
+        <layout:HorizontalLayout allowWrapping="true">
+          <VBox class="sapUiMediumMarginEnd">
+            <Text text="Créée le {path:'view>/room/createdAt', formatter:'.formatDate'}" class="aymaxMeta"/>
+            <Text text="{view>/room/postCount} publications" class="aymaxMeta"/>
+          </VBox>
+        </layout:HorizontalLayout>
+      </f:DynamicPageHeader>
+    </f:header>
+
+    <f:content>
+      <IconTabBar selectedKey="{view>/selectedTab}" select=".onTabSelect">
+        <items>
+          <!-- ONGLET FIL D'ACTUALITÉ -->
+          <IconTabFilter text="Fil d'actualité" key="feed" icon="sap-icon://feed">
+            <VBox class="sapUiContentPadding">
+              <!-- Champ de publication dans la room -->
+              <Panel class="aymaxCard">
+                <HBox alignItems="Start">
+                  <Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" displaySize="S" class="sapUiSmallMarginEnd"/>
+                  <VBox width="100%">
+                    <TextArea value="{view>/postText}" placeholder="Partagez dans cette room..." growing="true" growingMaxLines="4" width="100%"/>
+                    <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
+                      <Button icon="sap-icon://attachment" type="Transparent"/>
+                      <Button text="Publier" type="Emphasized" press=".onPublishInRoom"/>
+                    </HBox>
+                  </VBox>
+                </HBox>
+              </Panel>
+
+              <!-- Posts de la room -->
+              <List id="roomFeedList"
+                    items="{path:'/Posts', templateShareable:'false', parameters:{$expand:'author,tags'}}"
+                    growing="true"
+                    growingThreshold="10">
+                <CustomListItem>
+                  <VBox class="aymaxPostCard sapUiMediumMargin">
+                    <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+                      <Avatar src="{parts:[{path:'author/avatarUrl'},{path:'author/displayName'}], formatter:'.formatAvatar'}" displaySize="S" class="sapUiSmallMarginEnd"/>
+                      <VBox>
+                        <Title text="{author/displayName}" level="H5"/>
+                        <Text text="{path:'createdAt', formatter:'.formatDate'}" class="aymaxMeta"/>
+                      </VBox>
+                      <ToolbarSpacer/>
+                      <Button icon="sap-icon://overflow" type="Transparent"/>
+                    </HBox>
+                    <Text text="{content}" class="sapUiSmallMarginBottom" wrapping="true"/>
+                    <HBox wrap="Wrap" visible="{= ${tags}.length > 0}" class="sapUiTinyMarginBottom">
+                      <Tokenizer tokens="{path:'tags', templateShareable:'false'}">
+                        <Token text="{tag/name}" class="aymaxTag"/>
+                      </Tokenizer>
+                    </HBox>
+                    <HBox justifyContent="SpaceBetween" class="aymaxPostActions">
+                      <HBox>
+                        <ToggleButton text="{likeCount}" icon="sap-icon://thumb-up" pressed="{isLikedByMe}" press=".onLikePress"/>
+                        <Button text="{commentCount}" icon="sap-icon://comment" type="Transparent"/>
+                        <Button text="{shareCount}" icon="sap-icon://share-2" type="Transparent" press=".onShare"/>
+                      </HBox>
+                    </HBox>
+                  </VBox>
+                </CustomListItem>
+              </List>
+            </VBox>
+          </IconTabFilter>
+
+          <!-- ONGLET MEMBRES -->
+          <IconTabFilter text="Membres" key="members" icon="sap-icon://group">
+            <VBox class="sapUiContentPadding">
+              <List id="membersList"
+                    items="{path:'/RoomMembers', templateShareable:'false'}"
+                    growing="true">
+                <CustomListItem>
+                  <HBox class="aymaxMemberRow sapUiMediumMargin" alignItems="Center">
+                    <Avatar src="{parts:[{path:'userID'},{path:'userID'}], formatter:'.formatAvatar'}" displaySize="M" class="sapUiSmallMarginEnd"/>
+                    <VBox>
+                      <Title text="{userID}" level="H5"/>
+                      <Token text="{role}" class="aymaxTag"/>
+                    </VBox>
+                    <ToolbarSpacer/>
+                    <Text text="{path:'joinedAt', formatter:'.formatDate'}" class="aymaxMeta"/>
+                  </HBox>
+                </CustomListItem>
+              </List>
+            </VBox>
+          </IconTabFilter>
+
+          <!-- ONGLET FICHIERS -->
+          <IconTabFilter text="Fichiers" key="files" icon="sap-icon://attachment">
+            <VBox class="sapUiContentPadding">
+              <List id="filesList" showSeparators="None">
+                <StandardListItem title="Aucun fichier pour l'instant" description="Les documents partagés dans cette room apparaîtront ici."/>
+              </List>
+            </VBox>
+          </IconTabFilter>
+        </items>
+      </IconTabBar>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>

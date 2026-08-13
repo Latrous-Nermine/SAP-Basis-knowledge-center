@@ -1,7 +1,14 @@
 {
-  "xsappname": "aymax-knowledge-hub",
+  "xsappname": "SAP-Basis-knowledge-center",
   "tenant-mode": "dedicated",
+  "description": "Security configuration for SAP Basis Knowledge Center",
   "scopes": [
+    { "name": "$XSROLEDATA.Employee",     "description": "Scope pour le rôle Employé" },
+    { "name": "$XSROLEDATA.Manager",      "description": "Scope pour le rôle Manager" },
+    { "name": "$XSROLEDATA.HR",           "description": "Scope pour le rôle RH" },
+    { "name": "$XSROLEDATA.Administrator","description": "Scope pour le rôle Administrateur" },
+    { "name": "$XSROLEDATA.Intern",       "description": "Scope pour le rôle Stagiaire" },
+
     { "name": "$XSAPPNAME.Knowledge.Read",     "description": "Read knowledge content" },
     { "name": "$XSAPPNAME.Knowledge.Write",    "description": "Create and edit knowledge content" },
     { "name": "$XSAPPNAME.Knowledge.Approve",  "description": "Approve or reject content" },
@@ -13,13 +20,62 @@
     { "name": "$XSAPPNAME.Dashboard.Admin",    "description": "Admin dashboard" },
     { "name": "$XSAPPNAME.Dashboard.Intern",   "description": "Intern dashboard" }
   ],
-  "attributes": [],
   "role-templates": [
-    { "name": "Employee",          "scope-references": ["$XSAPPNAME.Knowledge.Read","$XSAPPNAME.Knowledge.Write","$XSAPPNAME.People.Read","$XSAPPNAME.Dashboard.Employee"] },
-    { "name": "Intern",            "scope-references": ["$XSAPPNAME.Knowledge.Read","$XSAPPNAME.People.Read","$XSAPPNAME.Dashboard.Intern"] },
-    { "name": "DepartmentManager", "scope-references": ["$XSAPPNAME.Knowledge.Read","$XSAPPNAME.Knowledge.Write","$XSAPPNAME.Knowledge.Approve","$XSAPPNAME.People.Read","$XSAPPNAME.Dashboard.Manager"] },
-    { "name": "HR",                "scope-references": ["$XSAPPNAME.People.Read","$XSAPPNAME.Dashboard.HR"] },
-    { "name": "Admin",             "scope-references": ["$XSAPPNAME.Knowledge.Read","$XSAPPNAME.Knowledge.Write","$XSAPPNAME.Knowledge.Approve","$XSAPPNAME.People.Read","$XSAPPNAME.People.Admin","$XSAPPNAME.Dashboard.Admin"] }
+    {
+      "name": "Employee",
+      "description": "Rôle Employé",
+      "scope-references": [
+        "$XSROLEDATA.Employee",
+        "$XSAPPNAME.Knowledge.Read",
+        "$XSAPPNAME.Knowledge.Write",
+        "$XSAPPNAME.People.Read",
+        "$XSAPPNAME.Dashboard.Employee"
+      ]
+    },
+    {
+      "name": "Intern",
+      "description": "Rôle Stagiaire",
+      "scope-references": [
+        "$XSROLEDATA.Intern",
+        "$XSAPPNAME.Knowledge.Read",
+        "$XSAPPNAME.People.Read",
+        "$XSAPPNAME.Dashboard.Intern"
+      ]
+    },
+    {
+      "name": "Manager",
+      "description": "Rôle Manager",
+      "scope-references": [
+        "$XSROLEDATA.Manager",
+        "$XSAPPNAME.Knowledge.Read",
+        "$XSAPPNAME.Knowledge.Write",
+        "$XSAPPNAME.Knowledge.Approve",
+        "$XSAPPNAME.People.Read",
+        "$XSAPPNAME.Dashboard.Manager"
+      ]
+    },
+    {
+      "name": "HR",
+      "description": "Rôle RH",
+      "scope-references": [
+        "$XSROLEDATA.HR",
+        "$XSAPPNAME.People.Read",
+        "$XSAPPNAME.Dashboard.HR"
+      ]
+    },
+    {
+      "name": "Administrator",
+      "description": "Rôle Administrateur",
+      "scope-references": [
+        "$XSROLEDATA.Administrator",
+        "$XSAPPNAME.Knowledge.Read",
+        "$XSAPPNAME.Knowledge.Write",
+        "$XSAPPNAME.Knowledge.Approve",
+        "$XSAPPNAME.People.Read",
+        "$XSAPPNAME.People.Admin",
+        "$XSAPPNAME.Dashboard.Admin"
+      ]
+    }
   ],
   "authorities-inheritance": false
 }

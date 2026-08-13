@@ -18,21 +18,29 @@
   },
   "private": true,
   "cds": {
+    "server": {
+      "body_parser": {
+        "limit": "30mb"
+      }
+    },
     "requires": {
       "[development]": {
         "auth": {
           "kind": "mocked",
           "users": {
             "sami":      { "roles": ["Employee"] },
-            "nadia":     { "roles": ["DepartmentManager"] },
+            "nadia":     { "roles": ["Manager"] },
             "rh":        { "roles": ["HR"] },
-            "admin":     { "roles": ["Admin"] },
+            "admin":     { "roles": ["Administrator"] },
             "stagiaire": { "roles": ["Intern"] }
           }
         }
       },
       "[production]": {
-        "auth": "xsuaa"
+        "auth": "xsuaa",
+        "db": {
+          "kind": "hana"
+        }
       }
     }
   }

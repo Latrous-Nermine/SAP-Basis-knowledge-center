@@ -19,10 +19,10 @@ service DepotService {
 
   @restrict: [
     { grant: 'READ',   where: 'uploadedBy_userID = $user.id' },
-    { grant: 'READ',                to: ['DepartmentManager', 'HR', 'Admin'] },
-    { grant: 'CREATE',              to: ['Employee', 'Intern', 'DepartmentManager', 'HR', 'Admin'] },
+    { grant: 'READ',                to: ['Manager', 'HR', 'Administrator'] },
+    { grant: 'CREATE',              to: ['Employee', 'Intern', 'Manager', 'HR', 'Administrator'] },
     { grant: 'DELETE', where: 'uploadedBy_userID = $user.id' },
-    { grant: 'DELETE',              to: ['Admin'] }
+    { grant: 'DELETE',              to: ['Administrator'] }
   ]
   entity DepotFiles as projection on kh.DepotFiles;
 }

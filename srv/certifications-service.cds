@@ -29,8 +29,8 @@ service CertificationsService {
 
   @restrict: [
     { grant: 'READ',   where: 'user_userID = $user.id' },
-    { grant: 'READ',                        to: ['DepartmentManager', 'HR', 'Admin'] },
-    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['DepartmentManager', 'HR', 'Admin'] }
+    { grant: 'READ',                        to: ['Manager', 'HR', 'Administrator'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['Manager', 'HR', 'Administrator'] }
   ]
   entity UserCertifications as projection on kh.UserCertifications;
 

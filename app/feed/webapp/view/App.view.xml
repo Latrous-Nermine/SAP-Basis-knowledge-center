@@ -7,7 +7,7 @@
 
   <VBox fitContainer="true">
     <HBox class="aymaxHeader" alignItems="Center" justifyContent="SpaceBetween">
-
+      
       <HBox alignItems="Center">
         <HBox class="aymaxLogo" alignItems="Center">
           <Avatar displaySize="XS" initials="A" class="sapUiTinyMarginEnd aymaxLogoAvatar"/>
@@ -42,9 +42,6 @@
           <Button text="Profil" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="profile"/></customData>
           </Button>
-          <Button text="{i18n>excellenceCenter}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="excellenceCenter"/></customData>
-          </Button>
         </HBox>
       </HBox>
 
@@ -52,7 +49,7 @@
         <Text text="{view>/userRole}" class="aymaxRoleBadge sapUiTinyMarginEnd"/>
         <SearchField width="260px" placeholder="Rechercher..." search=".onGlobalSearch" class="sapUiSmallMarginEnd"/>
         <Button icon="sap-icon://light-mode" type="Transparent" press=".onToggleTheme" class="sapUiTinyMarginEnd"/>
-        <Button icon="sap-icon://bell" type="Transparent" press=".onNotificationsPress" class="sapUiTinyMarginEnd"/>
+        <Button icon="sap-icon://bell" type="Transparent" class="sapUiTinyMarginEnd"/>
         <Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" displaySize="S"/>
       </HBox>
     </HBox>

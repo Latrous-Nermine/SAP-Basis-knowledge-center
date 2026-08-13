@@ -1,0 +1,24 @@
+/* Topics Page */
+.aymaxTopicCard {
+  background: var(--aymax-surface);
+  border-radius: var(--aymax-radius-md);
+  border: 1px solid var(--aymax-border);
+  box-shadow: var(--aymax-shadow-sm);
+  padding: 16px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.aymaxTopicCard:hover {
+  box-shadow: var(--aymax-shadow-md);
+  transform: translateY(-2px);
+}
+
+.aymaxTopicBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}

@@ -7,7 +7,7 @@
   xmlns:vizData="sap.viz.ui5.data"
   xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds">
 
-  <VBox visible="{= ${view-dashboard>/role} === 'Admin' }" class="dashboardSectionGap">
+  <VBox visible="{= ${view-dashboard>/role} === 'Administrator' }" class="dashboardSectionGap">
 
     <HBox class="dashboardGap16" wrap="Wrap" width="100%">
       <!-- Quick links. "Utilisateurs" is real (navigates to the Experts

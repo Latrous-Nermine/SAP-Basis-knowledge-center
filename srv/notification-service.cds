@@ -70,7 +70,7 @@ service NotificationService {
    * curl during development — remove it once the other lots are
    * calling it in-process.
    */
-  @requires: ['internal-user', 'Admin']
+  @requires: ['internal-user', 'Administrator']
   action raise(
     recipientID : String(255) @mandatory,
     type        : String(30)  @mandatory,

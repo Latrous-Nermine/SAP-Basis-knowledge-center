@@ -11,7 +11,7 @@ sap.ui.define([
 
   var TITLE_KEYS = {
     Employee: ["titleEmployee", "subtitleEmployee"],
-    DepartmentManager: ["titleManager", "subtitleManager"],
+    Manager: ["titleManager", "subtitleManager"],
     HR: ["titleHR", "subtitleHR"],
     Admin: ["titleAdmin", "subtitleAdmin"],
     Intern: ["titleIntern", "subtitleIntern"]
@@ -121,7 +121,7 @@ sap.ui.define([
             { label: oBundle.getText("kpiContributions"), value: e.contributionPoints, unit: sUnit, isFirst: false, icon: "sap-icon://group" }
           ];
         }
-        case "DepartmentManager": {
+        case "Manager": {
           var m = oData.manager;
           return [
             { label: oBundle.getText("teamActiveEmployees"), value: m.activeEmployees, unit: "", isFirst: true, icon: "sap-icon://group" },
@@ -138,7 +138,7 @@ sap.ui.define([
             { label: oBundle.getText("hrAverageLevel"), value: h.averageLevel, unit: "", isFirst: false, icon: "sap-icon://favorite" }
           ];
         }
-        case "Admin": {
+        case "Administrator": {
           var a = oData.admin;
           return [
             { label: oBundle.getText("adminTotalUsers"), value: a.totalUsers, unit: "", isFirst: true, icon: "sap-icon://group" },

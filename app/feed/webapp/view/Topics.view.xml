@@ -1,0 +1,43 @@
+<mvc:View
+  controllerName="aymax.feed.controller.Topics"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding">
+        <HBox class="sapUiMediumMarginBottom" alignItems="Center" justifyContent="SpaceBetween">
+          <VBox>
+            <Title text="Topics &amp; Thématiques" titleStyle="H3"/>
+            <Text text="Explorez la base de connaissances par thématique technique" class="aymaxMeta"/>
+          </VBox>
+          <Button icon="sap-icon://add" text="Créer un Topic" type="Emphasized" press=".onCreateTopic" visible="{= ${view>/currentUser/role} === 'Manager' || ${view>/currentUser/role} === 'Administrator'}"/>
+        </HBox>
+
+        <SearchField width="320px" placeholder="Rechercher un topic..." search=".onSearchTopics" class="sapUiMediumMarginBottom"/>
+
+        <Grid id="topicsGrid" defaultSpan="XL3 L4 M6 S12" content="{topics>/Topics}">
+          <VBox class="aymaxTopicCard">
+            <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+              <Avatar icon="{topics>icon}" displaySize="M" class="sapUiSmallMarginEnd"/>
+              <VBox>
+                <Title text="{topics>name}" level="H4"/>
+                <HBox class="sapUiTinyMarginTop">
+                  <Token text="{topics>postCount} posts" class="aymaxTag"/>
+                  <Token text="{topics>questionCount} questions" class="aymaxTagAccent"/>
+                </HBox>
+              </VBox>
+            </HBox>
+            <Text text="{topics>description}" maxLines="3" class="aymaxMeta sapUiSmallMarginBottom"/>
+            <HBox justifyContent="End">
+              <Button icon="sap-icon://edit" type="Transparent" press=".onEditTopic" visible="{= ${view>/currentUser/role} === 'Manager' || ${view>/currentUser/role} === 'Administrator'}"/>
+              <Button icon="sap-icon://delete" type="Transparent" press=".onDeleteTopic" visible="{= ${view>/currentUser/role} === 'Manager' || ${view>/currentUser/role} === 'Administrator'}"/>
+            </HBox>
+          </VBox>
+        </Grid>
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

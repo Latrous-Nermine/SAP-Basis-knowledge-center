@@ -4,12 +4,12 @@ import DashboardStrategyFactory from './DashboardStrategyFactory.js';
 // than one - never happens with today's mocked users (package.json),
 // each has exactly one role, but a real XSUAA token could in principle
 // carry several role-collections. Employee is the universal fallback.
-const ROLE_PRIORITY = ['Admin', 'HR', 'DepartmentManager', 'Intern', 'Employee'];
+const ROLE_PRIORITY = ['Administrator', 'HR', 'Manager', 'Intern', 'Employee'];
 
 const ROLE_KEYS = {
-  Admin: 'admin',
+  Administrator: 'admin',
   HR: 'hr',
-  DepartmentManager: 'manager',
+  Manager: 'manager',
   Intern: 'intern',
   Employee: 'employee'
 };

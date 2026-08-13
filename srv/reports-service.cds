@@ -25,13 +25,13 @@ service ReportsService {
 
   @readonly
   @restrict: [
-    { grant: 'READ', to: ['DepartmentManager', 'HR', 'Admin'] }
+    { grant: 'READ', to: ['Manager', 'HR', 'Administrator'] }
   ]
   entity KPIs as projection on kh.DashboardKPIs;
 
   @readonly
   @restrict: [
-    { grant: 'READ', to: ['DepartmentManager', 'HR', 'Admin'] }
+    { grant: 'READ', to: ['Manager', 'HR', 'Administrator'] }
   ]
   entity DepartmentStats as projection on kh.DepartmentStats;
 }

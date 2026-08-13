@@ -53,7 +53,7 @@ sap.ui.define([
       }).catch(function(oError) {
         // Same as the original: a background stat load, not a user
         // action - a role without ValidationCounts access
-        // (@requires DepartmentManager/HR/Admin) just keeps the pills
+        // (@requires Manager/HR/Admin) just keeps the pills
         // at zero rather than an interrupting error dialog.
         console.error("Error loading ValidationCounts:", oError);
       });
