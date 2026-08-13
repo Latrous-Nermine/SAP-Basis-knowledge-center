@@ -1,0 +1,6 @@
+ID,name,desc,count
+r0000001-0000-4000-8000-000000000001,Administrateur,Gestion technique de la plateforme,2
+r0000001-0000-4000-8000-000000000002,Manager,"Vue globale, validation du contenu",8
+r0000001-0000-4000-8000-000000000003,RH,Analytique employés et récompenses,3
+r0000001-0000-4000-8000-000000000004,Employé,Accès standard,142
+r0000001-0000-4000-8000-000000000005,Stagiaire,Accès restreint,14

@@ -1,0 +1,232 @@
+<mvc:View
+  controllerName="aymax.hub.controller.hr.HR"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
+
+        <!-- Page Title Area -->
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+          <HBox alignItems="Center">
+            <core:Icon src="sap-icon://hr-approval" size="1.2rem" color="var(--aymax-primary)" class="sapUiSmallMarginEnd"/>
+            <Title text="{i18n-hr>pageTitle}" level="H1" class="aymaxPageTitle"/>
+          </HBox>
+          <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-hr>backToFeed}" press=".onHomePress"/>
+        </HBox>
+        <Text text="{i18n-hr>pageSubtitle}" class="aymaxMeta sapUiMediumMarginBottom" wrapping="true"/>
+
+        <!-- TAB BUTTONS - replaces the outer app-shell's own nav tabs
+             (Riadh's original App.view.xml header), same pattern as
+             Admin's own filter tabs. -->
+        <HBox class="sapUiMediumMarginBottom" wrap="Wrap">
+          <Button text="{i18n-hr>tabEmployees}" type="{= ${view-hr>/activeTab} === 'employes' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+            <customData><core:CustomData key="tab" value="employes"/></customData>
+          </Button>
+          <Button text="{i18n-hr>tabSkills}" type="{= ${view-hr>/activeTab} === 'competences' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+            <customData><core:CustomData key="tab" value="competences"/></customData>
+          </Button>
+          <Button text="{i18n-hr>tabObjectives}" type="{= ${view-hr>/activeTab} === 'objectifs' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+            <customData><core:CustomData key="tab" value="objectifs"/></customData>
+          </Button>
+        </HBox>
+
+        <!-- ═══════ TAB: EMPLOYES ═══════ -->
+        <VBox visible="{= ${view-hr>/activeTab} === 'employes'}">
+
+          <!-- —— Employee List View —— -->
+          <VBox visible="{= !${view-hr>/activeEmployeeId}}">
+            <Panel class="aymaxCard" headerText="">
+              <Table
+                id="employeeTable"
+                items="{path: 'hr>/Employees', parameters: { $expand: 'skills' }}"
+                growing="true"
+                growingThreshold="10"
+                class="aymaxTable"
+                mode="SingleSelectMaster"
+                selectionChange=".onEmployeePress">
+                <columns>
+                  <Column width="25%"><Text text="{i18n-hr>colEmployee}"/></Column>
+                  <Column width="20%"><Text text="{i18n-hr>colDepartment}"/></Column>
+                  <Column width="15%"><Text text="{i18n-hr>colLevel}"/></Column>
+                  <Column width="15%" hAlign="Center"><Text text="{i18n-hr>colReputation}"/></Column>
+                  <Column width="25%"><Text text="{i18n-hr>colObjectives}"/></Column>
+                </columns>
+                <items>
+                  <ColumnListItem type="Active" press=".onEmployeePress">
+                    <cells>
+                      <HBox alignItems="Center">
+                        <Avatar initials="{path:'hr>name', formatter:'.formatter.initials'}" displaySize="XS" class="sapUiSmallMarginEnd aymaxAvatarAccent"/>
+                        <Text text="{hr>name}" class="aymaxEmployeeName"/>
+                      </HBox>
+                      <Text text="{hr>dept}" class="aymaxMetaText"/>
+                      <ObjectStatus text="{hr>level}" state="Information" inverted="true" class="aymaxLevelBadge"/>
+                      <ObjectNumber number="{hr>reputation}" class="aymaxRepNumber"/>
+                      <ObjectStatus
+                        text="{path:'hr>objStatus', formatter:'.formatter.formatObjStatusText'}"
+                        state="{path:'hr>objStatus', formatter:'.formatter.formatObjStatusState'}"
+                        inverted="true"
+                        class="aymaxStatusBadge"/>
+                    </cells>
+                  </ColumnListItem>
+                </items>
+              </Table>
+            </Panel>
+          </VBox>
+
+          <!-- —— Employee Detail View —— -->
+          <VBox id="detailViewBox" visible="{= !!${view-hr>/activeEmployeeId}}" class="aymaxDetailView">
+
+            <Button
+              text="{i18n-hr>btnBack}"
+              type="Transparent"
+              press=".onBackToList"
+              class="sapUiSmallMarginBottom aymaxBackBtn"/>
+
+            <layout:HorizontalLayout allowWrapping="true" class="aymaxDetailLayout">
+
+              <!-- Profile Card -->
+              <VBox width="280px" class="sapUiMediumMarginEnd">
+                <Panel class="aymaxProfileDetailCard">
+                  <VBox alignItems="Center" class="sapUiMediumMargin">
+                    <Avatar
+                      initials="{path:'hr>name', formatter:'.formatter.initials'}"
+                      displaySize="XL"
+                      class="sapUiSmallMarginBottom aymaxAvatarAccent"/>
+                    <Title
+                      text="{hr>name}"
+                      level="H3"/>
+                    <Text
+                      text="{hr>dept}"
+                      class="aymaxMetaText sapUiTinyMarginBottom"/>
+                    <ObjectStatus
+                      text="{hr>level}"
+                      state="Information"
+                      inverted="true"
+                      class="sapUiSmallMarginBottom aymaxLevelBadge"/>
+                    <VBox alignItems="Center" class="sapUiSmallMarginTop aymaxStatDivider" width="100%">
+                      <Title
+                        text="{hr>reputation}"
+                        level="H2" class="aymaxRepTitle"/>
+                      <Text text="{i18n-hr>lblReputation}" class="aymaxMetaText"/>
+                    </VBox>
+                  </VBox>
+                </Panel>
+              </VBox>
+
+              <!-- Right Detail Cards -->
+              <VBox class="aymaxDetailRight">
+
+                <!-- Skills -->
+                <Panel class="aymaxCard sapUiSmallMarginBottom">
+                  <headerToolbar>
+                    <Toolbar style="Clear"><Title level="H5" text="{i18n-hr>lblSkills}" class="card-kicker"/></Toolbar>
+                  </headerToolbar>
+                  <List
+                    items="{hr>skills}"
+                    showSeparators="None"
+                    class="aymaxSkillList">
+                    <CustomListItem>
+                      <VBox class="sapUiSmallMargin">
+                        <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+                          <Text text="{hr>skillName}" class="aymaxSkillName"/>
+                          <Text text="{path:'hr>level', formatter:'.formatter.starRating'}" class="aymaxSkillStars"/>
+                        </HBox>
+                        <layout:HorizontalLayout class="aymaxProgressBarOuter">
+                          <layout:HorizontalLayout
+                            class="aymaxProgressBarInner"
+                            width="{= ${hr>percent} + '%' }">
+                          </layout:HorizontalLayout>
+                        </layout:HorizontalLayout>
+                      </VBox>
+                    </CustomListItem>
+                  </List>
+                </Panel>
+
+                <!-- Objective -->
+                <Panel class="aymaxCard sapUiSmallMarginBottom">
+                  <headerToolbar>
+                    <Toolbar style="Clear"><Title level="H5" text="{i18n-hr>lblObjective}" class="card-kicker"/></Toolbar>
+                  </headerToolbar>
+                  <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMargin">
+                    <Text
+                      text="{hr>objectiveTitle}"
+                      class="aymaxObjTitle"/>
+                    <ObjectStatus
+                      text="{path:'hr>objStatus', formatter:'.formatter.formatObjStatusText'}"
+                      state="{path:'hr>objStatus', formatter:'.formatter.formatObjStatusState'}"
+                      inverted="true"
+                      class="aymaxStatusBadge"/>
+                  </HBox>
+                </Panel>
+
+                <!-- Certifications -->
+                <Panel class="aymaxCard">
+                  <headerToolbar>
+                    <Toolbar style="Clear"><Title level="H5" text="{i18n-hr>lblCertifications}" class="card-kicker"/></Toolbar>
+                  </headerToolbar>
+                  <HBox class="sapUiSmallMargin" justifyContent="Start">
+                    <VBox class="sapUiMediumMarginEnd">
+                      <ObjectStatus
+                        text="{path:'hr>certsEarnedCount', formatter:'.formatter.certsEarnedLabel'}"
+                        state="Success"
+                        inverted="false"/>
+                    </VBox>
+                    <VBox>
+                      <ObjectStatus
+                        text="{path:'hr>certsProgressCount', formatter:'.formatter.certsInProgressLabel'}"
+                        state="Information"
+                        inverted="false"/>
+                    </VBox>
+                  </HBox>
+                </Panel>
+              </VBox>
+            </layout:HorizontalLayout>
+          </VBox>
+        </VBox>
+
+        <!-- ═══════ TAB: COMPETENCES ═══════ -->
+        <VBox visible="{= ${view-hr>/activeTab} === 'competences'}">
+          <List items="{hr>/SkillGaps}" showSeparators="None" class="aymaxSkillGapList">
+            <CustomListItem class="aymaxSkillGapItem">
+              <Panel headerText="" class="aymaxCard aymaxSkillGapCard sapUiSmallMarginBottom sapUiSmallMarginEnd" width="280px">
+                <VBox class="sapUiSmallMargin">
+                  <Title text="{hr>name}" level="H5" class="card-title"/>
+                  <Text text="{i18n-hr>lblTeamCoverage}" class="aymaxMetaText sapUiTinyMarginBottom"/>
+                  <layout:HorizontalLayout class="aymaxProgressBarOuter">
+                    <layout:HorizontalLayout class="aymaxProgressBarInner" width="{path: 'hr>percent', formatter: '.formatter.formatSkillWidth'}"/>
+                  </layout:HorizontalLayout>
+                  <Text text="{parts:[{path:'hr>percent'},{path:'hr>headcount'}], formatter:'.formatter.skillGapMetaLabel'}" class="aymaxMetaText sapUiTinyMarginTop"/>
+                </VBox>
+              </Panel>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+        <!-- ═══════ TAB: OBJECTIFS ═══════ -->
+        <VBox visible="{= ${view-hr>/activeTab} === 'objectifs'}">
+          <List items="{hr>/Objectives}" class="aymaxObjectiveList">
+            <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
+              <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiSmallMargin">
+                <VBox class="aymaxObjInfo">
+                  <Text text="{hr>title}" class="aymaxObjTitle"/>
+                  <Text text="{parts:[{path:'hr>owner'},{path:'hr>due'}], formatter:'.formatter.objectiveDueLabel'}" class="aymaxMetaText"/>
+                </VBox>
+                <ObjectStatus
+                  text="{path:'hr>status', formatter:'.formatter.formatObjStatusText'}"
+                  state="{path:'hr>status', formatter:'.formatter.formatObjStatusState'}"
+                  inverted="true"
+                  class="aymaxStatusBadge"/>
+              </HBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

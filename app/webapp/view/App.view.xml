@@ -36,6 +36,30 @@
           <Button text="{i18n>navExcellenceCenter}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="excellenceCenter"/></customData>
           </Button>
+          <Button text="{i18n>navRewards}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="rewards"/></customData>
+          </Button>
+          <Button text="{i18n>navCertifications}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="certifications"/></customData>
+          </Button>
+          <Button text="{i18n>navAdmin}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="admin"/></customData>
+          </Button>
+          <Button text="{i18n>navDepot}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="depot"/></customData>
+          </Button>
+          <Button text="{i18n>navHR}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="hr"/></customData>
+          </Button>
+          <Button text="{i18n>navReports}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="reports"/></customData>
+          </Button>
+          <Button text="{i18n>navRapportsStage}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="rapportsStage"/></customData>
+          </Button>
+          <Button text="{i18n>navValidation}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="validation"/></customData>
+          </Button>
         </HBox>
       </HBox>
     </HBox>

@@ -1,0 +1,46 @@
+/* Admin - Lot 3, integrated from Riadh's branch. Uses its own exact
+   original hex values (not the shared --aymax-* tokens in
+   css/lot3/tokens.css) since his admin style.css was already an
+   independent hex-based palette, slightly different from the token
+   values used elsewhere - kept faithful rather than normalized, and
+   classes are admin-prefixed so this never collides with the
+   token-based .aymaxCard/.aymaxPageTitle used by other modules. */
+
+.adminPageContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.adminPageTitle {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+.adminRoleAvatar .sapFAvatarInitialsHolder {
+  background: linear-gradient(135deg, #6366f1, #4338ca) !important;
+  color: #ffffff !important;
+}
+
+.adminCard {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.adminBoldText {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+.adminMetaText {
+  color: #6b7280 !important;
+  font-size: 13px !important;
+}
+
+.adminLabel {
+  font-weight: 600 !important;
+  color: #374151 !important;
+}

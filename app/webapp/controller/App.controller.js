@@ -13,7 +13,15 @@ sap.ui.define([
     "knowledge": "knowledgeList",
     "experts": "expertsList",
     "profile": "profile",
-    "excellenceCenter": "excellenceCenter"
+    "excellenceCenter": "excellenceCenter",
+    "rewards": "rewards",
+    "certifications": "certifications",
+    "admin": "admin",
+    "depot": "depot",
+    "hr": "hr",
+    "reports": "reports",
+    "rapportsStage": "rapportsStage",
+    "validation": "validation"
   };
 
   return BaseController.extend("aymax.hub.controller.App", {

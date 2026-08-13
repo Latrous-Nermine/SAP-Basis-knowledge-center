@@ -1,0 +1,98 @@
+/* Certifications - Lot 3, integrated from Riadh's branch. Shared
+   page/card/tag rules live in css/lot3/tokens.css; this file only
+   carries what's specific to this module. */
+
+.certSectionTitle {
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  color: var(--aymax-primary) !important;
+}
+
+.certList .sapMListUl {
+  background: transparent !important;
+  border: none !important;
+}
+.certList .sapMLIBContent {
+  padding: 0 !important;
+}
+
+.certList {
+  display: block;
+}
+.certList .sapMListItems {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.certCardInner {
+  padding: 4px;
+}
+
+.certCheckIcon {
+  flex-shrink: 0;
+}
+
+.certName {
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  color: var(--aymax-text) !important;
+}
+
+.certDate {
+  font-size: 11px !important;
+  color: var(--aymax-text-muted) !important;
+}
+
+.certMetaValue {
+  font-size: 12px !important;
+  color: var(--aymax-text) !important;
+  font-weight: 500 !important;
+}
+
+.certStatusBadge .sapMObjStatusText {
+  font-size: 11px !important;
+}
+
+.certProgressLabel {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--aymax-primary) !important;
+}
+.certProgressBarOuter {
+  width: 100% !important;
+  height: 6px !important;
+  background: var(--aymax-border) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+.certProgressBarInner {
+  height: 6px !important;
+  background: linear-gradient(90deg, var(--aymax-accent), var(--aymax-primary)) !important;
+  border-radius: 999px !important;
+  display: block !important;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.certStartBtn .sapMBtnInner {
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+.certContinueBtn .sapMBtnInner {
+  color: var(--aymax-primary) !important;
+  font-weight: 500 !important;
+}
+.certContinueBtn .sapMBtnInner:hover {
+  background: var(--aymax-neutral-100) !important;
+}
+
+@media (max-width: 768px) {
+  .certList .sapMListItems {
+    grid-template-columns: 1fr !important;
+  }
+  .aymaxPageContent {
+    padding: 16px;
+  }
+}

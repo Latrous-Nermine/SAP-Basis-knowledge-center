@@ -1,0 +1,119 @@
+<mvc:View
+  controllerName="aymax.hub.controller.certifications.Certifications"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
+
+        <!-- Page Title - home icon added alongside it, same minimal
+             addition every migrated module gets (navigation back to
+             Feed, which the original standalone app didn't need). -->
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+          <Title text="{i18n-certifications>pageTitle}" level="H1" class="aymaxPageTitle"/>
+          <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-certifications>backToFeed}" press=".onHomePress"/>
+        </HBox>
+
+        <!-- ═══════ SECTION: OBTENUES ═══════ -->
+        <VBox class="sapUiLargeMarginBottom">
+          <Title text="{i18n-certifications>sectionEarned}" level="H3" class="certSectionTitle sapUiSmallMarginBottom"/>
+
+          <List id="earnedList" items="{path: 'certifications>/Earned', parameters: { $expand: 'certification($expand=tags)' }}" showSeparators="None" class="certList">
+            <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
+              <VBox class="sapUiSmallMargin certCardInner">
+                <HBox justifyContent="SpaceBetween" alignItems="Start" class="sapUiTinyMarginBottom">
+                  <Title text="{certifications>certification/name}" level="H4" class="certName"/>
+                  <core:Icon src="sap-icon://accept" color="#16a34a" size="1.2rem" class="certCheckIcon"/>
+                </HBox>
+                <Text text="{certifications>certification/description}" class="aymaxMeta sapUiTinyMarginBottom" wrapping="true"/>
+                <Text text="{certifications>earnedDate}" class="certDate"/>
+                <HBox items="{certifications>certification/tags}" wrap="Wrap" class="sapUiSmallMarginTop"><items><Text text="{certifications>tag}" class="aymaxTag aymaxTagAccent"/></items></HBox>
+              </VBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+        <!-- ═══════ SECTION: EN COURS ═══════ -->
+        <VBox class="sapUiLargeMarginBottom">
+          <Title text="{i18n-certifications>sectionInProgress}" level="H3" class="certSectionTitle sapUiSmallMarginBottom"/>
+
+          <List id="inProgressList" items="{path: 'certifications>/InProgress', parameters: { $expand: 'certification($expand=tags)' }}" showSeparators="None" class="certList">
+            <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
+              <VBox class="sapUiSmallMargin certCardInner">
+                <HBox justifyContent="SpaceBetween" alignItems="Start" class="sapUiTinyMarginBottom">
+                  <Title text="{certifications>certification/name}" level="H4" class="certName"/>
+                  <ObjectStatus text="{i18n-certifications>statusInProgress}" state="Information" inverted="true" class="certStatusBadge"/>
+                </HBox>
+                <Text text="{certifications>certification/description}" class="aymaxMeta sapUiTinyMarginBottom" wrapping="true"/>
+
+                <HBox class="sapUiTinyMarginBottom">
+                  <Text text="{i18n-certifications>lblProvider} : " class="aymaxMeta sapUiTinyMarginEnd"/>
+                  <Text text="{certifications>certification/provider}" class="certMetaValue"/>
+                </HBox>
+                <HBox class="sapUiTinyMarginBottom">
+                  <Text text="{i18n-certifications>lblStartDate} " class="aymaxMeta sapUiTinyMarginEnd"/>
+                  <Text text="{certifications>startDate}" class="certMetaValue"/>
+                </HBox>
+
+                <VBox class="sapUiSmallMarginTop sapUiTinyMarginBottom">
+                  <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+                    <Text text="{i18n-certifications>lblProgress}" class="aymaxMeta"/>
+                    <Text text="{path:'certifications>progress', formatter:'.formatter.formatProgressPercent'}" class="certProgressLabel"/>
+                  </HBox>
+                  <layout:HorizontalLayout class="certProgressBarOuter">
+                    <layout:HorizontalLayout
+                      class="certProgressBarInner"
+                      width="{path:'certifications>progress', formatter:'.formatter.formatProgressPercent'}">
+                    </layout:HorizontalLayout>
+                  </layout:HorizontalLayout>
+                </VBox>
+
+                <HBox items="{certifications>certification/tags}" wrap="Wrap" class="sapUiSmallMarginTop"><items><Text text="{certifications>tag}" class="aymaxTag aymaxTagAccent"/></items></HBox>
+
+                <Button
+                  text="{i18n-certifications>btnContinue}"
+                  type="Transparent"
+                  icon="sap-icon://forward"
+                  press=".onContinueCertification"
+                  class="sapUiSmallMarginTop certContinueBtn"/>
+              </VBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+        <!-- ═══════ SECTION: RECOMMANDEES ═══════ -->
+        <VBox>
+          <Title text="{i18n-certifications>sectionRecommended}" level="H3" class="certSectionTitle sapUiSmallMarginBottom"/>
+
+          <List id="recommendedList" items="{path: 'certifications>/Recommended', parameters: { $expand: 'certification($expand=tags)' }}" showSeparators="None" class="certList">
+            <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
+              <VBox class="sapUiSmallMargin certCardInner">
+                <Title text="{certifications>certification/name}" level="H4" class="certName sapUiTinyMarginBottom"/>
+                <Text text="{certifications>certification/description}" class="aymaxMeta sapUiTinyMarginBottom" wrapping="true"/>
+
+                <VBox class="sapUiTinyMarginBottom">
+                  <Text
+                    text="{parts: [{path:'certifications>certification/recArticles'}, {path:'certifications>certification/recQuestions'}], formatter:'.formatter.formatRecommendedInfo'}"
+                    class="aymaxMeta"/>
+                </VBox>
+
+                <HBox items="{certifications>certification/tags}" wrap="Wrap" class="sapUiSmallMarginTop sapUiTinyMarginBottom"><items><Text text="{certifications>tag}" class="aymaxTag aymaxTagAccent"/></items></HBox>
+
+                <Button
+                  text="{i18n-certifications>btnStart}"
+                  type="Emphasized"
+                  press=".onStartCertification"
+                  class="sapUiSmallMarginTop certStartBtn"/>
+              </VBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

@@ -1,0 +1,130 @@
+<mvc:View
+  controllerName="aymax.hub.controller.validation.Validation"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
+
+        <!-- Page Header -->
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
+          <HBox alignItems="Center">
+            <core:Icon src="sap-icon://task" size="1.2rem" color="var(--aymax-primary)" class="sapUiSmallMarginEnd"/>
+            <Title text="{i18n-validation>pageTitle}" level="H1" class="aymaxPageTitle"/>
+          </HBox>
+          <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-validation>backToFeed}" press=".onHomePress"/>
+        </HBox>
+        <Text text="{i18n-validation>pageSubtitle}" class="aymaxSubtitle sapUiMediumMarginBottom"/>
+
+        <!-- STATS ROW -->
+        <HBox class="aymaxValidationStats sapUiSmallMarginBottom" wrap="Wrap">
+          <VBox class="aymaxStatPill aymaxStatPillWarning sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="{view-validation>/counts/pending}" level="H4" class="aymaxStatPillValue"/>
+            <Text text="{i18n-validation>statPending}" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="aymaxStatPill aymaxStatPillSuccess sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="{view-validation>/counts/approved}" level="H4" class="aymaxStatPillValue"/>
+            <Text text="{i18n-validation>statApproved}" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="aymaxStatPill aymaxStatPillError sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="{view-validation>/counts/rejected}" level="H4" class="aymaxStatPillValue"/>
+            <Text text="{i18n-validation>statRejected}" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="aymaxStatPill sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="{view-validation>/counts/all}" level="H4" class="aymaxStatPillValue"/>
+            <Text text="{i18n-validation>statAll}" class="aymaxMeta"/>
+          </VBox>
+        </HBox>
+
+        <!-- FILTER TABS -->
+        <HBox class="sapUiMediumMarginBottom" wrap="Wrap">
+          <Button
+            text="{path: 'view-validation>/counts/pending', formatter: '.formatter.formatTabPending'}"
+            type="{= ${view-validation>/filterStatus} === 'pending' ? 'Emphasized' : 'Default'}"
+            press=".onTabSelect"
+            class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
+            <customData><core:CustomData key="tab" value="pending"/></customData>
+          </Button>
+          <Button
+            text="{path: 'view-validation>/counts/approved', formatter: '.formatter.formatTabApproved'}"
+            type="{= ${view-validation>/filterStatus} === 'approved' ? 'Emphasized' : 'Default'}"
+            press=".onTabSelect"
+            class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
+            <customData><core:CustomData key="tab" value="approved"/></customData>
+          </Button>
+          <Button
+            text="{path: 'view-validation>/counts/rejected', formatter: '.formatter.formatTabRejected'}"
+            type="{= ${view-validation>/filterStatus} === 'rejected' ? 'Emphasized' : 'Default'}"
+            press=".onTabSelect"
+            class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
+            <customData><core:CustomData key="tab" value="rejected"/></customData>
+          </Button>
+          <Button
+            text="{path: 'view-validation>/counts/all', formatter: '.formatter.formatTabAll'}"
+            type="{= ${view-validation>/filterStatus} === 'all' ? 'Emphasized' : 'Default'}"
+            press=".onTabSelect"
+            class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
+            <customData><core:CustomData key="tab" value="all"/></customData>
+          </Button>
+        </HBox>
+
+        <!-- VALIDATION LIST -->
+        <List
+          id="validationList"
+          items="{path: 'validation>/ValidationItems'}"
+          showSeparators="None"
+          noDataText="{i18n-validation>noDataText}"
+          class="aymaxValidationList">
+          <CustomListItem class="aymaxCard sapUiSmallMarginBottom aymaxValidationItem">
+            <VBox class="sapUiSmallMargin">
+
+              <!-- Badges Row -->
+              <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+                <ObjectStatus
+                  text="{path: 'validation>status', formatter: '.formatter.formatStatusText'}"
+                  state="{path: 'validation>status', formatter: '.formatter.formatStatusState'}"
+                  inverted="true"
+                  class="aymaxBadge sapUiSmallMarginEnd"/>
+                <Text text="{validation>category}" class="aymaxTagOutline"/>
+              </HBox>
+
+              <!-- Content -->
+              <Title text="{validation>title}" level="H3" class="aymaxItemTitle sapUiTinyMarginBottom"/>
+              <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+                <core:Icon src="sap-icon://employee" size="0.85rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
+                <!-- Riadh's original bound author/name (his own Employees.name)
+                     via $expand - UserProfiles isn't exposed as its own
+                     entity in this service, so this is flattened server-side
+                     onto authorName instead (see validation-service.cds). -->
+                <Text text="{validation>authorName}" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <Text text="{validation>dept}" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
+                <core:Icon src="sap-icon://time" size="0.75rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
+                <Text text="{path: 'validation>createdAt', formatter: '.formatter.formatCreatedAt'}" class="aymaxMetaText"/>
+              </HBox>
+              <Text text="{validation>excerpt}" class="aymaxExcerpt sapUiMediumMarginBottom" wrapping="true"/>
+
+              <!-- Actions (only if pending) -->
+              <HBox
+                visible="{= ${validation>status} === 'pending'}"
+                justifyContent="End"
+                alignItems="Center"
+                class="aymaxItemActions">
+                <Button text="{i18n-validation>btnReject}" type="Reject" icon="sap-icon://decline" press=".onReject" class="sapUiSmallMarginEnd"/>
+                <Button text="{i18n-validation>btnModify}" type="Default" icon="sap-icon://edit" press=".onModify" class="sapUiSmallMarginEnd"/>
+                <Button text="{i18n-validation>btnApprove}" type="Accept" icon="sap-icon://accept" press=".onApprove"/>
+              </HBox>
+
+            </VBox>
+          </CustomListItem>
+        </List>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

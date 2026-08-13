@@ -1,7 +1,7 @@
-ID,name,provider,relatedSkill
-8a5a0001-0000-4000-8000-000000000001,SAP BTP Associate,SAP Learning,SAP BTP
-8a5a0001-0000-4000-8000-000000000002,SAP Fiori Elements Developer,SAP Learning,SAP Fiori
-8a5a0001-0000-4000-8000-000000000003,Cloud Foundry Advanced,SAP Learning,Cloud Foundry
-8a5a0001-0000-4000-8000-000000000004,SAP HANA Cloud Specialist,SAP Learning,SAP HANA
-8a5a0001-0000-4000-8000-000000000005,Spring Boot Professional,SAP Learning,Java / Spring Boot
-8a5a0001-0000-4000-8000-000000000006,SAP Integration Suite,SAP Learning,SAP BTP
+ID,name,provider,relatedSkill,description,recArticles,recQuestions
+8a5a0001-0000-4000-8000-000000000001,SAP BTP Associate,SAP Learning,SAP BTP,Fondamentaux de la plateforme cloud SAP BTP.,6,8
+8a5a0001-0000-4000-8000-000000000002,SAP Fiori Elements Developer,SAP Learning,SAP Fiori,Développement d'applications SAP Fiori Elements.,4,5
+8a5a0001-0000-4000-8000-000000000003,Cloud Foundry Advanced,SAP Learning,Cloud Foundry,Déploiement et exploitation avancée sur Cloud Foundry.,5,7
+8a5a0001-0000-4000-8000-000000000004,SAP HANA Cloud Specialist,SAP Learning,SAP HANA,Optimisation et migration vers SAP HANA Cloud.,7,9
+8a5a0001-0000-4000-8000-000000000005,Spring Boot Professional,SAP Learning,Java / Spring Boot,Certification avancée sur l'écosystème Spring Boot.,4,6
+8a5a0001-0000-4000-8000-000000000006,SAP Integration Suite,SAP Learning,SAP BTP,Intégration de flux de données entre systèmes SAP et tiers.,3,2

@@ -1,0 +1,97 @@
+/* Lot 3 design tokens (from Riadh's branch) - declared once here rather
+   than once per module, since :root scope is global regardless of which
+   loaded CSS file declares it and all 8 Lot 3 modules used the exact
+   same values. Each module's own stylesheet only carries its
+   module-prefixed layout rules, referencing these tokens. */
+
+:root {
+  --aymax-primary: #293681;
+  --aymax-secondary: #4274D9;
+  --aymax-accent: #4274D9;
+  --aymax-bg: #F6F8FC;
+  --aymax-surface: #FFFFFF;
+  --aymax-text: #1A2138;
+  --aymax-text-secondary: #4F5C7C;
+  --aymax-text-muted: #6D7A9C;
+  --aymax-border: #E5E7EB;
+  --aymax-border-subtle: #F3F4F6;
+
+  --aymax-neutral-100: #F6F8FB;
+  --aymax-neutral-200: #EAEEF5;
+  --aymax-neutral-300: #D7DEEB;
+  --aymax-neutral-400: #B7C1D6;
+  --aymax-neutral-500: #93A0BC;
+  --aymax-neutral-600: #6D7A9C;
+
+  --aymax-radius-sm: 8px;
+  --aymax-radius-md: 12px;
+  --aymax-radius-lg: 16px;
+
+  --aymax-shadow-sm: 0 1px 3px rgba(41, 54, 129, 0.08);
+  --aymax-shadow-md: 0 6px 20px rgba(41, 54, 129, 0.10);
+}
+
+[data-theme="sap_horizon_dark"] {
+  --aymax-bg: #0F1526;
+  --aymax-surface: #171E33;
+  --aymax-text: #E8ECF7;
+  --aymax-text-secondary: #ADB6D1;
+  --aymax-text-muted: #8B96B8;
+  --aymax-border: #2A3355;
+  --aymax-border-subtle: #212A45;
+  --aymax-neutral-100: #212A45;
+  --aymax-primary: #6FA0E8;
+  --aymax-accent: #6FA0E8;
+}
+
+/* Shared across every Lot 3 module page - identical in each of Riadh's
+   original style.css files, declared once here instead of once per
+   module. */
+.aymaxPage {
+  background: var(--aymax-bg);
+}
+
+.aymaxPageContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.aymaxPageTitle {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: var(--aymax-text) !important;
+}
+
+.aymaxMeta {
+  color: var(--aymax-text-muted);
+  font-size: 12px;
+}
+
+.aymaxCard {
+  background: var(--aymax-surface) !important;
+  border-radius: var(--aymax-radius-md) !important;
+  border: 1px solid var(--aymax-border) !important;
+  box-shadow: var(--aymax-shadow-sm) !important;
+}
+
+.aymaxTag {
+  background: color-mix(in srgb, var(--aymax-primary) 10%, transparent) !important;
+  color: var(--aymax-primary) !important;
+  border: 1px solid color-mix(in srgb, var(--aymax-primary) 25%, transparent) !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  padding: 4px 10px;
+}
+
+.aymaxTagAccent {
+  background: color-mix(in srgb, var(--aymax-accent) 10%, transparent) !important;
+  color: var(--aymax-accent) !important;
+  border: 1px solid color-mix(in srgb, var(--aymax-accent) 25%, transparent) !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 600;
+  padding: 2px 10px;
+}

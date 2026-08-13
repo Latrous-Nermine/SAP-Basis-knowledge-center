@@ -1,0 +1,11 @@
+ID,name,admin,manager,hr,employee,intern
+pm000001-0000-4000-8000-000000000001,Publier un article,false,true,false,true,false
+pm000001-0000-4000-8000-000000000002,Valider le contenu,false,true,false,false,false
+pm000001-0000-4000-8000-000000000003,Voter (upvote/downvote),false,true,false,true,false
+pm000001-0000-4000-8000-000000000004,Gérer les récompenses,false,false,true,false,false
+pm000001-0000-4000-8000-000000000005,Gérer les rôles,true,false,false,false,false
+pm000001-0000-4000-8000-000000000006,Créer une question,false,true,false,true,true
+pm000001-0000-4000-8000-000000000007,Accéder au centre de connaissances,true,true,true,true,true
+pm000001-0000-4000-8000-000000000008,Soumettre un rapport de stage,false,false,false,false,true
+pm000001-0000-4000-8000-000000000009,Administrer les paramètres système,true,false,false,false,false
+pm000001-0000-4000-8000-000000000010,Consulter les rapports analytiques,false,true,true,false,false

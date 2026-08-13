@@ -1,0 +1,98 @@
+<mvc:View
+  controllerName="aymax.hub.controller.rapportsStage.RapportsStage"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
+
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
+          <HBox alignItems="Center">
+            <Title text="{i18n-rapportsStage>pageTitle}" level="H1" class="aymaxPageTitle sapUiSmallMarginEnd"/>
+            <ObjectStatus
+              visible="{view-rapportsStage>/hasReport}"
+              text="{path: 'rapportsStage>status', formatter: '.formatter.formatStatusText'}"
+              state="{path: 'rapportsStage>status', formatter: '.formatter.formatStatusState'}"
+              inverted="true"
+              class="aymaxStatusBadge"/>
+          </HBox>
+          <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-rapportsStage>backToFeed}" press=".onHomePress"/>
+        </HBox>
+        <Text text="{i18n-rapportsStage>pageSubtitle}" class="aymaxMeta sapUiMediumMarginBottom"/>
+
+        <!-- Empty state - no report seeded for this intern yet. Not in
+             the original (which assumed exactly one pre-seeded report),
+             but the original also never handled this case visually -
+             this only ever shows instead of a blank, broken-looking
+             form, never in place of the designed content. -->
+        <MessageStrip
+          visible="{= !${view-rapportsStage>/hasReport} &amp;&amp; ${view-rapportsStage>/loaded} }"
+          text="{i18n-rapportsStage>noReportYet}"
+          type="Information"
+          showIcon="true"
+          class="sapUiMediumMarginBottom"/>
+
+        <VBox visible="{view-rapportsStage>/hasReport}">
+
+          <!-- MAIN EDITOR CARD -->
+          <Panel class="aymaxCard sapUiMediumMarginBottom aymaxEditorPanel">
+            <VBox class="sapUiSmallMargin">
+              <Label text="{i18n-rapportsStage>lblTitle}" class="aymaxLabel sapUiTinyMarginBottom" required="true"/>
+              <Input value="{rapportsStage>title}" class="sapUiSmallMarginBottom"/>
+
+              <Label text="{i18n-rapportsStage>lblPeriod}" class="aymaxLabel sapUiTinyMarginBottom"/>
+              <Input value="{rapportsStage>period}" placeholder="{i18n-rapportsStage>periodPlaceholder}" class="sapUiSmallMarginBottom"/>
+
+              <Label text="{i18n-rapportsStage>lblBody}" class="aymaxLabel sapUiTinyMarginBottom"/>
+
+              <!-- Toolbar for rich text simulation -->
+              <OverflowToolbar class="aymaxRTEToolbar">
+                <Button icon="sap-icon://bold" type="Transparent" tooltip="{i18n-rapportsStage>tooltipBold}"/>
+                <Button icon="sap-icon://italic" type="Transparent" tooltip="{i18n-rapportsStage>tooltipItalic}"/>
+                <Button icon="sap-icon://list" type="Transparent" tooltip="{i18n-rapportsStage>tooltipList}"/>
+              </OverflowToolbar>
+
+              <TextArea
+                value="{rapportsStage>body}"
+                placeholder="{i18n-rapportsStage>bodyPlaceholder}"
+                growing="true"
+                growingMinLines="12"
+                width="100%"
+                class="aymaxTextArea sapUiMediumMarginBottom"/>
+
+              <HBox>
+                <Button text="{i18n-rapportsStage>btnSaveDraft}" type="Default" press=".onSaveDraft" class="sapUiSmallMarginEnd aymaxBtnSecondary"/>
+                <Button
+                  text="{i18n-rapportsStage>btnSubmit}"
+                  type="Emphasized"
+                  press=".onSubmitReport"
+                  enabled="{= ${rapportsStage>title}.length > 0 &amp;&amp; ${rapportsStage>status} === 'draft' }"/>
+              </HBox>
+            </VBox>
+          </Panel>
+
+          <!-- HISTORY CARD -->
+          <Panel class="aymaxCard">
+            <headerToolbar>
+              <Toolbar style="Clear"><Title level="H5" text="{i18n-rapportsStage>historyTitle}"/></Toolbar>
+            </headerToolbar>
+            <List items="{rapportsStage>history}" showSeparators="None" class="aymaxHistoryList">
+              <CustomListItem>
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxHistoryItem">
+                  <Text text="{rapportsStage>text}" class="aymaxHistoryText"/>
+                  <Text text="{rapportsStage>time}" class="aymaxMeta"/>
+                </HBox>
+              </CustomListItem>
+            </List>
+          </Panel>
+
+        </VBox>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

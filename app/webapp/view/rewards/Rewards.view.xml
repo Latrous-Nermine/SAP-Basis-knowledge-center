@@ -1,0 +1,91 @@
+<mvc:View
+  controllerName="aymax.hub.controller.rewards.Rewards"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" class="rewardsPage">
+    <content>
+      <VBox class="sapUiContentPadding rewardsPageContent">
+
+        <!-- Page Header - identical to the original design, with just
+             one small addition: a home icon before the Add button, the
+             same navigation-back affordance every other migrated
+             module has (this app is no longer standalone, so it needs
+             a way back to Feed that the original didn't). -->
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+          <VBox>
+            <Title text="{i18n-rewards>pageTitle}" level="H1" class="rewardsPageTitle"/>
+            <Text text="{i18n-rewards>pageSubtitle}" class="aymaxMeta sapUiTinyMarginTop"/>
+          </VBox>
+          <HBox alignItems="Center">
+            <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-rewards>backToFeed}" press=".onHomePress" class="sapUiSmallMarginEnd"/>
+            <Button
+              text="{i18n-rewards>addReward}"
+              type="Emphasized"
+              icon="sap-icon://add"
+              press=".onAddReward"
+              class="rewardsAddBtn"/>
+          </HBox>
+        </HBox>
+
+        <!-- Stats Row - same three cards as the original design.
+             "Articles disponibles" is bound to the real count now
+             (trivial, and the position/style is identical either way);
+             the other two are kept exactly as static illustrative text
+             the same way the original had them - there's no
+             distribution/redemption tracking entity to compute them
+             from, and inventing one wasn't part of what's being
+             migrated here. -->
+        <HBox class="rewardsStats sapUiMediumMarginBottom" wrap="Wrap">
+          <VBox class="rewardsStatCard sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="35 000" level="H3" class="rewardsStatValue"/>
+            <Text text="{i18n-rewards>statsPointsDistributed}" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="rewardsStatCard sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="12" level="H3" class="rewardsStatValue"/>
+            <Text text="{i18n-rewards>statsRewardsRedeemed}" class="aymaxMeta"/>
+          </VBox>
+          <VBox class="rewardsStatCard sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
+            <Title text="{view-rewards>/availableCount}" level="H3" class="rewardsStatValue"/>
+            <Text text="{i18n-rewards>statsAvailableItems}" class="aymaxMeta"/>
+          </VBox>
+        </HBox>
+
+        <!-- REWARDS GRID -->
+        <List
+          id="rewardsList"
+          items="{rewards>/Rewards}"
+          showSeparators="None"
+          class="rewardsGridList"
+          updateFinished=".onRewardsListUpdated">
+          <CustomListItem class="aymaxCard rewardsCard sapUiSmallMarginEnd sapUiSmallMarginBottom">
+            <VBox alignItems="Center" class="sapUiMediumMargin rewardsCardInner">
+
+              <VBox class="rewardsIconWrapper sapUiSmallMarginBottom" alignItems="Center" justifyContent="Center">
+                <core:Icon src="{path: 'rewards>icon', formatter: '.formatter.formatRewardIcon'}" size="1.8rem" color="var(--aymax-primary)"/>
+              </VBox>
+
+              <Title text="{rewards>name}" level="H4" class="rewardsTitle sapUiTinyMarginBottom" textAlign="Center"/>
+
+              <HBox alignItems="Center" justifyContent="Center" class="rewardsPointsBadge sapUiSmallMarginBottom">
+                <core:Icon src="sap-icon://favorite" size="0.9rem" color="var(--aymax-accent)" class="sapUiTinyMarginEnd"/>
+                <Text text="{path: 'rewards>points', formatter: '.formatter.formatPointsLabel'}" class="rewardsPoints"/>
+              </HBox>
+
+              <Text text="{rewards>category}" class="rewardsCategory sapUiTinyMarginBottom"/>
+
+              <HBox class="sapUiSmallMarginTop" justifyContent="Center">
+                <Button text="{i18n-rewards>editReward}" type="Default" press=".onEditReward" class="rewardsBtnSecondary sapUiTinyMarginEnd"/>
+                <Button text="{i18n-rewards>deleteReward}" type="Transparent" press=".onDeleteReward" class="rewardsDeleteBtn"/>
+              </HBox>
+
+            </VBox>
+          </CustomListItem>
+        </List>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

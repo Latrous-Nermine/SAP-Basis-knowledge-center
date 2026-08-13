@@ -1,0 +1,38 @@
+/* Reports (Vue d'ensemble) - Lot 3, integrated from Riadh's branch
+   (app/rapports). Shared page/card/token rules live in
+   css/lot3/tokens.css; this file only carries what's specific to
+   this module. */
+
+.aymaxKpiValue {
+  font-family: "72", "Arial", sans-serif !important;
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  color: var(--aymax-primary) !important;
+  margin-bottom: 8px !important;
+}
+
+.aymaxDeptName {
+  font-weight: 600 !important;
+  color: var(--aymax-text) !important;
+}
+
+.aymaxTable {
+  border: none !important;
+}
+.aymaxTable .sapMListTblRow {
+  border-bottom: 1px solid var(--aymax-border-subtle) !important;
+  transition: background 0.15s ease;
+}
+.aymaxTable .sapMListTblRow:hover {
+  background: var(--aymax-neutral-100) !important;
+}
+.aymaxTable .sapMListTblCell {
+  padding: 12px 8px !important;
+}
+.aymaxTable .sapMListTblHeaderCell {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--aymax-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}

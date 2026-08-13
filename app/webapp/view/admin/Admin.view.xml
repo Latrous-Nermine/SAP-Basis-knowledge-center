@@ -1,0 +1,197 @@
+<mvc:View
+  controllerName="aymax.hub.controller.admin.Admin"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" class="adminPage">
+    <content>
+      <VBox class="sapUiContentPadding adminPageContent">
+
+        <!-- Page Title Area -->
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+          <VBox>
+            <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+              <core:Icon src="sap-icon://action-settings" size="1.2rem" color="#4338ca" class="sapUiSmallMarginEnd"/>
+              <Title text="{i18n-admin>pageTitle}" level="H1" class="adminPageTitle"/>
+            </HBox>
+            <Text text="{i18n-admin>pageSubtitle}" class="adminMetaText"/>
+          </VBox>
+          <HBox alignItems="Center">
+            <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-admin>backToFeed}" press=".onHomePress" class="sapUiSmallMarginEnd"/>
+            <Button text="{i18n-admin>refresh}" type="Default" icon="sap-icon://refresh"/>
+          </HBox>
+        </HBox>
+
+        <!-- FILTER TABS -->
+        <HBox class="sapUiMediumMarginBottom" wrap="Wrap">
+          <Button text="{i18n-admin>tabRoles}" type="{= ${view-admin>/activeTab} === 'roles' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+            <customData><core:CustomData key="tab" value="roles"/></customData>
+          </Button>
+          <Button text="{i18n-admin>tabPermissions}" type="{= ${view-admin>/activeTab} === 'permissions' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+            <customData><core:CustomData key="tab" value="permissions"/></customData>
+          </Button>
+          <Button text="{i18n-admin>tabSettings}" type="{= ${view-admin>/activeTab} === 'settings' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+            <customData><core:CustomData key="tab" value="settings"/></customData>
+          </Button>
+          <Button text="{i18n-admin>tabConfig}" type="{= ${view-admin>/activeTab} === 'config' ? 'Emphasized' : 'Default'}" press=".onTabSelect" class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+            <customData><core:CustomData key="tab" value="config"/></customData>
+          </Button>
+        </HBox>
+
+        <!-- TAB: ROLES -->
+        <VBox visible="{= ${view-admin>/activeTab} === 'roles'}">
+          <Panel class="adminCard">
+            <headerToolbar>
+              <Toolbar style="Clear">
+                <Title level="H5" text="{i18n-admin>rolesTitle}"/>
+                <ToolbarSpacer/>
+                <Button text="{i18n-admin>newRole}" type="Emphasized" icon="sap-icon://add" press=".onAddRole"/>
+              </Toolbar>
+            </headerToolbar>
+            <Table items="{admin>/Roles}" class="adminTable">
+              <columns>
+                <Column width="25%"><Text text="{i18n-admin>colRole}"/></Column>
+                <Column width="50%"><Text text="{i18n-admin>colDescription}"/></Column>
+                <Column hAlign="End" width="15%"><Text text="{i18n-admin>colUsers}"/></Column>
+                <Column hAlign="End" width="10%"><Text text="{i18n-admin>colActions}"/></Column>
+              </columns>
+              <items>
+                <ColumnListItem>
+                  <cells>
+                    <HBox alignItems="Center">
+                      <Avatar
+                        initials="{path: 'admin>name', formatter: '.formatter.formatRoleInitials'}"
+                        displaySize="XS"
+                        class="sapUiTinyMarginEnd adminRoleAvatar"/>
+                      <Text text="{admin>name}" class="adminBoldText"/>
+                    </HBox>
+                    <Text text="{admin>desc}" class="adminMetaText"/>
+                    <HBox justifyContent="End" alignItems="Center">
+                      <Text text="{admin>count}" class="sapUiTinyMarginEnd"/>
+                      <Text text="{i18n-admin>usersSuffix}" class="adminMetaText"/>
+                    </HBox>
+                    <Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n-admin>editRole}" press=".onEditRole"/>
+                  </cells>
+                </ColumnListItem>
+              </items>
+            </Table>
+          </Panel>
+        </VBox>
+
+        <!-- TAB: PERMISSIONS -->
+        <VBox visible="{= ${view-admin>/activeTab} === 'permissions'}">
+          <Panel class="adminCard">
+            <headerToolbar>
+              <Toolbar style="Clear">
+                <Title level="H5" text="{i18n-admin>permissionsTitle}"/>
+                <ToolbarSpacer/>
+                <Text text="{i18n-admin>permissionsLegend}" class="adminMetaText"/>
+              </Toolbar>
+            </headerToolbar>
+            <Table items="{admin>/Permissions}" class="adminTable adminPermTable">
+              <columns>
+                <Column width="30%"><Text text="{i18n-admin>colPermission}"/></Column>
+                <Column hAlign="Center"><Text text="{i18n-admin>colAdmin}"/></Column>
+                <Column hAlign="Center"><Text text="{i18n-admin>colManager}"/></Column>
+                <Column hAlign="Center"><Text text="{i18n-admin>colHR}"/></Column>
+                <Column hAlign="Center"><Text text="{i18n-admin>colEmployee}"/></Column>
+                <Column hAlign="Center"><Text text="{i18n-admin>colIntern}"/></Column>
+              </columns>
+              <items>
+                <ColumnListItem>
+                  <cells>
+                    <Text text="{admin>name}" class="adminBoldText"/>
+                    <HBox justifyContent="Center">
+                      <core:Icon src="{path: 'admin>admin', formatter: '.formatter.formatPermIcon'}" color="{path: 'admin>admin', formatter: '.formatter.formatPermColor'}" size="1rem"/>
+                    </HBox>
+                    <HBox justifyContent="Center">
+                      <core:Icon src="{path: 'admin>manager', formatter: '.formatter.formatPermIcon'}" color="{path: 'admin>manager', formatter: '.formatter.formatPermColor'}" size="1rem"/>
+                    </HBox>
+                    <HBox justifyContent="Center">
+                      <core:Icon src="{path: 'admin>hr', formatter: '.formatter.formatPermIcon'}" color="{path: 'admin>hr', formatter: '.formatter.formatPermColor'}" size="1rem"/>
+                    </HBox>
+                    <HBox justifyContent="Center">
+                      <core:Icon src="{path: 'admin>employee', formatter: '.formatter.formatPermIcon'}" color="{path: 'admin>employee', formatter: '.formatter.formatPermColor'}" size="1rem"/>
+                    </HBox>
+                    <HBox justifyContent="Center">
+                      <core:Icon src="{path: 'admin>intern', formatter: '.formatter.formatPermIcon'}" color="{path: 'admin>intern', formatter: '.formatter.formatPermColor'}" size="1rem"/>
+                    </HBox>
+                  </cells>
+                </ColumnListItem>
+              </items>
+            </Table>
+          </Panel>
+        </VBox>
+
+        <!-- TAB: SETTINGS - no backing entity, same as the original
+             (pure UI mockup) - preserved exactly as static/illustrative. -->
+        <VBox visible="{= ${view-admin>/activeTab} === 'settings'}">
+          <Panel class="adminCard adminSettingsPanel">
+            <headerToolbar>
+              <Toolbar style="Clear">
+                <Title level="H5" text="{i18n-admin>settingsTitle}"/>
+              </Toolbar>
+            </headerToolbar>
+            <VBox class="sapUiMediumMargin">
+              <Label text="{i18n-admin>lblPlatformName}" class="adminLabel sapUiTinyMarginBottom"/>
+              <Input value="AYMAX Knowledge Hub" class="sapUiSmallMarginBottom"/>
+
+              <Label text="{i18n-admin>lblDefaultLanguage}" class="adminLabel sapUiTinyMarginBottom"/>
+              <ComboBox selectedKey="fr" class="sapUiSmallMarginBottom">
+                <core:Item key="fr" text="Français"/>
+                <core:Item key="en" text="English"/>
+                <core:Item key="ar" text="العربية"/>
+              </ComboBox>
+
+              <Label text="{i18n-admin>lblSessionDuration}" class="adminLabel sapUiTinyMarginBottom"/>
+              <Input value="120" type="Number" class="sapUiMediumMarginBottom"/>
+
+              <Label text="{i18n-admin>lblMaintenanceMode}" class="adminLabel sapUiTinyMarginBottom"/>
+              <Switch state="false" customTextOn="Actif" customTextOff="Inactif" class="sapUiSmallMarginBottom"/>
+
+              <Button text="{i18n-admin>saveSettings}" type="Emphasized" icon="sap-icon://save" press=".onSaveSettings"/>
+            </VBox>
+          </Panel>
+        </VBox>
+
+        <!-- TAB: CONFIG - same as Settings, no backing entity, preserved
+             exactly as static/illustrative. -->
+        <VBox visible="{= ${view-admin>/activeTab} === 'config'}">
+          <Panel class="adminCard adminSettingsPanel">
+            <headerToolbar>
+              <Toolbar style="Clear">
+                <Title level="H5" text="{i18n-admin>configTitle}"/>
+              </Toolbar>
+            </headerToolbar>
+            <VBox class="sapUiMediumMargin">
+              <Label text="{i18n-admin>lblEnvironment}" class="adminLabel sapUiTinyMarginBottom"/>
+              <ComboBox selectedKey="prod" class="sapUiSmallMarginBottom">
+                <core:Item key="prod" text="Production"/>
+                <core:Item key="rec" text="Recette"/>
+                <core:Item key="dev" text="Développement"/>
+              </ComboBox>
+
+              <Label text="{i18n-admin>lblAuth}" class="adminLabel sapUiTinyMarginBottom"/>
+              <ComboBox selectedKey="ias" class="sapUiSmallMarginBottom">
+                <core:Item key="ias" text="SAP IAS / SSO"/>
+                <core:Item key="basic" text="Basic Auth (dev uniquement)"/>
+              </ComboBox>
+
+              <Label text="{i18n-admin>lblDataRetention}" class="adminLabel sapUiTinyMarginBottom"/>
+              <Input value="36" type="Number" class="sapUiSmallMarginBottom"/>
+
+              <Label text="{i18n-admin>lblLogsEnabled}" class="adminLabel sapUiTinyMarginBottom"/>
+              <Switch state="true" customTextOn="Oui" customTextOff="Non" class="sapUiMediumMarginBottom"/>
+
+              <Button text="{i18n-admin>saveConfig}" type="Emphasized" icon="sap-icon://save" press=".onSaveSettings"/>
+            </VBox>
+          </Panel>
+        </VBox>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

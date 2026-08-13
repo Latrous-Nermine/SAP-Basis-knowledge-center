@@ -32,6 +32,46 @@
         "uri": "/odata/v4/dashboard/",
         "type": "OData",
         "settings": { "odataVersion": "4.0" }
+      },
+      "rewardsService": {
+        "uri": "/odata/v4/rewards/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "adminService": {
+        "uri": "/odata/v4/admin/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "certificationsService": {
+        "uri": "/odata/v4/certifications/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "depotService": {
+        "uri": "/odata/v4/depot/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "hrService": {
+        "uri": "/odata/v4/hr/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "reportsService": {
+        "uri": "/odata/v4/reports/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "rapportsStageService": {
+        "uri": "/odata/v4/rapports-stage/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "validationService": {
+        "uri": "/odata/v4/validation/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
       }
     }
   },
@@ -70,7 +110,15 @@
         { "pattern": "experts", "name": "expertsList", "target": "expertsList" },
         { "pattern": "knowledge", "name": "knowledgeList", "target": "knowledgeList" },
         { "pattern": "knowledge/{itemID}", "name": "knowledgeDetail", "target": "knowledgeDetail" },
-        { "pattern": "excellence-center", "name": "excellenceCenter", "target": "excellenceCenter" }
+        { "pattern": "excellence-center", "name": "excellenceCenter", "target": "excellenceCenter" },
+        { "pattern": "rewards", "name": "rewards", "target": "rewards" },
+        { "pattern": "certifications", "name": "certifications", "target": "certifications" },
+        { "pattern": "admin", "name": "admin", "target": "admin" },
+        { "pattern": "depot", "name": "depot", "target": "depot" },
+        { "pattern": "hr", "name": "hr", "target": "hr" },
+        { "pattern": "reports", "name": "reports", "target": "reports" },
+        { "pattern": "rapports-stage", "name": "rapportsStage", "target": "rapportsStage" },
+        { "pattern": "validation", "name": "validation", "target": "validation" }
       ],
       "targets": {
         "dashboard": { "viewName": "dashboard.Dashboard", "viewLevel": 1 },
@@ -79,7 +127,15 @@
         "expertsList": { "viewName": "experts.ExpertsList", "viewLevel": 1 },
         "knowledgeList": { "viewName": "knowledge.KnowledgeList", "viewLevel": 1 },
         "knowledgeDetail": { "viewName": "knowledge.KnowledgeDetail", "viewLevel": 2 },
-        "excellenceCenter": { "viewName": "excellence.ExcellenceCenter", "viewLevel": 1 }
+        "excellenceCenter": { "viewName": "excellence.ExcellenceCenter", "viewLevel": 1 },
+        "rewards": { "viewName": "rewards.Rewards", "viewLevel": 1 },
+        "certifications": { "viewName": "certifications.Certifications", "viewLevel": 1 },
+        "admin": { "viewName": "admin.Admin", "viewLevel": 1 },
+        "depot": { "viewName": "depot.Depot", "viewLevel": 1 },
+        "hr": { "viewName": "hr.HR", "viewLevel": 1 },
+        "reports": { "viewName": "reports.Reports", "viewLevel": 1 },
+        "rapportsStage": { "viewName": "rapportsStage.RapportsStage", "viewLevel": 1 },
+        "validation": { "viewName": "validation.Validation", "viewLevel": 1 }
       }
     },
     "models": {
@@ -163,7 +219,119 @@
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": { "bundleName": "aymax.hub.i18n.excellence.i18n" }
       },
-      "view-excellence": { "type": "sap.ui.model.json.JSONModel" }
+      "view-excellence": { "type": "sap.ui.model.json.JSONModel" },
+
+      "i18n-rewards": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.rewards.i18n" }
+      },
+      "view-rewards": { "type": "sap.ui.model.json.JSONModel" },
+      "rewards": {
+        "dataSource": "rewardsService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-certifications": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.certifications.i18n" }
+      },
+      "view-certifications": { "type": "sap.ui.model.json.JSONModel" },
+      "certifications": {
+        "dataSource": "certificationsService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-admin": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.admin.i18n" }
+      },
+      "view-admin": { "type": "sap.ui.model.json.JSONModel" },
+      "admin": {
+        "dataSource": "adminService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-depot": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.depot.i18n" }
+      },
+      "view-depot": { "type": "sap.ui.model.json.JSONModel" },
+      "depot": {
+        "dataSource": "depotService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-hr": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.hr.i18n" }
+      },
+      "view-hr": { "type": "sap.ui.model.json.JSONModel" },
+      "hr": {
+        "dataSource": "hrService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-reports": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.reports.i18n" }
+      },
+      "view-reports": { "type": "sap.ui.model.json.JSONModel" },
+      "reports": {
+        "dataSource": "reportsService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-rapportsStage": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.rapportsStage.i18n" }
+      },
+      "view-rapportsStage": { "type": "sap.ui.model.json.JSONModel" },
+      "rapportsStage": {
+        "dataSource": "rapportsStageService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+
+      "i18n-validation": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.validation.i18n" }
+      },
+      "view-validation": { "type": "sap.ui.model.json.JSONModel" },
+      "validation": {
+        "dataSource": "validationService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      }
     },
     "resources": {
       "css": [
@@ -172,7 +340,16 @@
         { "uri": "css/experts/style.css" },
         { "uri": "css/knowledge/style.css" },
         { "uri": "css/dashboard/style.css" },
-        { "uri": "css/excellence/style.css" }
+        { "uri": "css/excellence/style.css" },
+        { "uri": "css/lot3/tokens.css" },
+        { "uri": "css/rewards/style.css" },
+        { "uri": "css/certifications/style.css" },
+        { "uri": "css/admin/style.css" },
+        { "uri": "css/depot/style.css" },
+        { "uri": "css/hr/style.css" },
+        { "uri": "css/reports/style.css" },
+        { "uri": "css/rapportsStage/style.css" },
+        { "uri": "css/validation/style.css" }
       ]
     }
   }

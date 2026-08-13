@@ -1,0 +1,75 @@
+<mvc:View
+  controllerName="aymax.hub.controller.depot.Depot"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:layout="sap.ui.layout"
+  xmlns:u="sap.ui.unified"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
+
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
+          <Title text="{i18n-depot>pageTitle}" level="H1" class="aymaxPageTitle"/>
+          <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-depot>backToFeed}" press=".onHomePress"/>
+        </HBox>
+        <Text text="{i18n-depot>pageSubtitle}" class="aymaxMeta sapUiMediumMarginBottom" wrapping="true"/>
+
+        <!-- DROP ZONE -->
+        <VBox class="aymaxCard depotDropZone sapUiMediumMarginBottom" alignItems="Center" justifyContent="Center">
+          <core:Icon src="sap-icon://upload-to-cloud" size="3rem" color="var(--aymax-neutral-400)" class="sapUiSmallMarginBottom"/>
+          <Title text="{i18n-depot>dropZoneTitle}" level="H3" class="sapUiTinyMarginBottom"/>
+          <Text text="{i18n-depot>dropZoneOr}" class="aymaxMeta sapUiSmallMarginBottom"/>
+
+          <u:FileUploader
+            id="fileUploader"
+            name="myFileUpload"
+            tooltip="{i18n-depot>browseFiles}"
+            change=".onUploadChange"
+            buttonText="{i18n-depot>browseFiles}"
+            buttonOnly="true"
+            icon="sap-icon://attachment"
+            style="Emphasized"
+            class="depotBrowseBtn"/>
+
+          <Text text="{i18n-depot>acceptedFormats}" class="aymaxMeta sapUiSmallMarginTop"/>
+        </VBox>
+
+        <!-- FILE LIST -->
+        <Panel class="aymaxCard">
+          <headerToolbar>
+            <Toolbar style="Clear"><Title level="H5" text="{i18n-depot>filesListTitle}"/></Toolbar>
+          </headerToolbar>
+          <List items="{depot>/DepotFiles}" showSeparators="None" class="depotFileList">
+            <CustomListItem>
+              <HBox justifyContent="SpaceBetween" alignItems="Center" class="depotFileItem">
+                <HBox alignItems="Center">
+                  <core:Icon
+                    src="{path: 'depot>type', formatter: '.formatter.formatIcon'}"
+                    size="1.5rem"
+                    color="var(--aymax-primary)"
+                    class="sapUiSmallMarginEnd"/>
+                  <VBox>
+                    <Text text="{depot>name}" class="depotFileName"/>
+                    <Text
+                      text="{parts:[{path:'depot>size'},{path:'depot>uploadedAt'}], formatter:'.formatter.formatFileMeta'}"
+                      class="aymaxMeta"/>
+                  </VBox>
+                </HBox>
+                <Button
+                  icon="sap-icon://delete"
+                  type="Transparent"
+                  press=".onDeleteFile"
+                  tooltip="{i18n-depot>deleteFile}"
+                  class="depotDeleteBtn"/>
+              </HBox>
+            </CustomListItem>
+          </List>
+        </Panel>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

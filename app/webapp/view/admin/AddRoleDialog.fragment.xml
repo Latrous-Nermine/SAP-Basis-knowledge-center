@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{i18n-admin>addRoleDialogTitle}" contentWidth="400px">
+    <content>
+      <layout:VerticalLayout width="100%" class="sapUiContentPadding">
+        <Label text="{i18n-admin>fieldRoleName}" labelFor="newRoleName" class="sapUiTinyMarginTopBottom"/>
+        <Input id="newRoleName" value="{view-admin>/newRole/name}" placeholder="{i18n-admin>placeholderRoleName}" width="100%"/>
+        <Label text="{i18n-admin>fieldRoleDesc}" labelFor="newRoleDesc" class="sapUiTinyMarginTopBottom"/>
+        <Input id="newRoleDesc" value="{view-admin>/newRole/desc}" placeholder="{i18n-admin>placeholderRoleDesc}" width="100%"/>
+      </layout:VerticalLayout>
+    </content>
+    <beginButton>
+      <Button text="{i18n-admin>create}" type="Emphasized" press=".onConfirmAddRole"/>
+    </beginButton>
+    <endButton>
+      <Button text="{i18n-admin>cancel}" press=".onCancelAddRole"/>
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

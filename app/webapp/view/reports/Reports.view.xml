@@ -1,0 +1,101 @@
+<mvc:View
+  controllerName="aymax.hub.controller.reports.Reports"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="sapUiContentPadding aymaxPageContent">
+
+        <!-- Page Header -->
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+          <VBox>
+            <Title text="{i18n-reports>pageTitle}" level="H1" class="aymaxPageTitle"/>
+            <Text text="{i18n-reports>pageSubtitle}" class="aymaxMeta sapUiTinyMarginTop"/>
+          </VBox>
+          <HBox alignItems="Center">
+            <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-reports>backToFeed}" press=".onHomePress" class="sapUiSmallMarginEnd"/>
+            <Button text="{i18n-reports>btnExport}" type="Default" icon="sap-icon://download" press=".onExport" class="aymaxBtnSecondary"/>
+          </HBox>
+        </HBox>
+
+        <!-- KPIs GRID — use List with CustomListItem -->
+        <List
+          id="kpiList"
+          items="{reports>/KPIs}"
+          showSeparators="None"
+          class="aymaxKpiList sapUiMediumMarginBottom">
+          <CustomListItem class="aymaxCard sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxKpiCard">
+            <VBox class="sapUiSmallMargin">
+              <Text text="{reports>label}" class="aymaxMeta sapUiTinyMarginBottom"/>
+              <Title text="{reports>value}" level="H2" class="aymaxKpiValue"/>
+              <HBox alignItems="Center" class="sapUiTinyMarginTop">
+                <core:Icon
+                  src="{path: 'reports>state', formatter: '.formatter.formatKpiIcon'}"
+                  color="{path: 'reports>state', formatter: '.formatter.formatKpiColor'}"
+                  size="0.75rem"
+                  class="sapUiTinyMarginEnd"/>
+                <Text text="{reports>delta}" class="aymaxKpiDelta"/>
+              </HBox>
+            </VBox>
+          </CustomListItem>
+        </List>
+
+        <!-- DATA TABLE -->
+        <Panel class="aymaxCard">
+          <headerToolbar>
+            <Toolbar style="Clear">
+              <Title level="H5" text="{i18n-reports>deptPerformanceTitle}" class="card-kicker"/>
+              <ToolbarSpacer/>
+              <Button icon="sap-icon://sort" type="Transparent" tooltip="{i18n-reports>tooltipSort}" class="sapUiTinyMarginEnd"/>
+              <Button icon="sap-icon://filter" type="Transparent" tooltip="{i18n-reports>tooltipFilter}"/>
+            </Toolbar>
+          </headerToolbar>
+          <Table items="{reports>/DepartmentStats}" class="aymaxTable" growing="true" growingThreshold="10">
+            <columns>
+              <Column width="35%">
+                <Text text="{i18n-reports>colDepartment}"/>
+              </Column>
+              <Column hAlign="End">
+                <Text text="{i18n-reports>colPublications}"/>
+              </Column>
+              <Column hAlign="End">
+                <Text text="{i18n-reports>colQuestionsSolved}"/>
+              </Column>
+              <Column hAlign="End">
+                <Text text="{i18n-reports>colAvgReputation}"/>
+              </Column>
+              <Column hAlign="End" width="120px">
+                <Text text="{i18n-reports>colTrend}"/>
+              </Column>
+            </columns>
+            <items>
+              <ColumnListItem>
+                <cells>
+                  <HBox alignItems="Center">
+                    <Avatar
+                      initials="{path: 'reports>dept', formatter: '.formatter.formatDeptInitials'}"
+                      displaySize="XS"
+                      class="sapUiTinyMarginEnd aymaxDeptAvatar"/>
+                    <Text text="{reports>dept}" class="aymaxDeptName"/>
+                  </HBox>
+                  <ObjectNumber number="{reports>pubs}" class="aymaxTableNumber"/>
+                  <ObjectNumber number="{reports>solved}" class="aymaxTableNumber"/>
+                  <ObjectNumber number="{reports>avgRep}" class="aymaxTableNumber aymaxRepNumber"/>
+                  <ObjectStatus
+                    text="{path: 'reports>avgRep', formatter: '.formatter.formatTrend'}"
+                    state="{path: 'reports>avgRep', formatter: '.formatter.formatTrendState'}"
+                    inverted="false"/>
+                </cells>
+              </ColumnListItem>
+            </items>
+          </Table>
+        </Panel>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

@@ -1,0 +1,64 @@
+/* Rewards - Lot 3, integrated from Riadh's branch. Design tokens
+   (--aymax-*) live once in css/lot3/tokens.css; this file only carries
+   layout specific to this module, classes prefixed to avoid colliding
+   with any other module's similarly-named rules. */
+
+.rewardsPage {
+  background: var(--aymax-bg);
+}
+
+.rewardsPageContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.rewardsPageTitle {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: var(--aymax-text) !important;
+}
+
+.rewardsGridList {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.rewardsCard {
+  background: var(--aymax-surface) !important;
+  border-radius: var(--aymax-radius-md) !important;
+  border: 1px solid var(--aymax-border) !important;
+  box-shadow: var(--aymax-shadow-sm) !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.rewardsCard:hover {
+  box-shadow: var(--aymax-shadow-md) !important;
+  transform: translateY(-2px);
+}
+
+.rewardsIconWrapper {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 12px !important;
+  background: var(--aymax-neutral-100) !important;
+}
+
+.rewardsTitle {
+  font-weight: 600 !important;
+  color: var(--aymax-text) !important;
+}
+
+.rewardsPoints {
+  font-weight: 700 !important;
+  font-size: 18px !important;
+  color: var(--aymax-primary) !important;
+}
+
+.rewardsBtnSecondary .sapMBtnInner {
+  border: 1px solid var(--aymax-border) !important;
+  color: var(--aymax-text) !important;
+}
+.rewardsBtnSecondary .sapMBtnInner:hover {
+  background: var(--aymax-neutral-100) !important;
+}

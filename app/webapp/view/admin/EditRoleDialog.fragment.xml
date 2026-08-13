@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:layout="sap.ui.layout"
+  xmlns:core="sap.ui.core">
+
+  <Dialog title="{i18n-admin>editRoleDialogTitle}" contentWidth="400px">
+    <content>
+      <layout:VerticalLayout width="100%" class="sapUiContentPadding">
+        <Label text="{i18n-admin>fieldRoleName}" labelFor="editRoleName" class="sapUiTinyMarginTopBottom"/>
+        <Input id="editRoleName" value="{admin>name}" width="100%"/>
+        <Label text="{i18n-admin>fieldRoleDesc}" labelFor="editRoleDesc" class="sapUiTinyMarginTopBottom"/>
+        <Input id="editRoleDesc" value="{admin>desc}" width="100%"/>
+      </layout:VerticalLayout>
+    </content>
+    <beginButton>
+      <Button text="{i18n-admin>save}" type="Emphasized" press=".onConfirmEditRole"/>
+    </beginButton>
+    <endButton>
+      <Button text="{i18n-admin>cancel}" press=".onCancelEditRole"/>
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

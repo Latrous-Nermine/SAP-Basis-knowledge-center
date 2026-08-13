@@ -1,0 +1,59 @@
+/* ════════════════════════════════════════════════
+   Validation (content review queue) - Lot 3, integrated from
+   Riadh's branch. Uses its own literal hex values rather than the
+   shared css/lot3/tokens.css variables - same as this originally
+   shipped, and same reasoning as Admin's own module CSS (kept
+   separately prefixed so it can't silently collide with the
+   token-based rules other modules share).
+   ════════════════════════════════════════════════ */
+
+#validationPage .sapFDynamicPageTitle {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.aymaxSubtitle {
+  font-size: 14px !important;
+  color: #6b7280 !important;
+}
+
+.aymaxAvatar .sapFAvatarInitialsHolder {
+  background: linear-gradient(135deg, #6366f1, #4338ca) !important;
+  color: #ffffff !important;
+}
+
+.aymaxItemTitle {
+  font-weight: 600 !important;
+  color: #111827 !important;
+}
+
+.aymaxMetaText {
+  color: #6b7280 !important;
+  font-size: 13px !important;
+}
+
+.aymaxExcerpt {
+  font-size: 14px !important;
+  color: #374151 !important;
+  line-height: 1.6 !important;
+}
+
+.aymaxBadge .sapMObjStatusText {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.aymaxTagOutline {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  font-size: 12px;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.aymaxItemActions {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 12px;
+}
