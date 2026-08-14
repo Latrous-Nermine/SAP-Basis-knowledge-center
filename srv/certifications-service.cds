@@ -29,8 +29,15 @@ service CertificationsService {
 
   @restrict: [
     { grant: 'READ',   where: 'user_userID = $user.id' },
-    { grant: 'READ',                        to: ['Manager', 'HR', 'Administrator'] },
-    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['Manager', 'HR', 'Administrator'] }
+    /** TEAM: a Manager sees/manages only their own department's
+        certifications, not everyone's - $user.department comes from
+        the mocked-auth attr config (package.json) locally, from the
+        real XSUAA token attribute later. HR/Administrator stay
+        unscoped (FULL, per the permission matrix). */
+    { grant: 'READ',                         where: 'user.department = $user.department', to: ['Manager'] },
+    { grant: 'READ',                         to: ['HR', 'Administrator'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], where: 'user.department = $user.department', to: ['Manager'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['HR', 'Administrator'] }
   ]
   entity UserCertifications as projection on kh.UserCertifications;
 

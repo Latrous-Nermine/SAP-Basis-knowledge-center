@@ -28,11 +28,11 @@
         "auth": {
           "kind": "mocked",
           "users": {
-            "sami":      { "roles": ["Employee"] },
-            "nadia":     { "roles": ["Manager"] },
-            "rh":        { "roles": ["HR"] },
-            "admin":     { "roles": ["Administrator"] },
-            "stagiaire": { "roles": ["Intern"] }
+            "sami":      { "roles": ["Employee"],     "attr": { "department": "SAP Basis" } },
+            "nadia":     { "roles": ["Manager"],      "attr": { "department": "SAP Technical" } },
+            "rh":        { "roles": ["HR"],           "attr": { "department": "RH" } },
+            "admin":     { "roles": ["Administrator"],"attr": { "department": "IT" } },
+            "stagiaire": { "roles": ["Intern"],       "attr": { "department": "SAP Technical" } }
           }
         }
       },

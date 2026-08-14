@@ -1,7 +1,8 @@
 sap.ui.define([
   "sap/ui/core/UIComponent",
-  "sap/ui/model/json/JSONModel"
-], function(UIComponent, JSONModel) {
+  "sap/ui/model/json/JSONModel",
+  "./model/devRole"
+], function(UIComponent, JSONModel, devRole) {
   "use strict";
 
   return UIComponent.extend("aymax.feed.Component", {
@@ -10,6 +11,12 @@ sap.ui.define([
     init: function() {
       // 1. Appeler le parent (OBLIGATOIRE)
       UIComponent.prototype.init.apply(this, arguments);
+
+      // 1bis. Dev-only role preview (CLAUDE.md §5 C7 exception) -
+      // applied before the router starts, same ordering reasoning as
+      // the shared shell's own Component.js: the very first navigation's
+      // data has to already carry the previewed role, not the real login.
+      devRole.applyToComponent(this);
 
       // 2. Initialiser le router
       this.getRouter().initialize();

@@ -100,4 +100,15 @@ service PeopleService {
       own profile?" without a cross-service call to Lot 1's FeedService for
       something this service can answer trivially from req.user itself. */
   function getMyUserID() returns String;
+
+  /** The caller's own effective role - used by the shared shell to hide
+      NONE-access nav links per the permission matrix. Deliberately
+      resolved from req.user.is(), same as every @restrict check, so it
+      reflects the real role - including the dev-only role preview
+      override (CLAUDE.md §5 C7), since that rewrites the actual
+      Authorization header before auth runs, not just what the client
+      claims. Not a duplicate of getDashboard()'s own `role` field:
+      that call fetches a whole dashboard payload the shell doesn't
+      need just to gate five nav buttons. */
+  function getMyRole() returns String;
 }

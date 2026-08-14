@@ -16,11 +16,17 @@ using { aymax.knowledgehub as kh } from '../db/lot3';
 @requires: 'authenticated-user'
 service ValidationService {
 
+  /** Permission matrix: Employee=NONE, Intern=NONE, Manager=TEAM (own
+      department), HR=FULL, Administrator=FULL. Employee/Intern no
+      longer get CREATE here - submission into a review queue happens
+      through Knowledge Center's own submitForReview workflow
+      (srv/knowledge-service.cds) instead, not this entity directly. */
   @restrict: [
-    { grant: 'READ',   where: 'author_userID = $user.id' },
-    { grant: 'READ',                to: ['Manager', 'HR', 'Administrator'] },
-    { grant: 'CREATE',              to: ['Employee', 'Intern', 'Manager', 'HR', 'Administrator'] },
-    { grant: 'UPDATE', where: 'status = ''pending''', to: ['Manager', 'Administrator'] }
+    { grant: 'READ',   where: 'author.department = $user.department', to: ['Manager'] },
+    { grant: 'READ',                                                   to: ['HR', 'Administrator'] },
+    { grant: 'CREATE',                                                 to: ['Manager', 'HR', 'Administrator'] },
+    { grant: 'UPDATE', where: 'status = ''pending'' and author.department = $user.department', to: ['Manager'] },
+    { grant: 'UPDATE', where: 'status = ''pending''',                   to: ['HR', 'Administrator'] }
   ]
   entity ValidationItems as projection on kh.ValidationItems {
     *,

@@ -240,6 +240,15 @@ export default class PeopleService extends cds.ApplicationService {
     // ────────────────────────────────────────────────────────────
     this.on('getMyUserID', (req) => req.user.id);
 
+    // Highest-privilege wins if a token ever grants more than one role -
+    // same priority order as srv/domain/dashboard/DashboardDomain.js,
+    // kept in sync by hand since no shared role-priority module exists
+    // yet (mirrors that file's own comment on the same tradeoff).
+    this.on('getMyRole', (req) => {
+      const ROLE_PRIORITY = ['Administrator', 'HR', 'Manager', 'Intern', 'Employee'];
+      return ROLE_PRIORITY.find((role) => req.user.is(role)) || 'Employee';
+    });
+
     return super.init();
   }
 }

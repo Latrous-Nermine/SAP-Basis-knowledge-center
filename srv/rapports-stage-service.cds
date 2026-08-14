@@ -17,12 +17,20 @@ using { aymax.knowledgehub as kh } from '../db/lot3';
 @requires: 'authenticated-user'
 service RapportsStageService {
 
+  /** Permission matrix: Employee=NONE, Intern=OWN, Manager=TEAM (own
+      department's interns), HR/Administrator=FULL. Employee gets no
+      grant at all here - previously it fell through to NONE only by
+      data coincidence (no seed row ever had an Employee as
+      intern/tutor), not because the rule actually excluded the role;
+      now every grant below is explicitly role-scoped. */
   @restrict: [
-    { grant: 'READ',   where: 'intern_userID = $user.id or tutor_userID = $user.id' },
-    { grant: 'READ',                to: ['Manager', 'HR', 'Administrator'] },
-    { grant: 'CREATE',              to: ['Intern'] },
-    { grant: 'UPDATE', where: 'intern_userID = $user.id and status = ''draft''' },
-    { grant: 'UPDATE',              to: ['Manager', 'HR', 'Administrator'] }
+    { grant: 'READ',   where: 'intern_userID = $user.id',            to: ['Intern'] },
+    { grant: 'READ',   where: 'intern.department = $user.department', to: ['Manager'] },
+    { grant: 'READ',                                                  to: ['HR', 'Administrator'] },
+    { grant: 'CREATE',                                                to: ['Intern'] },
+    { grant: 'UPDATE', where: 'intern_userID = $user.id and status = ''draft''', to: ['Intern'] },
+    { grant: 'UPDATE', where: 'intern.department = $user.department', to: ['Manager'] },
+    { grant: 'UPDATE',                                                to: ['HR', 'Administrator'] }
   ]
   entity Rapports as projection on kh.Rapports {
     *,
@@ -30,8 +38,9 @@ service RapportsStageService {
   };
 
   @restrict: [
-    { grant: 'READ', where: 'rapport.intern_userID = $user.id or rapport.tutor_userID = $user.id' },
-    { grant: 'READ', to: ['Manager', 'HR', 'Administrator'] }
+    { grant: 'READ', where: 'rapport.intern_userID = $user.id',            to: ['Intern'] },
+    { grant: 'READ', where: 'rapport.intern.department = $user.department', to: ['Manager'] },
+    { grant: 'READ',                                                        to: ['HR', 'Administrator'] }
   ]
   entity RapportHistory as projection on kh.RapportHistory;
 

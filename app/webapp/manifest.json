@@ -28,6 +28,11 @@
         "type": "OData",
         "settings": { "odataVersion": "4.0" }
       },
+      "tagsService": {
+        "uri": "/odata/v4/tags/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
       "dashboardService": {
         "uri": "/odata/v4/dashboard/",
         "type": "OData",
@@ -118,10 +123,12 @@
         { "pattern": "hr", "name": "hr", "target": "hr" },
         { "pattern": "reports", "name": "reports", "target": "reports" },
         { "pattern": "rapports-stage", "name": "rapportsStage", "target": "rapportsStage" },
-        { "pattern": "validation", "name": "validation", "target": "validation" }
+        { "pattern": "validation", "name": "validation", "target": "validation" },
+        { "pattern": "feed", "name": "feed", "target": "feed" }
       ],
       "targets": {
         "dashboard": { "viewName": "dashboard.Dashboard", "viewLevel": 1 },
+        "feed": { "viewName": "feed.Feed", "viewLevel": 1 },
         "notifications": { "viewName": "notifications.Notifications", "viewLevel": 1 },
         "profile": { "viewName": "profile.Profile", "viewLevel": 1 },
         "expertsList": { "viewName": "experts.ExpertsList", "viewLevel": 1 },
@@ -174,6 +181,15 @@
       },
       "feed": {
         "dataSource": "feedService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "view-feed": { "type": "sap.ui.model.json.JSONModel" },
+      "tags": {
+        "dataSource": "tagsService",
         "settings": {
           "synchronizationMode": "None",
           "operationMode": "Server",
@@ -349,7 +365,8 @@
         { "uri": "css/hr/style.css" },
         { "uri": "css/reports/style.css" },
         { "uri": "css/rapportsStage/style.css" },
-        { "uri": "css/validation/style.css" }
+        { "uri": "css/validation/style.css" },
+        { "uri": "css/feed/style.css" }
       ]
     }
   }

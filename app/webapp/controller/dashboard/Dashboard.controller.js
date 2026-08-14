@@ -13,7 +13,7 @@ sap.ui.define([
     Employee: ["titleEmployee", "subtitleEmployee"],
     Manager: ["titleManager", "subtitleManager"],
     HR: ["titleHR", "subtitleHR"],
-    Admin: ["titleAdmin", "subtitleAdmin"],
+    Administrator: ["titleAdmin", "subtitleAdmin"],
     Intern: ["titleIntern", "subtitleIntern"]
   };
 

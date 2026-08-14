@@ -17,12 +17,17 @@ using { aymax.knowledgehub as kh } from '../db/lot3';
 @requires: 'authenticated-user'
 service DepotService {
 
+  /** Permission matrix: Employee=NONE (no grant at all - previously had
+      CREATE, removed), Intern=OWN, Manager=TEAM (own department),
+      HR=READONLY (READ only, no CREATE/DELETE), Administrator=FULL. */
   @restrict: [
-    { grant: 'READ',   where: 'uploadedBy_userID = $user.id' },
-    { grant: 'READ',                to: ['Manager', 'HR', 'Administrator'] },
-    { grant: 'CREATE',              to: ['Employee', 'Intern', 'Manager', 'HR', 'Administrator'] },
-    { grant: 'DELETE', where: 'uploadedBy_userID = $user.id' },
-    { grant: 'DELETE',              to: ['Administrator'] }
+    { grant: 'READ',   where: 'uploadedBy_userID = $user.id',             to: ['Intern'] },
+    { grant: 'READ',   where: 'uploadedBy.department = $user.department', to: ['Manager'] },
+    { grant: 'READ',                                                      to: ['HR', 'Administrator'] },
+    { grant: 'CREATE',                                                    to: ['Intern', 'Manager'] },
+    { grant: 'DELETE', where: 'uploadedBy_userID = $user.id',             to: ['Intern'] },
+    { grant: 'DELETE', where: 'uploadedBy.department = $user.department', to: ['Manager'] },
+    { grant: ['CREATE', 'DELETE'],                                        to: ['Administrator'] }
   ]
   entity DepotFiles as projection on kh.DepotFiles;
 }

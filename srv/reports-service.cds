@@ -23,15 +23,21 @@ using { aymax.knowledgehub as kh } from '../db/lot3';
 @requires: 'authenticated-user'
 service ReportsService {
 
-  @readonly
+  /** Permission matrix: everyone gets READ (org-wide KPIs, nothing
+      per-person to scope by OWN/TEAM here), only Administrator can
+      manage the underlying numbers - "c'est pour l'admin, readonly
+      pour les autres". Not @readonly anymore: that annotation blocks
+      writes at the API level entirely, which would also block
+      Administrator. */
   @restrict: [
-    { grant: 'READ', to: ['Manager', 'HR', 'Administrator'] }
+    { grant: 'READ',                         to: ['Employee', 'Intern', 'Manager', 'HR', 'Administrator'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['Administrator'] }
   ]
   entity KPIs as projection on kh.DashboardKPIs;
 
-  @readonly
   @restrict: [
-    { grant: 'READ', to: ['Manager', 'HR', 'Administrator'] }
+    { grant: 'READ',                         to: ['Employee', 'Intern', 'Manager', 'HR', 'Administrator'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: ['Administrator'] }
   ]
   entity DepartmentStats as projection on kh.DepartmentStats;
 }

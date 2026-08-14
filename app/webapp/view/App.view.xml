@@ -20,7 +20,9 @@
           <Button text="{i18n>navDashboard}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="dashboard"/></customData>
           </Button>
-          <Button text="{i18n>navFeed}" type="Transparent" press=".onGoToFeed"/>
+          <Button text="{i18n>navFeed}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="feed"/></customData>
+          </Button>
           <Button text="{i18n>navNotifications}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="notifications"/></customData>
           </Button>
@@ -42,25 +44,43 @@
           <Button text="{i18n>navCertifications}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="certifications"/></customData>
           </Button>
-          <Button text="{i18n>navAdmin}" type="Transparent" press=".onNavTo">
+          <Button id="navBtnAdmin" text="{i18n>navAdmin}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="admin"/></customData>
           </Button>
-          <Button text="{i18n>navDepot}" type="Transparent" press=".onNavTo">
+          <Button id="navBtnDepot" text="{i18n>navDepot}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="depot"/></customData>
           </Button>
-          <Button text="{i18n>navHR}" type="Transparent" press=".onNavTo">
+          <Button id="navBtnHr" text="{i18n>navHR}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="hr"/></customData>
           </Button>
           <Button text="{i18n>navReports}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="reports"/></customData>
           </Button>
-          <Button text="{i18n>navRapportsStage}" type="Transparent" press=".onNavTo">
+          <Button id="navBtnRapportsStage" text="{i18n>navRapportsStage}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="rapportsStage"/></customData>
           </Button>
-          <Button text="{i18n>navValidation}" type="Transparent" press=".onNavTo">
+          <Button id="navBtnValidation" text="{i18n>navValidation}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="validation"/></customData>
           </Button>
         </HBox>
+      </HBox>
+
+      <!-- DEV-ONLY role preview (CLAUDE.md §5 C7 exception) - lets
+           anyone browsing locally preview each role's dashboard
+           without a private-window relogin. Real auth is untouched;
+           see model/devRole.js for exactly what this does and does
+           not change. Must be removed before the real XSUAA rollout
+           (TODO-INTEGRATION.md). -->
+      <HBox alignItems="Center" class="aymaxDevRoleBox">
+        <Label text="{i18n>devRoleLabel}" class="sapUiTinyMarginEnd aymaxDevRoleLabel" labelFor="devRoleSelect"/>
+        <Select id="devRoleSelect" width="170px" change=".onDevRoleChange">
+          <core:Item key="" text="{i18n>devRoleReal}"/>
+          <core:Item key="Employee" text="{i18n>devRoleEmployee}"/>
+          <core:Item key="Manager" text="{i18n>devRoleManager}"/>
+          <core:Item key="HR" text="{i18n>devRoleHR}"/>
+          <core:Item key="Administrator" text="{i18n>devRoleAdmin}"/>
+          <core:Item key="Intern" text="{i18n>devRoleIntern}"/>
+        </Select>
       </HBox>
     </HBox>
 
