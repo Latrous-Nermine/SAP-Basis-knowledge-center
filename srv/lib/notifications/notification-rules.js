@@ -28,8 +28,12 @@ export const NOTIFICATION_TYPES = [
   'SECURITY_EVENT',
 ];
 
+// VALIDATION/QUESTION added (2026-08) when the Validation and Questions
+// modules were wired up to real notifications - keep in sync with the
+// NotificationSource enum in db/lot2.cds.
 export const NOTIFICATION_SOURCES = [
   'POST', 'COMMENT', 'ROOM', 'BADGE', 'CERTIFICATION', 'USER', 'SYSTEM', 'KNOWLEDGE',
+  'VALIDATION', 'QUESTION',
 ];
 
 /** Types that should stand out in the UI. Everything else is INFO. */
@@ -54,6 +58,18 @@ export function isValidSource(source) {
  */
 export function severityFor(type) {
   return SEVERITY_BY_TYPE[type] ?? 'INFO';
+}
+
+/**
+ * notif.VALIDATION_RESULT's {1} placeholder ("Votre contenu « {0} » a
+ * été {1}.") needs a French participle, not the raw status code -
+ * shared here so the three call sites that raise VALIDATION_RESULT
+ * (Knowledge Center's own approveItem/rejectItem, its
+ * approveContribution/rejectContribution, and Validation's
+ * approve/reject) render the same word instead of each inventing one.
+ */
+export function frenchResultWord(status) {
+  return status === 'approved' ? 'approuvé' : 'rejeté';
 }
 
 /**

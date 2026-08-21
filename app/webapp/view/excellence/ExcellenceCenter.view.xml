@@ -17,7 +17,7 @@
            BEGIN COLUMN - Projects & Phases (Section 9, this step)
            ============================================================ -->
       <f:beginColumnPages>
-        <Page title="{i18n-excellence>appTitle}" showNavButton="false" class="excellenceSidebarPage">
+        <Page title="{i18n-excellence>appTitle}" showNavButton="false" class="aymaxPage excellenceSidebarPage">
           <headerContent>
             <Button
               icon="sap-icon://home"
@@ -111,7 +111,7 @@
            3) nothing selected (e.g. accordion just collapsed) -> empty state
            ============================================================ -->
       <f:midColumnPages>
-        <Page title="{i18n-excellence>workspaceTitle}" showNavButton="false">
+        <Page title="{i18n-excellence>workspaceTitle}" showNavButton="false" class="aymaxPage">
           <content>
 
             <uxap:ObjectPageLayout
@@ -625,7 +625,7 @@
            to filter by), so every member is shown to every viewer for now.
            ============================================================ -->
       <f:endColumnPages>
-        <Page title="{i18n-excellence>teamTitle}" showNavButton="false">
+        <Page title="{i18n-excellence>teamTitle}" showNavButton="false" class="aymaxPage">
           <content>
 
             <IconTabBar

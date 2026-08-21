@@ -1,0 +1,86 @@
+<mvc:View
+  controllerName="aymax.hub.controller.search.Search"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:layout="sap.ui.layout"
+  displayBlock="true">
+
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <layout:HorizontalLayout allowWrapping="false" class="aymaxSearchWrapper">
+        <layout:VerticalLayout width="100%" class="knowledgeContentContainer">
+
+          <VBox class="sapUiMediumMarginBottom">
+            <Title text="{i18n-search>pageTitle}" titleStyle="H2" class="aymaxPageTitle"/>
+            <Text text="{i18n-search>pageSubtitle}" class="aymaxMeta sapUiTinyMarginTop"/>
+          </VBox>
+
+          <SearchField
+            id="searchField"
+            value="{view-search>/query}"
+            width="100%"
+            placeholder="{i18n-search>searchPlaceholder}"
+            search=".onSearch"
+            class="aymaxSearchField sapUiMediumMarginBottom"/>
+
+          <HBox visible="{= !!${view-search>/lastQuery} }" wrap="Wrap" class="aymaxSearchTabs sapUiMediumMarginBottom">
+            <Button
+              text="{i18n-search>facetAll} ({view-search>/total})"
+              type="{= ${view-search>/activeFacet} === '' ? 'Emphasized' : 'Transparent' }"
+              press=".onFacetAll"
+              class="aymaxSearchTab sapUiTinyMarginEnd"/>
+            <Button
+              text="{= ${i18n-search>facetKnowledge} + ' (' + ${view-search>/facetCounts/knowledge} + ')' }"
+              type="{= ${view-search>/activeFacet} === 'knowledge' ? 'Emphasized' : 'Transparent' }"
+              press=".onFacetKnowledge"
+              class="aymaxSearchTab sapUiTinyMarginEnd"/>
+            <Button
+              text="{= ${i18n-search>facetQuestion} + ' (' + ${view-search>/facetCounts/question} + ')' }"
+              type="{= ${view-search>/activeFacet} === 'question' ? 'Emphasized' : 'Transparent' }"
+              press=".onFacetQuestion"
+              class="aymaxSearchTab sapUiTinyMarginEnd"/>
+            <Button
+              text="{= ${i18n-search>facetExpert} + ' (' + ${view-search>/facetCounts/expert} + ')' }"
+              type="{= ${view-search>/activeFacet} === 'expert' ? 'Emphasized' : 'Transparent' }"
+              press=".onFacetExpert"
+              class="aymaxSearchTab"/>
+          </HBox>
+
+          <VBox visible="{= !${view-search>/lastQuery} }" class="aymaxCard aymaxSearchEmptyState sapUiLargeMarginTop" alignItems="Center">
+            <core:Icon src="sap-icon://search" size="2rem" class="aymaxSearchEmptyIcon sapUiSmallMarginBottom"/>
+            <Text text="{i18n-search>emptyPrompt}" class="aymaxMeta"/>
+          </VBox>
+
+          <VBox visible="{= !!${view-search>/lastQuery} &amp;&amp; ${view-search>/total} === 0 }" class="aymaxCard aymaxSearchEmptyState sapUiLargeMarginTop" alignItems="Center">
+            <core:Icon src="sap-icon://message-information" size="2rem" class="aymaxSearchEmptyIcon sapUiSmallMarginBottom"/>
+            <Text text="{= ${i18n-search>noResults} + ' « ' + ${view-search>/lastQuery} + ' »' }" class="aymaxMeta"/>
+          </VBox>
+
+          <List
+            id="resultsList"
+            items="{view-search>/filteredResults}"
+            showSeparators="None"
+            visible="{= !!${view-search>/lastQuery} &amp;&amp; ${view-search>/total} > 0 }">
+            <CustomListItem type="Active" press=".onResultPress">
+              <HBox alignItems="Start" class="aymaxCard aymaxSearchResultCard sapUiSmallMarginBottom">
+                <VBox class="aymaxSearchResultIconBox sapUiSmallMarginEnd" alignItems="Center" justifyContent="Center">
+                  <core:Icon src="{path:'view-search>type', formatter:'.formatter.iconForType'}" size="1.2rem"/>
+                </VBox>
+                <VBox width="100%">
+                  <HBox justifyContent="SpaceBetween" alignItems="Center">
+                    <Title text="{view-search>title}" level="H5" wrapping="true" class="aymaxSearchResultTitle"/>
+                    <ObjectStatus text="{path:'view-search>type', formatter:'.formatter.labelForType'}" state="{path:'view-search>type', formatter:'.formatter.stateForType'}" class="sapUiTinyMarginBegin"/>
+                  </HBox>
+                  <Text text="{view-search>excerpt}" maxLines="2" wrapping="true" class="aymaxMeta sapUiTinyMarginTop"/>
+                  <Text text="{view-search>meta}" class="aymaxSearchResultMeta sapUiTinyMarginTop"/>
+                </VBox>
+              </HBox>
+            </CustomListItem>
+          </List>
+
+        </layout:VerticalLayout>
+      </layout:HorizontalLayout>
+    </content>
+  </Page>
+</mvc:View>

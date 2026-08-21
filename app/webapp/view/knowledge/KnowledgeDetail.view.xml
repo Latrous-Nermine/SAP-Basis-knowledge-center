@@ -6,7 +6,7 @@
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
-  <Page showNavButton="true" navButtonPress=".onNavBack">
+  <Page showNavButton="true" navButtonPress=".onNavBack" class="aymaxPage">
     <content>
 
       <!-- Same max-width/centering/padding container KnowledgeList.view.xml
@@ -24,9 +24,22 @@
               <Title text="{knowledge>title}" wrapping="true"/>
             </uxap:heading>
             <uxap:actions>
+            <!-- Visibility for every control below is set IMPERATIVELY from
+                 the controller (_updateActionVisibility), not via a
+                 declarative binding - uxap:actions on an
+                 ObjectPageDynamicHeaderTitle turned out not to reliably
+                 apply formatter/expression visible= bindings (found 2026-08:
+                 canVote/canSubmitForReview were both silently stuck at their
+                 visible=true default here, a PRE-EXISTING bug this
+                 uncovered, not something the new Approve/Reject buttons
+                 introduced - voting and "Soumettre" were showing on items
+                 that shouldn't have allowed either). Same imperative
+                 setVisible() pattern App.controller.js already uses for the
+                 nav bar, which does not have this problem. -->
               <HBox
+                id="voteControls"
                 alignItems="Center"
-                visible="{path:'knowledge>status', formatter:'.formatter.canVote'}"
+                visible="false"
                 class="knowledgeVoteControls sapUiTinyMarginEnd">
                 <ToggleButton
                   icon="sap-icon://thumb-up"
@@ -42,16 +55,33 @@
                   press=".onDownvotePress"
                   class="sapUiTinyMarginBegin"/>
               </HBox>
-              <!-- Submit for review: only action currently implemented. There is
-                   no edit form/route in this app yet, so no Edit button is shown
-                   here - adding one would be a new feature, not a restyle.
-                   ObjectPageLayout keeps this pinned via its own sticky header,
-                   replacing the earlier CSS sticky-toolbar hack. -->
+              <!-- Submit for review: no edit form/route in this app yet, so no
+                   Edit button is shown here - adding one would be a new
+                   feature, not a restyle. ObjectPageLayout keeps this pinned
+                   via its own sticky header, replacing the earlier CSS
+                   sticky-toolbar hack. -->
               <Button
+                id="btnSubmitForReview"
                 text="{i18n-knowledge>submitForReview}"
                 type="Emphasized"
                 press=".onSubmitForReview"
-                visible="{path:'knowledge>status', formatter:'.formatter.canSubmitForReview'}"/>
+                visible="false"/>
+              <!-- Approve/Reject (2026-08) - shown when status is pending AND
+                   the viewer resolved as Manager (view-knowledge>/isManager,
+                   set in onInit); the real gate is the backend's own
+                   @requires:'Manager' on approveItem/rejectItem regardless. -->
+              <Button
+                id="btnApproveItem"
+                text="{i18n-knowledge>approveItem}"
+                type="Accept"
+                press=".onApproveItem"
+                visible="false"/>
+              <Button
+                id="btnRejectItem"
+                text="{i18n-knowledge>rejectItem}"
+                type="Reject"
+                press=".onRejectItem"
+                visible="false"/>
             </uxap:actions>
           </uxap:ObjectPageDynamicHeaderTitle>
         </uxap:headerTitle>

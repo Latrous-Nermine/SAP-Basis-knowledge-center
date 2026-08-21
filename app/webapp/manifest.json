@@ -33,6 +33,11 @@
         "type": "OData",
         "settings": { "odataVersion": "4.0" }
       },
+      "questionsService": {
+        "uri": "/odata/v4/questions/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
       "dashboardService": {
         "uri": "/odata/v4/dashboard/",
         "type": "OData",
@@ -75,6 +80,11 @@
       },
       "validationService": {
         "uri": "/odata/v4/validation/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "searchService": {
+        "uri": "/odata/v4/search/",
         "type": "OData",
         "settings": { "odataVersion": "4.0" }
       }
@@ -124,10 +134,13 @@
         { "pattern": "reports", "name": "reports", "target": "reports" },
         { "pattern": "rapports-stage", "name": "rapportsStage", "target": "rapportsStage" },
         { "pattern": "validation", "name": "validation", "target": "validation" },
-        { "pattern": "feed", "name": "feed", "target": "feed" }
+        { "pattern": "basis-academy", "name": "basisAcademy", "target": "basisAcademy" },
+        { "pattern": "feed", "name": "feed", "target": "feed" },
+        { "pattern": "search{?query}", "name": "search", "target": "search" }
       ],
       "targets": {
         "dashboard": { "viewName": "dashboard.Dashboard", "viewLevel": 1 },
+        "search": { "viewName": "search.Search", "viewLevel": 1 },
         "feed": { "viewName": "feed.Feed", "viewLevel": 1 },
         "notifications": { "viewName": "notifications.Notifications", "viewLevel": 1 },
         "profile": { "viewName": "profile.Profile", "viewLevel": 1 },
@@ -142,7 +155,8 @@
         "hr": { "viewName": "hr.HR", "viewLevel": 1 },
         "reports": { "viewName": "reports.Reports", "viewLevel": 1 },
         "rapportsStage": { "viewName": "rapportsStage.RapportsStage", "viewLevel": 1 },
-        "validation": { "viewName": "validation.Validation", "viewLevel": 1 }
+        "validation": { "viewName": "validation.Validation", "viewLevel": 1 },
+        "basisAcademy": { "viewName": "basisAcademy.BasisAcademy", "viewLevel": 1 }
       }
     },
     "models": {
@@ -151,6 +165,20 @@
         "settings": { "bundleName": "aymax.hub.i18n.i18n" }
       },
       "view": { "type": "sap.ui.model.json.JSONModel" },
+
+      "i18n-search": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.search.i18n" }
+      },
+      "view-search": { "type": "sap.ui.model.json.JSONModel" },
+      "search": {
+        "dataSource": "searchService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
 
       "i18n-notifications": {
         "type": "sap.ui.model.resource.ResourceModel",
@@ -190,6 +218,14 @@
       "view-feed": { "type": "sap.ui.model.json.JSONModel" },
       "tags": {
         "dataSource": "tagsService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "questions": {
+        "dataSource": "questionsService",
         "settings": {
           "synchronizationMode": "None",
           "operationMode": "Server",
@@ -340,6 +376,12 @@
         "settings": { "bundleName": "aymax.hub.i18n.validation.i18n" }
       },
       "view-validation": { "type": "sap.ui.model.json.JSONModel" },
+
+      "i18n-basisAcademy": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "aymax.hub.i18n.basisAcademy.i18n" }
+      },
+      "view-basisAcademy": { "type": "sap.ui.model.json.JSONModel" },
       "validation": {
         "dataSource": "validationService",
         "settings": {
@@ -351,6 +393,7 @@
     },
     "resources": {
       "css": [
+        { "uri": "css/search/style.css" },
         { "uri": "css/notifications/style.css" },
         { "uri": "css/profile/style.css" },
         { "uri": "css/experts/style.css" },
@@ -366,6 +409,7 @@
         { "uri": "css/reports/style.css" },
         { "uri": "css/rapportsStage/style.css" },
         { "uri": "css/validation/style.css" },
+        { "uri": "css/basisAcademy/style.css" },
         { "uri": "css/feed/style.css" }
       ]
     }

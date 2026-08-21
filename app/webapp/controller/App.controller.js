@@ -24,7 +24,18 @@ sap.ui.define([
     "reports": "reports",
     "rapportsStage": "rapportsStage",
     "validation": "validation",
+    "basisAcademy": "basisAcademy",
     "feed": "feed"
+  };
+
+  // Rooms/Questions/Tags live entirely in the standalone Lot 1 app
+  // (app/feed/webapp), not as routes in this shell's own Component - same
+  // pattern Feed's own sidebar shortcuts already use
+  // (Feed.controller.js#onNavToRooms/onNavToTags).
+  var mExternalRoutes = {
+    "rooms": "/feed/webapp/index.html#/rooms",
+    "questions": "/feed/webapp/index.html#/questions",
+    "tags": "/feed/webapp/index.html#/tags"
   };
 
   // Permission matrix (2026-08) - modules with a NONE access level for a
@@ -36,10 +47,17 @@ sap.ui.define([
   // Keyed by navKey, which is also the route name for every one of
   // these five (mRoutes maps each 1:1) - not true for knowledge/experts,
   // but those are never gated so it doesn't matter here.
+  // Manager (2026-08): "Validation" moved into the Knowledge Center page
+  // itself (a "Contenu à valider" section, KnowledgeList.view.xml) rather
+  // than staying a separate navbar destination, since for a Manager it's
+  // the same content their team's Knowledge Center submissions already
+  // live next to - explicit request. HR/Administrator keep the standalone
+  // page: their relationship to Validation is broader oversight, not
+  // scoped to their own Knowledge Center browsing.
   var HIDDEN_FOR_ROLE = {
     Employee: ["hr", "rapportsStage", "depot", "validation", "admin"],
     Intern: ["hr", "validation", "admin"],
-    Manager: ["admin"],
+    Manager: ["admin", "validation"],
     HR: [],
     Administrator: []
   };
@@ -130,6 +148,37 @@ sap.ui.define([
       var sRouteName = oEvent.getParameter("name");
       this._updateActiveNav(sRouteName);
       this._guardRoute(sRouteName);
+      var oBell = this.byId("navBtnNotificationBell");
+      if (oBell) oBell.setVisible(sRouteName !== "notifications");
+    },
+
+    // Same theme-toggle pattern as the standalone Lot 1 app
+    // (app/feed/webapp/controller/App.controller.js#onToggleTheme) -
+    // this shell had no theme toggle at all before this fix, even
+    // though css/lot3/tokens.css already defines a full dark palette
+    // under [data-theme="sap_horizon_dark"] - nothing ever set that
+    // attribute, so it was permanently unreachable here.
+    onToggleTheme: function() {
+      var sCurrentTheme = sap.ui.getCore().getConfiguration().getTheme();
+      var sNewTheme = sCurrentTheme === "sap_horizon" ? "sap_horizon_dark" : "sap_horizon";
+      sap.ui.getCore().applyTheme(sNewTheme);
+      document.documentElement.setAttribute("data-theme", sNewTheme);
+    },
+
+    onNotificationsBellPress: function() {
+      this.getRouter().navTo("notifications");
+    },
+
+    onHeaderSearch: function(oEvent) {
+      var sQuery = (oEvent.getParameter("query") || "").trim();
+      if (!sQuery) return;
+      // Not router.navTo(..., {"?query": {q: sQuery}}) - confirmed live
+      // that UI5's own query-parameter object serialization double-
+      // encodes the value (a space came back as %2520, i.e. "%20"
+      // encoded a second time). Building the hash directly sidesteps
+      // it; the router still picks up the resulting hashchange and
+      // fires pattern-matched exactly as navTo would.
+      window.location.hash = "#/search?q=" + encodeURIComponent(sQuery);
     },
 
     _updateActiveNav: function(sActiveRoute) {
@@ -156,7 +205,14 @@ sap.ui.define([
         }
       }
 
-      if (!sKey || !mRoutes[sKey]) return;
+      if (!sKey) return;
+
+      if (mExternalRoutes[sKey]) {
+        window.location.href = mExternalRoutes[sKey];
+        return;
+      }
+
+      if (!mRoutes[sKey]) return;
       this.getRouter().navTo(mRoutes[sKey]);
     }
   });

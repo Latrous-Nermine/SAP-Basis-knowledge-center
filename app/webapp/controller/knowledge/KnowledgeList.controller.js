@@ -2,12 +2,13 @@ sap.ui.define([
   "../BaseController",
   "../../model/knowledge/formatter",
   "../../model/knowledge/VotingHelper",
+  "../../model/validation/formatter",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator",
   "sap/ui/core/Fragment",
   "sap/m/MessageToast",
   "sap/m/MessageBox"
-], function(BaseController, formatter, VotingHelper, Filter, FilterOperator, Fragment, MessageToast, MessageBox) {
+], function(BaseController, formatter, VotingHelper, validationFormatter, Filter, FilterOperator, Fragment, MessageToast, MessageBox) {
   "use strict";
 
   var CATEGORIES = [
@@ -39,6 +40,20 @@ sap.ui.define([
 
     formatter: formatter,
 
+    // Prototype-level, not set in onInit (2026-08 fix) - XML bindings
+    // resolve formatter references against the controller WHILE the view
+    // is being constructed, before onInit ever runs (the same reason
+    // `formatter: formatter` above is declared here and not assigned
+    // inside onInit). Setting this as `this.validationFormatter = ...`
+    // in onInit left every ".validationFormatter.X" binding in
+    // ValidationSection.fragment.xml resolving too early, against a
+    // controller that didn't have the property yet - confirmed via
+    // "formatter function .validationFormatter.X not found!" console
+    // errors, not assumed. onInit still does the one thing that
+    // genuinely can only happen at runtime: pointing its resourceBundle
+    // at i18n-validation.
+    validationFormatter: validationFormatter,
+
     // Overrides BaseController's getResourceBundle() (which returns the
     // shell's own tiny 2-key i18n bundle) so this.getText()/formatter
     // lookups resolve against this module's real, full bundle instead -
@@ -60,7 +75,16 @@ sap.ui.define([
       // models, since one shared Component can only have one true default.
       this.oModel = this.getOwnerComponent().getModel("knowledge");
       this.oPeopleModel = this.getOwnerComponent().getModel("people");
+      this.oValidationModel = this.getOwnerComponent().getModel("validation");
       formatter.setResourceBundle(this.getResourceBundle());
+
+      // "Contenu à valider" section (2026-08, Manager only) reuses
+      // Validation's own formatter module and i18n bundle directly - same
+      // text/status-colour logic as the standalone Validation page, not a
+      // second copy of it (this.validationFormatter itself is declared at
+      // the prototype level above, not here - see that comment).
+      this._oValidationBundle = this.getOwnerComponent().getModel("i18n-validation").getResourceBundle();
+      validationFormatter.setResourceBundle(this._oValidationBundle);
 
       this._sActiveCategory = "";
       this._sSearchQuery = "";
@@ -87,6 +111,15 @@ sap.ui.define([
       // ranking with no ?sort= param sent at all, so the list itself is
       // already correctly ordered before this ever needs to change.
       this.getViewModel().setProperty("/communitySortKey", "relevant");
+      this.getViewModel().setProperty("/validation", {
+        filterStatus: "pending",
+        counts: { pending: 0, approved: 0, rejected: 0, all: 0 },
+        // Collapsed by default - the section itself (and the list inside
+        // it) only renders once the Manager presses the toggle button,
+        // explicit request (2026-08). Counts still load eagerly below
+        // regardless, so nothing has to wait on a first click.
+        sectionVisible: false
+      });
 
       // Ownership (who is "me") has to be known before either list's
       // filters can be built - My/Community only exist relative to it.
@@ -98,6 +131,23 @@ sap.ui.define([
         // "nobody", which is the safe default (never silently show
         // everything as if it were "mine").
         this._applyFilters();
+      }.bind(this));
+
+      // "Contenu à valider" section (2026-08) - Manager only, same
+      // server-resolved-role pattern as KnowledgeDetail's own Approve/
+      // Reject buttons and App.controller.js's nav guard. A UI hint only:
+      // the real gate is validation-service.cds's own @restrict (TEAM-
+      // scoped to the Manager's department), which the embedded list
+      // binding goes through exactly like the standalone page did.
+      this.oPeopleModel.bindContext("/getMyRole()").requestObject().then(function(oData) {
+        var bIsManager = (oData && oData.value) === "Manager";
+        this.getViewModel().setProperty("/isManager", bIsManager);
+        if (bIsManager) {
+          this._loadValidationCounts();
+          this._applyValidationFilter("pending");
+        }
+      }.bind(this)).catch(function() {
+        this.getViewModel().setProperty("/isManager", false);
       }.bind(this));
     },
 
@@ -219,7 +269,7 @@ sap.ui.define([
       var oDecision = VotingHelper.resolveVoteAction(oContext.getProperty("myVote"), iValue);
 
       var oParams = Object.assign({ itemID: sItemID }, oDecision.params);
-      var oActionContext = this.oModel.bindContext("/" + oDecision.action)(oParams);
+      var oActionContext = this.bindAction(this.oModel, "/" + oDecision.action, oParams);
 
       oActionContext.execute().then(function() {
         oContext.refresh();
@@ -374,6 +424,111 @@ sap.ui.define([
           }.bind(this));
         }.bind(this)
       });
+    },
+
+    // Toggle button press - the fragment's own outer VBox requires both
+    // /isManager and this to be true before it renders anything (see
+    // ValidationSection.fragment.xml), so this is the only place that
+    // flips the second half.
+    onToggleValidationSection: function() {
+      var bVisible = this.getViewModel().getProperty("/validation/sectionVisible");
+      this.getViewModel().setProperty("/validation/sectionVisible", !bVisible);
+    },
+
+    // ============================================================
+    // "Contenu à valider" (2026-08, Manager only) - mirrors
+    // Validation.controller.js's own logic exactly (same backend calls,
+    // same ValidationService), scoped under its own /validation view-model
+    // path and onValidationXxx method names so nothing here collides with
+    // this controller's own existing state/handlers.
+    // ============================================================
+
+    _loadValidationCounts: function() {
+      var oViewModel = this.getViewModel();
+      this.oValidationModel.bindContext("/getValidationCounts()").requestObject().then(function(oData) {
+        oViewModel.setProperty("/validation/counts", {
+          pending: oData.pending || 0,
+          approved: oData.approved || 0,
+          rejected: oData.rejected || 0,
+          all: oData.total || 0
+        });
+      }).catch(function(oError) {
+        console.error("Error loading ValidationCounts:", oError);
+      });
+    },
+
+    _applyValidationFilter: function(sKey) {
+      var oList = this.byId("validationSectionList");
+      if (!oList) return;
+      var oBinding = oList.getBinding("items");
+      if (!oBinding) return;
+
+      var aFilters = sKey === "all" ? [] : [new Filter("status", FilterOperator.EQ, sKey)];
+      oBinding.filter(aFilters);
+    },
+
+    onValidationTabSelect: function(oEvent) {
+      var sKey = oEvent.getSource().data("tab");
+      this.getViewModel().setProperty("/validation/filterStatus", sKey);
+      this._applyValidationFilter(sKey);
+    },
+
+    _changeValidationStatus: function(oContext, sNewStatus) {
+      oContext.setProperty("status", sNewStatus);
+      this.oValidationModel.submitBatch("$auto").then(function() {
+        MessageToast.show(this._oValidationBundle.getText("statusUpdated", [validationFormatter.formatStatusText(sNewStatus)]));
+        this._loadValidationCounts();
+        this._applyValidationFilter(this.getViewModel().getProperty("/validation/filterStatus"));
+      }.bind(this)).catch(function(oError) {
+        MessageBox.error((oError && oError.message) || this._oValidationBundle.getText("errorUpdateStatus"));
+      }.bind(this));
+    },
+
+    onValidationApprove: function(oEvent) {
+      this._changeValidationStatus(oEvent.getSource().getBindingContext("validation"), "approved");
+    },
+
+    onValidationReject: function(oEvent) {
+      this._changeValidationStatus(oEvent.getSource().getBindingContext("validation"), "rejected");
+    },
+
+    // Reuses the standalone Validation page's own dialog fragment as-is
+    // (aymax.hub.view.validation.EditContentDialog) - it only references
+    // the shared i18n-validation/validation models, nothing specific to
+    // that page, so there's nothing to duplicate here.
+    onValidationModify: function(oEvent) {
+      var oContext = oEvent.getSource().getBindingContext("validation");
+      if (!this._pValidationEditDialog) {
+        this._pValidationEditDialog = Fragment.load({
+          id: this.getView().getId(),
+          name: "aymax.hub.view.validation.EditContentDialog",
+          controller: this
+        }).then(function(oDialog) {
+          this.getView().addDependent(oDialog);
+          return oDialog;
+        }.bind(this));
+      }
+      this._pValidationEditDialog.then(function(oDialog) {
+        oDialog.setBindingContext(oContext, "validation");
+        oDialog.open();
+      });
+    },
+
+    // Method names fixed by EditContentDialog.fragment.xml's own
+    // press=".onCancelModify"/".onConfirmModify" - same names the
+    // standalone Validation controller uses for the same fragment.
+    onCancelModify: function() {
+      this.oValidationModel.resetChanges();
+      this._pValidationEditDialog.then(function(oDialog) { oDialog.close(); });
+    },
+
+    onConfirmModify: function() {
+      this.oValidationModel.submitBatch("$auto").then(function() {
+        MessageToast.show(this._oValidationBundle.getText("contentUpdated"));
+        this._pValidationEditDialog.then(function(oDialog) { oDialog.close(); });
+      }.bind(this)).catch(function(oError) {
+        MessageBox.error((oError && oError.message) || this._oValidationBundle.getText("errorUpdateContent"));
+      }.bind(this));
     }
   });
 });

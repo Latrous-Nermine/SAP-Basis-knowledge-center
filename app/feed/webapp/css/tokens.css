@@ -1,0 +1,59 @@
+/* Design tokens (2026-08 polish pass) - this standalone app (Rooms,
+   Questions, Topics, Tags, and their detail pages - the Feed timeline
+   itself now lives embedded in the shared shell, app/webapp) has always
+   referenced var(--aymax-surface)/var(--aymax-border)/var(--aymax-primary)
+   etc. throughout its own CSS (style.css, rooms.css, questions.css,
+   topics.css, tags.css), but never defined them - no :root block existed
+   anywhere in this app. Every one of those var() references was silently
+   resolving to nothing (card backgrounds/borders/accent text were not
+   actually applying). Same values as app/webapp/css/lot3/tokens.css,
+   the shared shell's own reference copy - kept in sync by hand since
+   this is a separate UI5 component with its own manifest.json and
+   cannot share a single loaded file with it. */
+
+:root {
+  --aymax-primary: #293681;
+  --aymax-secondary: #4274D9;
+  --aymax-accent: #4274D9;
+  --aymax-bg: #F6F8FC;
+  --aymax-surface: #FFFFFF;
+  --aymax-text: #1A2138;
+  --aymax-text-secondary: #4F5C7C;
+  --aymax-text-muted: #6D7A9C;
+  --aymax-border: #E5E7EB;
+  --aymax-border-subtle: #F3F4F6;
+
+  --aymax-neutral-100: #F6F8FB;
+  --aymax-neutral-200: #EAEEF5;
+  --aymax-neutral-300: #D7DEEB;
+  --aymax-neutral-400: #B7C1D6;
+  --aymax-neutral-500: #93A0BC;
+  --aymax-neutral-600: #6D7A9C;
+
+  --aymax-radius-sm: 8px;
+  --aymax-radius-md: 12px;
+  --aymax-radius-lg: 16px;
+
+  --aymax-shadow-sm: 0 1px 3px rgba(41, 54, 129, 0.08);
+  --aymax-shadow-md: 0 6px 20px rgba(41, 54, 129, 0.10);
+}
+
+[data-theme="sap_horizon_dark"] {
+  --aymax-bg: #0F1526;
+  --aymax-surface: #171E33;
+  --aymax-text: #E8ECF7;
+  --aymax-text-secondary: #ADB6D1;
+  --aymax-text-muted: #8B96B8;
+  --aymax-border: #2A3355;
+  --aymax-border-subtle: #212A45;
+  --aymax-neutral-100: #212A45;
+  --aymax-primary: #6FA0E8;
+  --aymax-accent: #6FA0E8;
+}
+
+/* Safety net for pages that render without their own .aymaxPage class
+   (RoomDetail/QuestionDetail use sap.f.DynamicPage directly) - the
+   whole app gets the same off-white base either way. */
+html, body {
+  background: var(--aymax-bg);
+}

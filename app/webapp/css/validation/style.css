@@ -57,3 +57,43 @@
   border-top: 1px solid #f3f4f6;
   padding-top: 12px;
 }
+
+/* Stat pills + filter tabs (2026-08 fix) - these classes were already
+   used in Validation.view.xml's markup but had no matching rule
+   anywhere in the codebase, so the standalone page has always rendered
+   them as plain unstyled text/buttons. Fixing it here benefits both
+   that page and the embedded "Contenu à valider" section in Knowledge
+   Center (KnowledgeList.controller.js/ValidationSection.fragment.xml),
+   since both bind the exact same class names. */
+.aymaxValidationStats {
+  gap: 12px;
+}
+
+.aymaxStatPill {
+  background: var(--aymax-surface);
+  border: 1px solid var(--aymax-border);
+  border-radius: var(--aymax-radius-md);
+  padding: 12px 22px;
+  min-width: 110px;
+}
+
+.aymaxStatPillValue {
+  font-weight: 700 !important;
+  font-size: 22px !important;
+  color: var(--aymax-text) !important;
+}
+
+.aymaxStatPillWarning .aymaxStatPillValue { color: var(--sapCriticalColor, #b35c00) !important; }
+.aymaxStatPillSuccess .aymaxStatPillValue { color: var(--sapPositiveColor, #257a3e) !important; }
+.aymaxStatPillError .aymaxStatPillValue   { color: var(--sapNegativeColor, #b00000) !important; }
+
+.aymaxFilterTab {
+  border-radius: 999px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+.aymaxValidationList .sapMListUl {
+  background: transparent !important;
+  border: none !important;
+}

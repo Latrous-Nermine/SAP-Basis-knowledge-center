@@ -3,14 +3,17 @@
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
   xmlns:core="sap.ui.core"
+  xmlns:layout="sap.ui.layout"
   displayBlock="true">
 
   <Page showHeader="false" class="aymaxPage">
     <content>
+     <layout:HorizontalLayout class="aymaxPageWrapper">
+      <layout:VerticalLayout width="100%" class="aymaxPageCenter">
       <VBox class="sapUiContentPadding">
         <HBox class="sapUiMediumMarginBottom" alignItems="Center" justifyContent="SpaceBetween">
           <VBox>
-            <Title text="Topics &amp; Thématiques" titleStyle="H3"/>
+            <Title text="Topics &amp; Thématiques" titleStyle="H3" class="aymaxPageTitle"/>
             <Text text="Explorez la base de connaissances par thématique technique" class="aymaxMeta"/>
           </VBox>
           <Button icon="sap-icon://add" text="Créer un Topic" type="Emphasized" press=".onCreateTopic" visible="{= ${view>/currentUser/role} === 'Manager' || ${view>/currentUser/role} === 'Administrator'}"/>
@@ -18,7 +21,7 @@
 
         <SearchField width="320px" placeholder="Rechercher un topic..." search=".onSearchTopics" class="sapUiMediumMarginBottom"/>
 
-        <Grid id="topicsGrid" defaultSpan="XL3 L4 M6 S12" content="{topics>/Topics}">
+        <layout:Grid id="topicsGrid" defaultSpan="XL3 L4 M6 S12" content="{topics>/Topics}">
           <VBox class="aymaxTopicCard">
             <HBox alignItems="Center" class="sapUiSmallMarginBottom">
               <Avatar icon="{topics>icon}" displaySize="M" class="sapUiSmallMarginEnd"/>
@@ -36,8 +39,10 @@
               <Button icon="sap-icon://delete" type="Transparent" press=".onDeleteTopic" visible="{= ${view>/currentUser/role} === 'Manager' || ${view>/currentUser/role} === 'Administrator'}"/>
             </HBox>
           </VBox>
-        </Grid>
+        </layout:Grid>
       </VBox>
+      </layout:VerticalLayout>
+     </layout:HorizontalLayout>
     </content>
   </Page>
 </mvc:View>

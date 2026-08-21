@@ -57,4 +57,14 @@ service CertificationsService {
       (voteItem, submitForReview, ...), not raw PATCH - same pattern,
       not a new one. */
   action startCertification(userCertificationID: UUID) returns Boolean;
+
+  /** Self-service: mark one of MY OWN in-progress certifications as
+      earned/completed (2026-08 - previously there was no way to ever
+      finish this workflow at all). Same self-service shape as
+      startCertification, for the same reason: an employee reporting
+      "I passed this exam" is the realistic real-world flow for
+      certifications with no attachment/proof-upload mechanism in this
+      app - HR/Administrator keep their existing FULL entity access for
+      correcting a record directly if ever needed. */
+  action completeCertification(userCertificationID: UUID) returns Boolean;
 }

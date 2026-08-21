@@ -1,4 +1,5 @@
 import cds from '@sap/cds';
+import { notify } from '../lib/notify.js';
 
 /**
  * QuestionsHandler — Style StackOverflow
@@ -319,14 +320,28 @@ export default class QuestionsHandler extends cds.ApplicationService {
 
     const aID = cds.utils.uuid();
     const db = cds.db;
+    const answererID = _currentUserID(req);
     await db.run(INSERT.into('aymax.knowledgehub.Answers').entries({
-      ID: aID, question_ID: questionID, author_userID: _currentUserID(req),
+      ID: aID, question_ID: questionID, author_userID: answererID,
       content: content.trim(), voteCount: 0, isAccepted: false
     }));
     await UPDATE(this.entities.Questions).set('answerCount +=', 1).where({ ID: questionID });
 
     // Reputation +2 pour avoir repondu
-    await db.run(UPDATE('aymax.knowledgehub.UserProfiles').set('reputation +=', 2).where({ userID: _currentUserID(req) }));
+    await db.run(UPDATE('aymax.knowledgehub.UserProfiles').set('reputation +=', 2).where({ userID: answererID }));
+
+    // Notification (2026-08) - "someone answered your question" reuses
+    // COMMENT (no dedicated type exists for a new answer, only for the
+    // ANSWER_ACCEPTED bonus below; COMMENT's own text - "X a commenté
+    // votre publication sur {1}" - reads naturally enough for an answer).
+    if (q.author_userID !== answererID) {
+      const answerer = await db.run(SELECT.one.from('aymax.knowledgehub.UserProfiles')
+        .columns('displayName').where({ userID: answererID }));
+      notify(q.author_userID, 'COMMENT', {
+        sourceType: 'QUESTION', sourceId: questionID,
+        params: { actorName: answerer?.displayName || answererID, title: q.title },
+      });
+    }
 
     return db.run(SELECT.one.from('aymax.knowledgehub.Answers').where({ ID: aID }));
   }
@@ -383,6 +398,13 @@ export default class QuestionsHandler extends cds.ApplicationService {
     if (a?.author_userID) {
       const db = cds.db;
       await db.run(UPDATE('aymax.knowledgehub.UserProfiles').set('reputation +=', 10).where({ userID: a.author_userID }));
+
+      if (a.author_userID !== curUser) {
+        notify(a.author_userID, 'ANSWER_ACCEPTED', {
+          sourceType: 'QUESTION', sourceId: questionID,
+          params: { title: q.title },
+        });
+      }
     }
     return true;
   }

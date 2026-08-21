@@ -5,15 +5,24 @@ sap.ui.define([
   "use strict";
 
   var mRoutes = {
-    "dashboard": "dashboard",
     "feed": "feed",
     "questions": "questions",
-    "knowledge": "knowledge",
     "rooms": "rooms",
     "tags": "tags",
-    "topics": "topics",
-    "experts": "experts",
-    "profile": "profile"
+    "topics": "topics"
+  };
+
+  // These four used to be real routes in THIS app before Lot 2 existed
+  // (hence the "Page en cours de développement" stub below), but Lot 2
+  // was actually built into the separate shared shell (app/webapp), not
+  // here - clicking these from any page in this app (Rooms/Questions/
+  // Tags included) redirects there instead of showing a message about
+  // a page that, by now, genuinely exists.
+  var mExternalRoutes = {
+    "dashboard": "/webapp/index.html#/dashboard",
+    "knowledge": "/webapp/index.html#/knowledge",
+    "experts": "/webapp/index.html#/experts",
+    "profile": "/webapp/index.html#/profile"
   };
 
   var mRoleLabels = {
@@ -68,20 +77,38 @@ sap.ui.define([
         }
       }
 
-      if (!sKey || !mRoutes[sKey]) return;
+      if (!sKey) return;
 
-      if (sKey === "dashboard" || sKey === "experts" || sKey === "profile" || sKey === "knowledge") {
-        MessageToast.show("Page en cours de développement (Lot 2)");
+      if (mExternalRoutes[sKey]) {
+        window.location.href = mExternalRoutes[sKey];
         return;
       }
 
+      if (!mRoutes[sKey]) return;
       this.getOwnerComponent().getRouter().navTo(mRoutes[sKey], {}, true);
     },
 
+    // Notifications live entirely in the shared shell (app/webapp), not
+    // here - same cross-app redirect pattern as mExternalRoutes above.
+    // The bell had no press handler at all before this fix (confirmed
+    // live: clicking it did nothing - no nav, no toast, no popover).
+    onNotificationsPress: function() {
+      window.location.href = "/webapp/index.html#/notifications";
+    },
+
+    // tokens.css's dark-mode overrides for every --aymax-* custom
+    // property are scoped to `[data-theme="sap_horizon_dark"]`, but
+    // nothing ever set that attribute - applyTheme() only re-themes
+    // native UI5 controls. Every custom aymax* class (cards, meta text,
+    // comment composer...) was silently stuck on light-mode colors while
+    // native UI5 chrome went dark, which is exactly the half-broken
+    // look reported live (white card backgrounds, near-invisible dark
+    // text on dark backgrounds).
     onToggleTheme: function() {
       var sCurrentTheme = sap.ui.getCore().getConfiguration().getTheme();
       var sNewTheme = sCurrentTheme === "sap_horizon" ? "sap_horizon_dark" : "sap_horizon";
       sap.ui.getCore().applyTheme(sNewTheme);
+      document.documentElement.setAttribute("data-theme", sNewTheme);
     },
 
     onGlobalSearch: function(oEvent) {

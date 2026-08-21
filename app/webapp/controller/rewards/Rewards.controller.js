@@ -20,6 +20,38 @@ sap.ui.define([
 
     onInit: function() {
       this.oModel = this.getOwnerComponent().getModel("rewards");
+
+      // Add/Edit/Delete are HR/Administrator-only server-side (the
+      // catalog's own @restrict, rewards-service.cds) - this was showing
+      // to every role regardless, so an Employee saw fully-clickable
+      // management controls that could only ever 403 (Delete is wired to
+      // a real backend call, not a stub). Same server-resolved-role
+      // pattern as KnowledgeDetail/App.controller.js's own nav guard -
+      // a UI hint only, the real gate stays the backend's own restrict.
+      this.getOwnerComponent().getModel("people").bindContext("/getMyRole()").requestObject()
+        .then(function(oData) {
+          var sRole = oData && oData.value;
+          this.getViewModel().setProperty("/canManage", sRole === "HR" || sRole === "Administrator");
+        }.bind(this))
+        .catch(function() {
+          this.getViewModel().setProperty("/canManage", false);
+        }.bind(this));
+
+      // Read-only "you qualify" / "X points away" per reward, compared
+      // against the viewer's own reputation - the catalog previously had
+      // no relationship at all to the reputation it's presumably
+      // rewarding.
+      var oPeopleModel = this.getOwnerComponent().getModel("people");
+      oPeopleModel.bindContext("/getMyUserID()").requestObject().then(function(oData) {
+        var sMyUserID = oData && oData.value;
+        if (!sMyUserID) return;
+        return oPeopleModel.bindContext("/People('" + sMyUserID + "')").requestObject();
+      }).then(function(oProfile) {
+        if (oProfile) this.getViewModel().setProperty("/myReputation", oProfile.reputation || 0);
+      }.bind(this)).catch(function() {
+        // No score to compare against - qualificationLabel already
+        // treats an unset /myReputation as "don't show anything".
+      });
     },
 
     onHomePress: function() {

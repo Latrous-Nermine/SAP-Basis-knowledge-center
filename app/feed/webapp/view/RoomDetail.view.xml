@@ -59,33 +59,60 @@
                 </HBox>
               </Panel>
 
-              <!-- Posts de la room -->
+              <!-- Posts de la room. items was bound to the unprefixed "/Posts"
+                   path, which resolves against this view's DEFAULT model
+                   (feedService, /odata/v4/feed) rather than the "rooms"
+                   model (/odata/v4/rooms) - found live: the request never
+                   even fired (batched with the Members tab's own broken
+                   binding below, whose 405 aborted the whole batch). Every
+                   child binding in this template needs the same "rooms>"
+                   prefix, not just items= - an unprefixed relative binding
+                   under a NAMED-model item context does not inherit that
+                   name (the exact bug already found and fixed once this
+                   session on QuestionDetail's own answers list). -->
               <List id="roomFeedList"
-                    items="{path:'/Posts', templateShareable:'false', parameters:{$expand:'author,tags'}}"
+                    items="{path:'rooms>/Posts', templateShareable:'false', parameters:{$expand:'author,tags,stage'}}"
                     growing="true"
                     growingThreshold="10">
                 <CustomListItem>
                   <VBox class="aymaxPostCard sapUiMediumMargin">
                     <HBox alignItems="Center" class="sapUiSmallMarginBottom">
-                      <Avatar src="{parts:[{path:'author/avatarUrl'},{path:'author/displayName'}], formatter:'.formatAvatar'}" displaySize="S" class="sapUiSmallMarginEnd"/>
+                      <Avatar src="{parts:[{path:'rooms>author/avatarUrl'},{path:'rooms>author/displayName'}], formatter:'.formatAvatar'}" displaySize="S" class="sapUiSmallMarginEnd"/>
                       <VBox>
-                        <Title text="{author/displayName}" level="H5"/>
-                        <Text text="{path:'createdAt', formatter:'.formatDate'}" class="aymaxMeta"/>
+                        <Title text="{rooms>author/displayName}" level="H5"/>
+                        <Text text="{path:'rooms>createdAt', formatter:'.formatDate'}" class="aymaxMeta"/>
                       </VBox>
                       <ToolbarSpacer/>
+                      <!-- Room Stage (Brouillon -> Revue -> Approuvé -> Publié): the
+                           backend pipeline already existed (RoomStages,
+                           PostStageHistory, changePostStage) but nothing in this
+                           view could ever trigger it - wiring it up here, not
+                           inventing it. Badge only shows when the room actually
+                           has stages defined (most rooms don't, today). -->
+                      <ObjectStatus
+                        text="{= ${rooms>stage/name} || 'Sans stage' }"
+                        state="None"
+                        visible="{= !!${rooms>stage/ID} }"
+                        class="sapUiTinyMarginEnd"/>
+                      <Button
+                        icon="sap-icon://workflow-tasks"
+                        type="Transparent"
+                        tooltip="Déplacer vers un autre stage"
+                        press=".onChangePostStageDialog"
+                        visible="{view>/room/hasStages}"/>
                       <Button icon="sap-icon://overflow" type="Transparent"/>
                     </HBox>
-                    <Text text="{content}" class="sapUiSmallMarginBottom" wrapping="true"/>
-                    <HBox wrap="Wrap" visible="{= ${tags}.length > 0}" class="sapUiTinyMarginBottom">
-                      <Tokenizer tokens="{path:'tags', templateShareable:'false'}">
-                        <Token text="{tag/name}" class="aymaxTag"/>
+                    <Text text="{rooms>content}" class="sapUiSmallMarginBottom" wrapping="true"/>
+                    <HBox wrap="Wrap" visible="{= ${rooms>tags}.length > 0}" class="sapUiTinyMarginBottom">
+                      <Tokenizer tokens="{path:'rooms>tags', templateShareable:'false'}">
+                        <Token text="{rooms>tag/name}" class="aymaxTag"/>
                       </Tokenizer>
                     </HBox>
                     <HBox justifyContent="SpaceBetween" class="aymaxPostActions">
                       <HBox>
-                        <ToggleButton text="{likeCount}" icon="sap-icon://thumb-up" pressed="{isLikedByMe}" press=".onLikePress"/>
-                        <Button text="{commentCount}" icon="sap-icon://comment" type="Transparent"/>
-                        <Button text="{shareCount}" icon="sap-icon://share-2" type="Transparent" press=".onShare"/>
+                        <ToggleButton text="{rooms>likeCount}" icon="sap-icon://thumb-up" pressed="{rooms>isLikedByMe}" press=".onLikePress"/>
+                        <Button text="{rooms>commentCount}" icon="sap-icon://comment" type="Transparent"/>
+                        <Button text="{rooms>shareCount}" icon="sap-icon://share-2" type="Transparent" press=".onShare"/>
                       </HBox>
                     </HBox>
                   </VBox>
@@ -98,17 +125,17 @@
           <IconTabFilter text="Membres" key="members" icon="sap-icon://group">
             <VBox class="sapUiContentPadding">
               <List id="membersList"
-                    items="{path:'/RoomMembers', templateShareable:'false'}"
+                    items="{path:'rooms>/RoomMembers', templateShareable:'false'}"
                     growing="true">
                 <CustomListItem>
                   <HBox class="aymaxMemberRow sapUiMediumMargin" alignItems="Center">
-                    <Avatar src="{parts:[{path:'userID'},{path:'userID'}], formatter:'.formatAvatar'}" displaySize="M" class="sapUiSmallMarginEnd"/>
+                    <Avatar src="{parts:[{path:'rooms>userID'},{path:'rooms>userID'}], formatter:'.formatAvatar'}" displaySize="M" class="sapUiSmallMarginEnd"/>
                     <VBox>
-                      <Title text="{userID}" level="H5"/>
-                      <Token text="{role}" class="aymaxTag"/>
+                      <Title text="{rooms>userID}" level="H5"/>
+                      <Token text="{rooms>role}" class="aymaxTag"/>
                     </VBox>
                     <ToolbarSpacer/>
-                    <Text text="{path:'joinedAt', formatter:'.formatDate'}" class="aymaxMeta"/>
+                    <Text text="{path:'rooms>joinedAt', formatter:'.formatDate'}" class="aymaxMeta"/>
                   </HBox>
                 </CustomListItem>
               </List>

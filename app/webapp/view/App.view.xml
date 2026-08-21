@@ -23,6 +23,15 @@
           <Button text="{i18n>navFeed}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="feed"/></customData>
           </Button>
+          <Button text="{i18n>navQuestions}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="questions"/></customData>
+          </Button>
+          <Button text="{i18n>navRooms}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="rooms"/></customData>
+          </Button>
+          <Button text="{i18n>navTags}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="tags"/></customData>
+          </Button>
           <Button text="{i18n>navNotifications}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="notifications"/></customData>
           </Button>
@@ -62,25 +71,47 @@
           <Button id="navBtnValidation" text="{i18n>navValidation}" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="validation"/></customData>
           </Button>
+          <Button text="{i18n>navBasisAcademy}" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="basisAcademy"/></customData>
+          </Button>
         </HBox>
       </HBox>
 
-      <!-- DEV-ONLY role preview (CLAUDE.md §5 C7 exception) - lets
-           anyone browsing locally preview each role's dashboard
-           without a private-window relogin. Real auth is untouched;
-           see model/devRole.js for exactly what this does and does
-           not change. Must be removed before the real XSUAA rollout
-           (TODO-INTEGRATION.md). -->
-      <HBox alignItems="Center" class="aymaxDevRoleBox">
-        <Label text="{i18n>devRoleLabel}" class="sapUiTinyMarginEnd aymaxDevRoleLabel" labelFor="devRoleSelect"/>
-        <Select id="devRoleSelect" width="170px" change=".onDevRoleChange">
-          <core:Item key="" text="{i18n>devRoleReal}"/>
-          <core:Item key="Employee" text="{i18n>devRoleEmployee}"/>
-          <core:Item key="Manager" text="{i18n>devRoleManager}"/>
-          <core:Item key="HR" text="{i18n>devRoleHR}"/>
-          <core:Item key="Administrator" text="{i18n>devRoleAdmin}"/>
-          <core:Item key="Intern" text="{i18n>devRoleIntern}"/>
-        </Select>
+      <HBox alignItems="Center">
+        <SearchField
+          id="shellSearchField"
+          width="240px"
+          placeholder="{i18n>headerSearchPlaceholder}"
+          search=".onHeaderSearch"
+          class="sapUiSmallMarginEnd"/>
+
+        <!-- Same theme-toggle / notifications-bell pair as the standalone
+             Lot 1 app's header (app/feed/webapp/view/App.view.xml) -
+             this shell had neither, an inconsistency once users started
+             crossing between the two apps via the shared nav links.
+             Bell hides on the Notifications page itself: clicking a
+             bell to go to the page you're already on is a no-op that
+             only invites confusion. -->
+        <Button icon="sap-icon://light-mode" type="Transparent" press=".onToggleTheme" tooltip="{i18n>themeToggleTooltip}" class="sapUiTinyMarginEnd"/>
+        <Button id="navBtnNotificationBell" icon="sap-icon://bell" type="Transparent" press=".onNotificationsBellPress" tooltip="{i18n>navNotifications}" class="sapUiSmallMarginEnd"/>
+
+        <!-- DEV-ONLY role preview (CLAUDE.md §5 C7 exception) - lets
+             anyone browsing locally preview each role's dashboard
+             without a private-window relogin. Real auth is untouched;
+             see model/devRole.js for exactly what this does and does
+             not change. Must be removed before the real XSUAA rollout
+             (TODO-INTEGRATION.md). -->
+        <HBox alignItems="Center" class="aymaxDevRoleBox">
+          <Label text="{i18n>devRoleLabel}" class="sapUiTinyMarginEnd aymaxDevRoleLabel" labelFor="devRoleSelect"/>
+          <Select id="devRoleSelect" width="170px" change=".onDevRoleChange">
+            <core:Item key="" text="{i18n>devRoleReal}"/>
+            <core:Item key="Employee" text="{i18n>devRoleEmployee}"/>
+            <core:Item key="Manager" text="{i18n>devRoleManager}"/>
+            <core:Item key="HR" text="{i18n>devRoleHR}"/>
+            <core:Item key="Administrator" text="{i18n>devRoleAdmin}"/>
+            <core:Item key="Intern" text="{i18n>devRoleIntern}"/>
+          </Select>
+        </HBox>
       </HBox>
     </HBox>
 

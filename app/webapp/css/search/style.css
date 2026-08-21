@@ -1,0 +1,55 @@
+.aymaxSearchWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 32px 24px;
+  box-sizing: border-box;
+}
+
+.aymaxSearchField .sapMSF {
+  border-radius: var(--aymax-radius-md);
+}
+
+.aymaxSearchTab {
+  border-radius: 999px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+.aymaxSearchEmptyState {
+  padding: 48px 24px;
+  color: var(--aymax-text-muted);
+}
+
+.aymaxSearchEmptyIcon {
+  color: var(--aymax-neutral-500);
+}
+
+.aymaxSearchResultCard {
+  padding: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.aymaxSearchResultCard:hover {
+  box-shadow: var(--aymax-shadow-md);
+  transform: translateY(-1px);
+}
+
+.aymaxSearchResultIconBox {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--aymax-primary) 10%, transparent);
+  color: var(--aymax-primary);
+}
+
+.aymaxSearchResultTitle {
+  color: var(--aymax-text) !important;
+}
+
+.aymaxSearchResultMeta {
+  color: var(--aymax-text-muted);
+  font-size: 12px;
+}

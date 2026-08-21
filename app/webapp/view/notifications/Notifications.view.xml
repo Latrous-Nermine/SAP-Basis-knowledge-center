@@ -13,7 +13,7 @@
        it - this was the real cause behind this app's long-standing
        "renders once then goes blank" issue. -->
   <App>
-  <f:DynamicPage id="notificationsPage" headerExpanded="false">
+  <f:DynamicPage id="notificationsPage" headerExpanded="false" class="aymaxPage">
 
     <f:title>
       <f:DynamicPageTitle>

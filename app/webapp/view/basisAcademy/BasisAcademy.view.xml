@@ -1,0 +1,97 @@
+<mvc:View
+  controllerName="aymax.hub.controller.basisAcademy.BasisAcademy"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  displayBlock="true">
+
+  <Page showHeader="false" showNavButton="false" class="aymaxPage">
+    <content>
+      <VBox class="knowledgeContentContainer">
+
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
+          <VBox>
+            <Title text="{i18n-basisAcademy>pageTitle}" level="H1" class="aymaxPageTitle"/>
+            <Text text="{i18n-basisAcademy>pageSubtitle}" class="aymaxMeta sapUiTinyMarginTop"/>
+          </VBox>
+          <HBox alignItems="Center">
+            <Button
+              icon="sap-icon://nav-back"
+              text="{i18n-basisAcademy>viewTeam}"
+              type="Transparent"
+              press=".onSelectTeamView"
+              visible="{= ${view-basisAcademy>/activeTab} === 'mine' }"
+              class="sapUiTinyMarginEnd"/>
+            <Button
+              icon="sap-icon://person-placeholder"
+              text="{i18n-basisAcademy>viewMine}"
+              type="Emphasized"
+              press=".onSelectMineView"
+              visible="{= ${view-basisAcademy>/activeTab} === 'team' &amp;&amp; ${view-basisAcademy>/isManager} === false }"
+              class="sapUiTinyMarginEnd"/>
+            <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-basisAcademy>backToFeed}" press=".onHomePress"/>
+          </HBox>
+        </HBox>
+
+        <!-- "Ma progression"/member-drilldown subtitle -->
+        <Title
+          text="{view-basisAcademy>/viewedMemberSubtitle}"
+          level="H4"
+          visible="{= ${view-basisAcademy>/activeTab} === 'mine' }"
+          class="sapUiSmallMarginBottom"/>
+
+        <!-- ═══════ ROADMAP ═══════ -->
+        <VBox class="aymaxCard baRoadmapCard sapUiMediumMarginBottom">
+          <VBox class="baRoadmapCanvas">
+            <core:HTML content="{view-basisAcademy>/roadmapHtml}"/>
+          </VBox>
+
+          <HBox class="baLegend sapUiMediumMarginTop" alignItems="Center">
+            <HBox alignItems="Center" class="sapUiTinyMarginEnd">
+              <core:Icon src="sap-icon://sys-help" size="0.85rem" class="baLegendIcon baLegendIconMuted sapUiTinyMarginEnd"/>
+              <Text text="{i18n-basisAcademy>legendTitle}" class="aymaxMeta"/>
+            </HBox>
+            <HBox alignItems="Center" class="sapUiTinyMarginEnd">
+              <core:Icon src="sap-icon://circle-task-2" size="0.6rem" class="baLegendIcon baLegendIconNotStarted sapUiTinyMarginEnd"/>
+              <Text text="{i18n-basisAcademy>legendNotStarted}" class="aymaxMeta"/>
+            </HBox>
+            <HBox alignItems="Center" class="sapUiTinyMarginEnd">
+              <core:Icon src="sap-icon://circle-task-2" size="0.6rem" class="baLegendIcon baLegendIconInProgress sapUiTinyMarginEnd"/>
+              <Text text="{i18n-basisAcademy>legendInProgress}" class="aymaxMeta"/>
+            </HBox>
+            <HBox alignItems="Center" class="sapUiTinyMarginEnd">
+              <core:Icon src="sap-icon://sys-enter-2" size="0.7rem" class="baLegendIcon baLegendIconValidated sapUiTinyMarginEnd"/>
+              <Text text="{i18n-basisAcademy>legendValidated}" class="aymaxMeta"/>
+            </HBox>
+            <HBox alignItems="Center">
+              <core:Icon src="sap-icon://locked" size="0.6rem" class="baLegendIcon baLegendIconLocked sapUiTinyMarginEnd"/>
+              <Text text="{i18n-basisAcademy>legendLocked}" class="aymaxMeta"/>
+            </HBox>
+          </HBox>
+        </VBox>
+
+        <!-- ═══════ TEAM SUMMARY (team tab only) ═══════ -->
+        <VBox class="aymaxCard sapUiMediumMarginBottom" visible="{= ${view-basisAcademy>/activeTab} === 'team' }">
+          <Title text="{i18n-basisAcademy>teamSummaryTitle}" level="H3" class="sapUiSmallMargin"/>
+          <List items="{view-basisAcademy>/team}" showSeparators="None" class="sapUiTinyMarginBottom">
+            <CustomListItem type="Active" press=".onOpenMemberProgress" class="baTeamSummaryRow sapUiSmallMarginBeginEnd">
+              <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBeginEnd">
+                <HBox alignItems="Center">
+                  <Avatar
+                    initials="{view-basisAcademy>initials}"
+                    backgroundColor="{view-basisAcademy>color}"
+                    displaySize="XS"
+                    class="sapUiTinyMarginEnd"/>
+                  <Text text="{view-basisAcademy>displayName}"/>
+                </HBox>
+                <Text text="{view-basisAcademy>currentDomainLabel}" class="aymaxMeta"/>
+                <Link text="{i18n-basisAcademy>viewProgress}" press=".onOpenMemberProgress"/>
+              </HBox>
+            </CustomListItem>
+          </List>
+        </VBox>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

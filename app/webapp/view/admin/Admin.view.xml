@@ -6,7 +6,7 @@
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
-  <Page showHeader="false" class="adminPage">
+  <Page showHeader="false" class="aymaxPage adminPage">
     <content>
       <VBox class="sapUiContentPadding adminPageContent">
 

@@ -7,13 +7,19 @@
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
-  <Page showNavButton="false" busy="{view-dashboard>/busy}" busyIndicatorDelay="0">
+  <Page showHeader="false" showNavButton="false" busy="{view-dashboard>/busy}" busyIndicatorDelay="0" class="aymaxPage">
     <content>
       <VBox class="dashboardContentContainer">
 
+        <!-- showHeader=false (2026-08 polish pass, matches Certification's
+             pattern) - was previously an empty native Page header bar
+             above this same custom toolbar (no title/headerContent had
+             ever been set on the Page itself), a blank strip only this
+             page had. Title now uses aymaxPageTitle for the same 24px/700
+             weight every other module's page title uses. -->
         <Toolbar class="dashboardHeaderToolbar" height="auto">
           <VBox class="dashboardGap4">
-            <Title text="{view-dashboard>/title}" level="H2"/>
+            <Title text="{view-dashboard>/title}" level="H1" class="aymaxPageTitle"/>
             <Text text="{view-dashboard>/subtitle}" class="dashboardSubtitle"/>
           </VBox>
           <ToolbarSpacer/>

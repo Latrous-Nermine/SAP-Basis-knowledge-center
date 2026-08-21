@@ -9,7 +9,7 @@
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
-  <Page showNavButton="true" navButtonPress=".onNavBack" busy="{view-profile>/busy}">
+  <Page showNavButton="true" navButtonPress=".onNavBack" busy="{view-profile>/busy}" class="aymaxPage">
     <headerContent>
       <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-profile>backToFeed}" press=".onHomePress"/>
     </headerContent>

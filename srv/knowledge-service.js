@@ -4,6 +4,20 @@ import { makeSearchCaseInsensitive } from './domain/CaseInsensitiveSearch.js';
 import { isValidVoteValue, countFieldFor } from './domain/knowledge/VotingRules.js';
 import { isAllowedType, isAllowedSize, ALLOWED_MIME_TYPES, MAX_FILE_SIZE_BYTES } from './domain/knowledge/AttachmentValidation.js';
 import { orderByFor } from './domain/knowledge/KnowledgeRanking.js';
+import { notify, notifyMany } from './lib/notify.js';
+import { awardReputation } from './lib/reputation.js';
+import { frenchResultWord } from './lib/notifications/notification-rules.js';
+import { NoOpSecurityGuardian, decisionForRiskScore } from './domain/knowledge/SecurityGuardian.js';
+
+const securityGuardian = new NoOpSecurityGuardian();
+
+/** Reputation awarded per approved Knowledge Center item/contribution -
+    modest, real values in the same order of magnitude as the Questions
+    module's own awards (+15 accepted answer, +10 answer bonus), NOT
+    the inflated illustrative numbers in the seed CSV. A full new
+    article is worth more than an addition to an existing one. */
+const REPUTATION_ITEM_APPROVED = 20;
+const REPUTATION_CONTRIBUTION_APPROVED = 8;
 
 /**
  * Handler for KnowledgeService. Stays thin: reads req, delegates the
@@ -164,9 +178,41 @@ export default class KnowledgeService extends cds.ApplicationService {
         return req.reject(409, `Cannot submit an item from status '${item.status}'`);
       }
 
+      // AI Security Guardian seam (CLAUDE.md §5 C6, decided but never
+      // wired up until now). NoOpSecurityGuardian always returns risk
+      // 0 today, so every existing submission still resolves to
+      // 'publish' below and behaves exactly as before - what's new is
+      // that the decision rule itself (spec §7.7: 0-39 publish, 40-69
+      // warn, 70-100 block) is real and runs on every call, ready for
+      // a real assessor to be swapped in without touching this handler.
+      const { riskScore } = await securityGuardian.assess(`${item.title}\n${item.content ?? ''}`);
+      const decision = decisionForRiskScore(riskScore);
+      if (decision === 'block') {
+        return req.reject(403, 'Ce contenu a été bloqué par la revue de sécurité automatisée et ne peut pas être soumis.');
+      }
+
       await UPDATE(KnowledgeItems).set({ status: 'pending' }).where({ ID: itemID });
-      // TODO-INTEGRATION.md I-12: notify() facade doesn't exist yet -
-      // department managers should get VALIDATION_REQUESTED here.
+
+      if (decision === 'warn') {
+        const admins = await SELECT.from(UserProfiles).columns('userID').where({ role: 'Administrator' });
+        notifyMany(
+          admins.map((a) => a.userID),
+          'SECURITY_EVENT',
+          { sourceType: 'KNOWLEDGE', sourceId: itemID, params: { detail: `Contenu à risque modéré soumis pour revue : ${item.title}` } },
+        );
+      }
+
+      // Every Manager can see/act on any pending item (this service's
+      // own READ restrict above has no department scoping for pending
+      // items), so every Manager is a valid recipient - not just the
+      // author's own department. Self-skip: a Manager submitting their
+      // own item shouldn't be told to go review it.
+      const managers = await SELECT.from(UserProfiles).columns('userID').where({ role: 'Manager' });
+      notifyMany(
+        managers.map((m) => m.userID).filter((id) => id !== req.user.id),
+        'VALIDATION_REQUESTED',
+        { sourceType: 'KNOWLEDGE', sourceId: itemID, params: { title: item.title } },
+      );
       return true;
     });
 
@@ -184,6 +230,28 @@ export default class KnowledgeService extends cds.ApplicationService {
       const patch = { status: toStatus };
       if (toStatus === 'approved') patch.publishedAt = new Date();
       await UPDATE(KnowledgeItems).set(patch).where({ ID: itemID });
+
+      // Reputation only on approval, never on rejection - and only to
+      // the item's actual author(s), not every contributor (a
+      // contributor's own reputation is awarded separately, when THEIR
+      // contribution is approved - see decideContribution below).
+      const authors = await SELECT.from(KnowledgeContributors)
+        .columns('user_userID').where({ item_ID: itemID, role: 'author' });
+      const recipients = authors.map((a) => a.user_userID).filter((id) => id !== req.user.id);
+
+      if (toStatus === 'approved') {
+        for (const authorID of recipients) {
+          await awardReputation(authorID, REPUTATION_ITEM_APPROVED, `Publication approuvée : ${item.title}`, 'publication', {
+            sourceType: 'KnowledgeItem', sourceID: itemID,
+          });
+        }
+      }
+
+      notifyMany(recipients, 'VALIDATION_RESULT', {
+        sourceType: 'KNOWLEDGE', sourceId: itemID,
+        params: { title: item.title, result: frenchResultWord(toStatus) },
+      });
+
       return true;
     };
     this.on('approveItem', decide('approved'));
@@ -299,6 +367,7 @@ export default class KnowledgeService extends cds.ApplicationService {
       if (contribution.status !== 'pending') {
         return req.reject(409, `Cannot decide a contribution that is already '${contribution.status}'`);
       }
+      const item = await SELECT.one.from(KnowledgeItems).columns('title').where({ ID: contribution.item_ID });
 
       await UPDATE(KnowledgeContributions, contributionID).with({
         status: toStatus, decidedAt: new Date(), decidedBy_userID: req.user.id,
@@ -317,34 +386,25 @@ export default class KnowledgeService extends cds.ApplicationService {
             role: 'contributor',
           });
         }
+
+        if (contribution.submittedBy_userID !== req.user.id) {
+          await awardReputation(
+            contribution.submittedBy_userID, REPUTATION_CONTRIBUTION_APPROVED,
+            `Contribution acceptée : ${item?.title ?? ''}`, 'contribution',
+            { sourceType: 'KnowledgeItem', sourceID: contribution.item_ID },
+          );
+        }
       }
 
-      // Contract A - the raw in-process action (the nicer srv/lib/notify.js
-      // facade CLAUDE.md describes doesn't exist as a file yet, see
-      // TODO-INTEGRATION.md I-12). Plain cds.connect.to()+.send() does NOT
-      // run as 'internal-user' automatically - it propagates the ACTUAL
-      // caller (a Manager here), which raise()'s own
-      // @requires: ['internal-user','Administrator'] correctly rejects.
-      // cds.spawn(..., cds.User.privileged) is CAP's documented mechanism
-      // for exactly this: a detached transaction running as that elevated
-      // identity - NOT cds.tx(), which nests inside the current request's
-      // own already-open transaction and deadlocked SQLite's single
-      // writer (found the hard way, verified against the server log).
-      // Being detached also means a manager's already-committed approval
-      // decision can never be undone by a notification hiccup; the
-      // failure is still logged, never silently swallowed (CLAUDE.md §10).
-      cds.spawn({ user: cds.User.privileged }, async (tx) => {
-        const notificationService = await cds.connect.to('NotificationService');
-        await notificationService.tx(tx).send('raise', {
-          recipientID: contribution.submittedBy_userID,
-          type: 'VALIDATION_RESULT',
-          sourceType: 'KNOWLEDGE',
-          sourceId: contribution.item_ID,
-          params: JSON.stringify({ status: toStatus }),
+      // Contract A, via srv/lib/notify.js (see that file for why this is
+      // a detached, privileged transaction rather than a plain
+      // cds.connect.to()+.send()).
+      if (contribution.submittedBy_userID !== req.user.id) {
+        notify(contribution.submittedBy_userID, 'VALIDATION_RESULT', {
+          sourceType: 'KNOWLEDGE', sourceId: contribution.item_ID,
+          params: { title: item?.title ?? '', result: frenchResultWord(toStatus) },
         });
-      }).on('failed', (err) => {
-        console.error('Failed to notify contribution submitter', err);
-      });
+      }
 
       return true;
     };
@@ -352,13 +412,83 @@ export default class KnowledgeService extends cds.ApplicationService {
     this.on('rejectContribution', decideContribution('rejected'));
 
     // ────────────────────────────────────────────────────────────
-    // Solved question -> Knowledge item (TODO-INTEGRATION.md I-07).
-    // Lot 3's Questions entity doesn't exist yet - fail loudly rather
-    // than silently doing nothing (CLAUDE.md §10).
+    // Solved question -> Knowledge item (TODO-INTEGRATION.md I-07,
+    // implemented 2026-08 now that Lot 3's Questions module has shipped).
+    // Questions/Answers live in the same shared namespace
+    // (aymax.knowledgehub) as everything else here, same cross-lot
+    // read pattern already used for Comments above - not a new kind
+    // of coupling, just reading Lot 3's data, never writing it.
+    //
+    // Only a resolved question WITH an accepted answer can be promoted:
+    // publishing an open or merely-closed question would put an
+    // unverified guess into the knowledge base under the same
+    // authority as reviewed content. category/fromQuestion/
+    // sourceQuestionID below are exactly the fields db/lot2.cds
+    // already reserved for this, unused until now.
+    //
+    // status is set straight to 'approved', not 'draft'/'pending':
+    // the action already requires the 'Manager' role (service
+    // contract), and a Manager choosing to promote content IS the
+    // approval act - routing it through submitForReview/approveItem
+    // against themselves would be a no-op loop, not a real review.
     // ────────────────────────────────────────────────────────────
     this.on('promoteQuestion', async (req) => {
-      return req.reject(501, 'promoteQuestion() is not available yet: it depends on Lot 3\'s '
-        + 'Questions entity, which does not exist in this repo yet (TODO-INTEGRATION.md I-07).');
+      const { questionID } = req.data;
+      const { Questions, Answers } = cds.entities('aymax.knowledgehub');
+
+      const question = await SELECT.one.from(Questions).where({ ID: questionID });
+      if (!question) return req.reject(404, 'Question not found');
+      if (question.status !== 'resolved' || !question.acceptedAnswer_ID) {
+        return req.reject(409, 'Only a resolved question with an accepted answer can be promoted to Knowledge Center');
+      }
+
+      const alreadyPromoted = await SELECT.one.from(KnowledgeItems).where({ sourceQuestionID: questionID });
+      if (alreadyPromoted) return req.reject(409, 'This question has already been promoted to Knowledge Center');
+
+      const answer = await SELECT.one.from(Answers).where({ ID: question.acceptedAnswer_ID });
+
+      const ID = cds.utils.uuid();
+      await INSERT.into(KnowledgeItems).entries({
+        ID,
+        title: question.title,
+        category: 'resolved_question',
+        excerpt: question.content?.slice(0, 500),
+        content: `${question.content}\n\n---\n\n**Réponse acceptée :**\n\n${answer?.content ?? ''}`,
+        status: 'approved',
+        publishedAt: new Date(),
+        fromQuestion: true,
+        sourceQuestionID: questionID,
+      });
+
+      const solverID = answer?.author_userID ?? question.author_userID;
+      const contributorEntries = [
+        { ID: cds.utils.uuid(), item_ID: ID, user_userID: solverID, role: 'author' },
+      ];
+      if (question.author_userID && question.author_userID !== solverID) {
+        contributorEntries.push({ ID: cds.utils.uuid(), item_ID: ID, user_userID: question.author_userID, role: 'contributor' });
+      }
+      await INSERT.into(KnowledgeContributors).entries(contributorEntries);
+
+      if (answer?.author_userID) {
+        await awardReputation(
+          answer.author_userID, REPUTATION_ITEM_APPROVED,
+          `Réponse promue en article Knowledge Center : ${question.title}`, 'publication',
+          { sourceType: 'KnowledgeItem', sourceID: ID },
+        );
+        // ARTICLE_PUBLISHED was defined in the notification schema but
+        // never raised anywhere in the app before this - this is the
+        // first real trigger for it, and a genuine semantic match
+        // ("Nouvel article publié...") rather than reusing an
+        // unrelated type.
+        if (answer.author_userID !== req.user.id) {
+          notify(answer.author_userID, 'ARTICLE_PUBLISHED', {
+            sourceType: 'KNOWLEDGE', sourceId: ID,
+            params: { title: question.title },
+          });
+        }
+      }
+
+      return ID;
     });
 
     return super.init();

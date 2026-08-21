@@ -46,6 +46,7 @@ sap.ui.define([
       // models, since one shared Component can only have one true default.
       this.oModel = this.getOwnerComponent().getModel("people");
       this.oFeedModel = this.getOwnerComponent().getModel("feed");
+      this.oQuestionsModel = this.getOwnerComponent().getModel("questions");
 
       this._oFilters = { department: "", search: "", expertiseLevel: "", availability: "", technologies: [], skill: "" };
 
@@ -266,7 +267,7 @@ sap.ui.define([
       var sAction = bIsFollowedByMe ? "unfollowUser" : "followUser";
       var sErrorKey = bIsFollowedByMe ? "errorUnfollow" : "errorFollow";
 
-      var oActionContext = this.oModel.bindContext("/" + sAction)({ userID: sUserID });
+      var oActionContext = this.bindAction(this.oModel, "/" + sAction, { userID: sUserID });
       oActionContext.execute().then(function() {
         oContext.refresh();
       }).catch(function(oError) {
@@ -274,26 +275,29 @@ sap.ui.define([
       }.bind(this));
     },
 
-    // Lot 3's Questions entity doesn't exist yet (TODO-INTEGRATION.md I-19) -
-    // this creates a real Post of type 'question' via Lot 1's FeedService,
-    // pre-filled toward the expert, then hands off to Feed. Forward
-    // compatible: swapping this for a real Question is a one-line change
-    // once Lot 3 ships it, not a rewrite.
+    // Real Question now (2026-08), not a Feed Post tagged type:"question" -
+    // TODO-INTEGRATION.md I-19: the Questions module didn't exist yet
+    // when this was first built, so a Post was the only content type
+    // available. Same one-click UX (no new dialog), now landing in the
+    // Questions module where a question actually belongs, instead of
+    // silently vanishing from it.
     onAskQuestionPress: function(oEvent) {
       var oContext = oEvent.getSource().getBindingContext("people");
       var sDisplayName = oContext.getProperty("displayName");
       var sPrefix = this.getText("askQuestionContentPrefix", [sDisplayName]);
 
-      var oListBinding = this.oFeedModel.bindList("/Posts");
-      var oNewContext = oListBinding.create({
+      var oActionContext = this.bindAction(this.oQuestionsModel, "/createQuestion", {
+        title: sPrefix,
         content: sPrefix + " ",
-        type: "question",
-        status: "published"
+        roomID: null,
+        tagIDs: [],
+        topicIDs: []
       });
 
-      oNewContext.created().then(function() {
+      oActionContext.execute().then(function() {
+        var oResult = oActionContext.getBoundContext().getObject();
         MessageToast.show(this.getText("askQuestionSuccess"));
-        window.location.href = "/feed/webapp/index.html";
+        window.location.href = "/feed/webapp/index.html#/questions/" + oResult.ID;
       }.bind(this)).catch(function() {
         MessageBox.error(this.getText("errorAskQuestion"));
       }.bind(this));

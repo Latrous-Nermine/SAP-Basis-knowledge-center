@@ -74,12 +74,20 @@
 
                 <HBox items="{certifications>certification/tags}" wrap="Wrap" class="sapUiSmallMarginTop"><items><Text text="{certifications>tag}" class="aymaxTag aymaxTagAccent"/></items></HBox>
 
-                <Button
-                  text="{i18n-certifications>btnContinue}"
-                  type="Transparent"
-                  icon="sap-icon://forward"
-                  press=".onContinueCertification"
-                  class="sapUiSmallMarginTop certContinueBtn"/>
+                <HBox class="sapUiSmallMarginTop">
+                  <Button
+                    text="{i18n-certifications>btnContinue}"
+                    type="Transparent"
+                    icon="sap-icon://forward"
+                    press=".onContinueCertification"
+                    class="sapUiTinyMarginEnd certContinueBtn"/>
+                  <Button
+                    text="{i18n-certifications>btnComplete}"
+                    type="Emphasized"
+                    icon="sap-icon://complete"
+                    press=".onCompleteCertification"
+                    class="certCompleteBtn"/>
+                </HBox>
               </VBox>
             </CustomListItem>
           </List>

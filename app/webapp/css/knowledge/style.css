@@ -3,7 +3,7 @@
    semantic colour still comes from ObjectStatus states per CLAUDE.md §10. */
 
 .knowledgeContentContainer {
-  max-width: 1440px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 32px;
   box-sizing: border-box;
@@ -24,18 +24,26 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
+/* Same recipe as .aymaxCard (css/lot3/tokens.css) - background/border/
+   radius/shadow aligned so a card here and a card on Certification are
+   the same surface, not just "close" (this one previously had no
+   border at all and a hand-tuned shadow, a visible mismatch next to
+   Lot 3 pages using the shared token). Hover/animation/cursor stay
+   this module's own - Certification's cards aren't clickable rows. */
 .knowledgeCard {
-  border-radius: 12px;
+  background: var(--aymax-surface);
+  border: 1px solid var(--aymax-border);
+  border-radius: var(--aymax-radius-md);
   padding: 24px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--aymax-shadow-sm);
   cursor: pointer;
   transition: box-shadow 200ms ease, transform 150ms ease;
   animation: knowledgeCardFadeIn 400ms ease both;
 }
 
 .knowledgeCard:hover {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--aymax-shadow-md);
   transform: translateY(-2px) scale(1.01);
 }
 

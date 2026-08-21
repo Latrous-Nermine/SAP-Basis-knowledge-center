@@ -5,14 +5,32 @@
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
-  <Page title="{i18n-knowledge>pageTitle}" showNavButton="false">
-    <headerContent>
-      <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-knowledge>backToFeed}" press=".onHomePress"/>
-    </headerContent>
+  <Page showHeader="false" showNavButton="false" class="aymaxPage">
     <content>
       <!-- Centered, max-width reading column with comfortable margins -
-           per Fiori Horizon guidance, not a full-bleed layout. -->
+           per Fiori Horizon guidance, not a full-bleed layout. Title row
+           matches Certification's own pattern (showHeader=false + a
+           self-built title, not the native Page header bar) - 2026-08
+           polish pass, same reason every other module converted. -->
       <VBox class="knowledgeContentContainer">
+
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+          <Title text="{i18n-knowledge>pageTitle}" level="H1" class="aymaxPageTitle"/>
+          <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-knowledge>backToFeed}" press=".onHomePress"/>
+        </HBox>
+
+        <!-- Manager only, collapsed by default - the section itself only
+             renders once toggled open (see the fragment's own visible=),
+             explicit request (2026-08). -->
+        <Button
+          text="{= ${view-knowledge>/validation/sectionVisible} ? ${i18n-knowledge>validationSectionHide} : ${i18n-knowledge>validationSectionShow} }"
+          icon="sap-icon://task"
+          type="Emphasized"
+          press=".onToggleValidationSection"
+          visible="{view-knowledge>/isManager}"
+          class="sapUiMediumMarginBottom"/>
+
+        <core:Fragment fragmentName="aymax.hub.view.knowledge.ValidationSection" type="XML"/>
 
         <VBox class="knowledgeStickyFilters">
           <!-- Interns are blocked server-side (@restrict on CREATE) - there is

@@ -63,6 +63,10 @@ type NotificationType : String(30) enum {
 
 type NotificationSource : String(20) enum {
   POST; COMMENT; ROOM; BADGE; CERTIFICATION; USER; SYSTEM; KNOWLEDGE;
+  // Added (2026-08) when Validation and Questions were wired up to
+  // real notifications - keep in sync with NOTIFICATION_SOURCES in
+  // srv/lib/notifications/notification-rules.js.
+  VALIDATION; QUESTION;
 }
 
 type NotificationSeverity : String(10) enum {

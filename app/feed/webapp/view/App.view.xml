@@ -48,8 +48,8 @@
       <HBox alignItems="Center">
         <Text text="{view>/userRole}" class="aymaxRoleBadge sapUiTinyMarginEnd"/>
         <SearchField width="260px" placeholder="Rechercher..." search=".onGlobalSearch" class="sapUiSmallMarginEnd"/>
-        <Button icon="sap-icon://light-mode" type="Transparent" press=".onToggleTheme" class="sapUiTinyMarginEnd"/>
-        <Button icon="sap-icon://bell" type="Transparent" class="sapUiTinyMarginEnd"/>
+        <Button icon="sap-icon://light-mode" type="Transparent" press=".onToggleTheme" tooltip="Changer de thème" class="sapUiTinyMarginEnd"/>
+        <Button icon="sap-icon://bell" type="Transparent" press=".onNotificationsPress" tooltip="Notifications" class="sapUiTinyMarginEnd"/>
         <Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" displaySize="S"/>
       </HBox>
     </HBox>

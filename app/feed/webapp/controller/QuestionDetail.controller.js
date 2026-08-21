@@ -1,9 +1,10 @@
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/m/MessageToast",
+  "sap/m/MessageBox",
   "aymax/feed/service/ODataService",
   "aymax/feed/model/formatter"
-], function(Controller, MessageToast, ODataService, formatter) {
+], function(Controller, MessageToast, MessageBox, ODataService, formatter) {
   "use strict";
 
   return Controller.extend("aymax.feed.controller.QuestionDetail", {
@@ -11,6 +12,11 @@ sap.ui.define([
 
     onInit: function() {
       this.oModel = this.getOwnerComponent().getModel("questions");
+      // Knowledge Center's own service (Lot 2) - promoteQuestion lives
+      // there, not here, since the question becomes a KnowledgeItem, an
+      // entity this app doesn't otherwise touch. Same cross-app model
+      // pattern as this app's other services, just a second one.
+      this.oKnowledgeModel = this.getOwnerComponent().getModel("knowledge");
       this.oViewModel = this.getOwnerComponent().getModel("view");
       this.getOwnerComponent().getRouter().getRoute("questionDetail").attachPatternMatched(this._onRouteMatched, this);
     },
@@ -20,19 +26,23 @@ sap.ui.define([
       this._loadQuestionData();
     },
 
+    // oModel is an OData V4 model (manifest.json: "odataVersion": "4.0"),
+    // which has no .read() method - that's a V2-only API. This never
+    // actually loaded data on this page (initial load or any of the
+    // post-action refreshes below); bindContext(...).requestObject() is
+    // the correct V4 equivalent, same pattern already used by
+    // ODataService.callFunction for unbound functions.
     _loadQuestionData: function() {
       var self = this;
-      this.oModel.read("/Questions(" + this._sQuestionId + ")", {
-        urlParameters: { "$expand": "author,answers" },
-        success: function(oData) {
-          var aAnswers = oData.answers || [];
-          self.oViewModel.setProperty("/question", oData);
-          self.oViewModel.setProperty("/answers", aAnswers);
-          self.oViewModel.setProperty("/answersCount", oData.answerCount || aAnswers.length);
-        },
-        error: function() {
-          MessageToast.show("Erreur lors du chargement de la question.");
-        }
+      this.oModel.bindContext("/Questions(" + this._sQuestionId + ")", null, {
+        $expand: "author,answers"
+      }).requestObject().then(function(oData) {
+        var aAnswers = oData.answers || [];
+        self.oViewModel.setProperty("/question", oData);
+        self.oViewModel.setProperty("/answers", aAnswers);
+        self.oViewModel.setProperty("/answersCount", oData.answerCount || aAnswers.length);
+      }).catch(function() {
+        MessageToast.show("Erreur lors du chargement de la question.");
       });
     },
 
@@ -114,6 +124,25 @@ sap.ui.define([
         MessageToast.show("Question fermée.");
         this._loadQuestionData();
       }.bind(this));
+    },
+
+    onPromoteQuestion: function() {
+      var that = this;
+      var sTitle = this.oViewModel.getProperty("/question/title");
+      MessageBox.confirm(
+        "Publier « " + sTitle + " » comme article du Centre de connaissances ? La réponse acceptée sera visible par toute l'entreprise.",
+        {
+          title: "Promouvoir vers le Centre de connaissances",
+          onClose: function(sAction) {
+            if (sAction !== MessageBox.Action.OK) return;
+            ODataService.callAction(that.oKnowledgeModel, "/promoteQuestion", {
+              questionID: that._sQuestionId
+            }).then(function() {
+              MessageToast.show("Question publiée dans le Centre de connaissances !");
+            });
+          }
+        }
+      );
     }
   });
 });

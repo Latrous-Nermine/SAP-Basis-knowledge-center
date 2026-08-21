@@ -50,7 +50,7 @@ export default class PeopleService extends cds.ApplicationService {
     const { People } = this.entities;
     const {
       Follows, KnowledgeItems, KnowledgeContributors, KnowledgeAttachments,
-      Comments, ReputationEvents,
+      Comments, ReputationEvents, Questions, Answers, UserCertifications, Certifications,
     } = cds.entities('aymax.knowledgehub');
 
     // ────────────────────────────────────────────────────────────
@@ -160,7 +160,7 @@ export default class PeopleService extends cds.ApplicationService {
         .columns('item_ID').where({ user_userID: userID });
       const itemIDs = contributions.map((c) => c.item_ID);
 
-      const [publishedItems, comments, uploads, follows] = await Promise.all([
+      const [publishedItems, comments, uploads, follows, questionsAsked, answersGiven, certsEarned] = await Promise.all([
         itemIDs.length
           ? SELECT.from(KnowledgeItems).columns('title', 'publishedAt')
               .where({ ID: { in: itemIDs }, status: 'approved' })
@@ -171,6 +171,16 @@ export default class PeopleService extends cds.ApplicationService {
           .where({ createdBy: userID }),
         SELECT.from(Follows).columns('followedUser_userID', 'createdAt')
           .where({ userID, followedUser_userID: { '!=': null } }),
+        // Questions/Certifications (2026-08) - the two modules the
+        // Activity feed had no coverage for at all before this (Comments
+        // already covers Q&A comments generically, since addCommentToQuestion/
+        // addCommentToAnswer write into this same shared Comments entity).
+        SELECT.from(Questions).columns('title', 'createdAt')
+          .where({ author_userID: userID }),
+        SELECT.from(Answers).columns('question_ID', 'createdAt')
+          .where({ author_userID: userID }),
+        SELECT.from(UserCertifications).columns('certification_ID', 'earnedDate')
+          .where({ user_userID: userID, status: 'earned' }),
       ]);
 
       const followedIDs = follows.map((f) => f.followedUser_userID);
@@ -179,6 +189,18 @@ export default class PeopleService extends cds.ApplicationService {
         : [];
       const nameByID = new Map(followedUsers.map((u) => [u.userID, u.displayName]));
 
+      const answeredQuestionIDs = answersGiven.map((a) => a.question_ID);
+      const answeredQuestions = answeredQuestionIDs.length
+        ? await SELECT.from(Questions).columns('ID', 'title').where({ ID: { in: answeredQuestionIDs } })
+        : [];
+      const questionTitleByID = new Map(answeredQuestions.map((q) => [q.ID, q.title]));
+
+      const earnedCertIDs = certsEarned.map((c) => c.certification_ID);
+      const earnedCerts = earnedCertIDs.length
+        ? await SELECT.from(Certifications).columns('ID', 'name').where({ ID: { in: earnedCertIDs } })
+        : [];
+      const certNameByID = new Map(earnedCerts.map((c) => [c.ID, c.name]));
+
       const entries = [
         ...publishedItems.map((i) => ({ text: `A publié « ${i.title} »`, occurredAt: i.publishedAt })),
         ...comments.map((c) => ({ text: `A commenté : « ${(c.content || '').slice(0, 60)} »`, occurredAt: c.createdAt })),
@@ -186,6 +208,15 @@ export default class PeopleService extends cds.ApplicationService {
         ...follows.map((f) => ({
           text: `A suivi ${nameByID.get(f.followedUser_userID) || f.followedUser_userID}`,
           occurredAt: f.createdAt,
+        })),
+        ...questionsAsked.map((q) => ({ text: `A posé une question : « ${q.title} »`, occurredAt: q.createdAt })),
+        ...answersGiven.map((a) => ({
+          text: `A répondu à « ${questionTitleByID.get(a.question_ID) || ''} »`,
+          occurredAt: a.createdAt,
+        })),
+        ...certsEarned.map((c) => ({
+          text: `A obtenu la certification « ${certNameByID.get(c.certification_ID) || ''} »`,
+          occurredAt: c.earnedDate,
         })),
       ];
 

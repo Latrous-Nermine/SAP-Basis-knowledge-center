@@ -2,9 +2,13 @@
    (radius/shadow/spacing) - no color overrides; semantic colour still comes
    from NotificationListItem's own unread/priority states. */
 
+/* Border/radius/shadow aligned to .aymaxCard (css/lot3/tokens.css),
+   2026-08 polish pass. */
 .notificationsCard {
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  background: var(--aymax-surface);
+  border: 1px solid var(--aymax-border);
+  border-radius: var(--aymax-radius-md);
+  box-shadow: var(--aymax-shadow-sm);
   overflow: hidden;
 }
 

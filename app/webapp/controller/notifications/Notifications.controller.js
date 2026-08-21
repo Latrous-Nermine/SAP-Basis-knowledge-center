@@ -50,7 +50,7 @@ sap.ui.define([
       if (!oContext || oContext.getProperty("isRead")) return;
 
       var sID = oContext.getProperty("ID");
-      var oActionContext = this.oModel.bindContext("/markRead")({
+      var oActionContext = this.bindAction(this.oModel, "/markRead", {
         notificationID: sID
       });
 
@@ -63,7 +63,7 @@ sap.ui.define([
     },
 
     onMarkAllRead: function() {
-      var oActionContext = this.oModel.bindContext("/markAllRead")();
+      var oActionContext = this.bindAction(this.oModel, "/markAllRead");
 
       oActionContext.execute().then(function() {
         MessageToast.show(this.getText("allMarkedRead"));

@@ -71,7 +71,7 @@ sap.ui.define([
       var oContext = this.getView().getBindingContext("rapportsStage");
       var sID = oContext.getProperty("ID");
 
-      var oActionContext = this.oModel.bindContext("/submitRapport")({
+      var oActionContext = this.bindAction(this.oModel, "/submitRapport", {
         rapportID: sID
       });
 

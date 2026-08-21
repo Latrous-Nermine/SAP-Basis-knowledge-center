@@ -21,10 +21,14 @@
   color: var(--aymax-primary);
 }
 
-/* ===== PAGE CONTAINER ===== */
-.aymaxPage {
-  background: #f3f2ef;
-}
+/* Page background (2026-08 fix): this rule used to redefine the SHARED
+   .aymaxPage class with a LinkedIn-grey hardcoded here - since this
+   file loads last in manifest.json's css resources list, it silently
+   won the cascade over css/lot3/tokens.css's .aymaxPage { background:
+   var(--aymax-bg) } for EVERY page using that shared class app-wide
+   (Depot, HR, Validation, Rapport de stage, Reports, Feed itself), not
+   just this one. Removed entirely so the shared off-white token
+   (Certification's own background) applies here too, consistently. */
 
 /* ===== NAVBAR MENU BUTTON ===== */
 .aymaxHeader .sapMBtnTransparent {
@@ -365,8 +369,20 @@
   border-radius: 3px;
 }
 
-/* ===== RESPONSIVE ===== */
- #mainLayout {
+/* ===== RESPONSIVE =====
+   Was #mainLayout - an ID selector that only ever worked in the
+   original standalone app (app/feed/webapp), where this view's IDs
+   rendered literally. Once embedded in the shared shell (app/webapp),
+   UI5 auto-prefixes every control ID with the view's own generated ID
+   to avoid cross-view collisions (renders as e.g.
+   "__xmlview0--mainLayout", not "mainLayout") - so this rule has never
+   actually matched anything since the migration: no flex, no
+   centering, the whole 3-column layout has been rendering at its
+   natural left-aligned content width ever since (2026-08 fix, found by
+   inspecting the live DOM - the element the CSS targeted did not
+   exist). A class doesn't get this prefix treatment, so it's the
+   robust selector here regardless of which shell embeds this view. */
+.aymaxFeedMainLayout {
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -376,10 +392,10 @@
 }
 
 @media (max-width: 1200px) {
-  #mainLayout {
+  .aymaxFeedMainLayout {
     flex-direction: column !important;
   }
-  #mainLayout > div {
+  .aymaxFeedMainLayout > div {
     width: 100% !important;
     margin-right: 0 !important;
   }

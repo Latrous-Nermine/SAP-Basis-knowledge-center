@@ -9,7 +9,7 @@
 
   <Page showHeader="false" class="aymaxPage">
     <content>
-      <layout:HorizontalLayout id="mainLayout" allowWrapping="false" class="sapUiContentPadding">
+      <layout:HorizontalLayout id="mainLayout" allowWrapping="false" class="sapUiContentPadding aymaxFeedMainLayout">
 
         <!-- ===== COLONNE GAUCHE : Profil + Raccourcis ===== -->
         <layout:VerticalLayout width="280px" class="sapUiMediumMarginEnd">
@@ -209,11 +209,19 @@
                     </Tokenizer>
                   </HBox>
 
-                  <!-- Pièces jointes -->
+                  <!-- Pièces jointes. showNoData=false (2026-08 fix): the
+                       visible= expression was meant to hide this control
+                       entirely for posts with zero documents, but
+                       sap.m.List still renders its own default "No data"
+                       placeholder row underneath regardless - every post
+                       without an attachment was showing a stray "No data"
+                       line. This is the actual, direct fix for that
+                       placeholder rather than depending on visible= alone. -->
                   <List
                     items="{path:'documents', templateShareable:'false'}"
                     visible="{= ${documents}.length > 0}"
                     showSeparators="None"
+                    showNoData="false"
                     class="sapUiTinyMarginBottom">
                     <CustomListItem type="Active" press=".onDocumentPress">
                       <HBox alignItems="Center" class="aymaxDocItem sapUiTinyMarginTopBottom">

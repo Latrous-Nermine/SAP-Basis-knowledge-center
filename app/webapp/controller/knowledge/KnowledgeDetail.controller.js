@@ -29,8 +29,24 @@ sap.ui.define([
       // Was the unnamed default model in the old standalone app; now named
       // models, since one shared Component can only have one true default.
       this.oModel = this.getOwnerComponent().getModel("knowledge");
+      this.oPeopleModel = this.getOwnerComponent().getModel("people");
       formatter.setResourceBundle(this.getResourceBundle());
       this.getRouter().getRoute("knowledgeDetail").attachPatternMatched(this._onObjectMatched, this);
+
+      // Same server-resolved-role pattern as App.controller.js's own nav
+      // guard (PeopleService#getMyRole()) - Approve/Reject are a UI hint
+      // only, the real gate is approveItem/rejectItem's own
+      // @requires:'Manager' (knowledge-service.cds), same as everywhere
+      // else in this app (CLAUDE.md: "a disabled button is a hint").
+      this.oPeopleModel.bindContext("/getMyRole()").requestObject()
+        .then(function(oData) {
+          this.getViewModel().setProperty("/isManager", (oData && oData.value) === "Manager");
+          this._updateActionVisibility();
+        }.bind(this))
+        .catch(function() {
+          this.getViewModel().setProperty("/isManager", false);
+          this._updateActionVisibility();
+        }.bind(this));
     },
 
     _onObjectMatched: function(oEvent) {
@@ -51,7 +67,12 @@ sap.ui.define([
       // contributorsLabel isn't in the OData response - build it once the
       // element binding has data (there's no Profile service yet to show
       // display names, so user IDs are shown - see TODO-INTEGRATION.md I-16).
-      var oElementBinding = this.getView().getElementBinding();
+      // getElementBinding() needs the model name - bindElement above used
+      // model:"knowledge" (a named model, not the view's default), so the
+      // unnamed lookup always returned undefined (found 2026-08 via real
+      // click-through testing: every single navigation into this page
+      // threw here, not just a deep-link edge case).
+      var oElementBinding = this.getView().getElementBinding("knowledge");
       oElementBinding.attachDataReceived(this._setContributorsLabel, this);
     },
 
@@ -60,6 +81,26 @@ sap.ui.define([
       var aContributors = (oData && oData.contributors) || [];
       var sLabel = aContributors.map(function(c) { return c.displayName || c.user_userID; }).join(", ");
       this.getViewModel().setProperty("/contributorsLabel", sLabel);
+      // Same dataReceived event this was already listening to (fires on
+      // initial load AND every getElementBinding("knowledge").refresh(),
+      // e.g. after approve/reject/submit) - the one place status is
+      // guaranteed fresh, so the one place these buttons need re-deciding.
+      this._updateActionVisibility();
+    },
+
+    // See the big comment on uxap:actions in the view for why this is
+    // imperative instead of a declarative visible= binding.
+    _updateActionVisibility: function() {
+      var oContext = this.getView().getBindingContext("knowledge");
+      if (!oContext) return;
+      var sStatus = oContext.getProperty("status");
+      var bIsManager = this.getViewModel().getProperty("/isManager") === true;
+      var bCanReview = bIsManager && sStatus === "pending";
+
+      this.byId("voteControls").setVisible(formatter.canVote(sStatus));
+      this.byId("btnSubmitForReview").setVisible(formatter.canSubmitForReview(sStatus));
+      this.byId("btnApproveItem").setVisible(bCanReview);
+      this.byId("btnRejectItem").setVisible(bCanReview);
     },
 
     _loadRelated: function(sItemID) {
@@ -100,23 +141,49 @@ sap.ui.define([
       var oDecision = VotingHelper.resolveVoteAction(oContext.getProperty("myVote"), iValue);
 
       var oParams = Object.assign({ itemID: this._sItemID }, oDecision.params);
-      var oActionContext = this.oModel.bindContext("/" + oDecision.action)(oParams);
+      var oActionContext = this.bindAction(this.oModel, "/" + oDecision.action, oParams);
 
       oActionContext.execute().then(function() {
-        this.getView().getElementBinding().refresh();
+        this.getView().getElementBinding("knowledge").refresh();
       }.bind(this)).catch(function(oError) {
         MessageBox.error((oError && oError.message) || this.getText("errorVote"));
       }.bind(this));
     },
 
+    // Approve/Reject (2026-08) - previously had no frontend at all
+    // (approveItem/rejectItem existed only as backend actions, callable
+    // by curl, never through this UI - the review queue in
+    // KnowledgeList.view.xml's "En attente" tab let a Manager SEE
+    // pending items but never decide on them).
+    onApproveItem: function() {
+      this._decide("approveItem", "approveItemSuccess", "errorApproveItem");
+    },
+
+    onRejectItem: function() {
+      this._decide("rejectItem", "rejectItemSuccess", "errorRejectItem");
+    },
+
+    _decide: function(sAction, sSuccessKey, sErrorKey) {
+      var oActionContext = this.bindAction(this.oModel, "/" + sAction, {
+        itemID: this._sItemID
+      });
+
+      oActionContext.execute().then(function() {
+        MessageToast.show(this.getText(sSuccessKey));
+        this.getView().getElementBinding("knowledge").refresh();
+      }.bind(this)).catch(function(oError) {
+        MessageBox.error((oError && oError.message) || this.getText(sErrorKey));
+      }.bind(this));
+    },
+
     onSubmitForReview: function() {
-      var oActionContext = this.oModel.bindContext("/submitForReview")({
+      var oActionContext = this.bindAction(this.oModel, "/submitForReview", {
         itemID: this._sItemID
       });
 
       oActionContext.execute().then(function() {
         MessageToast.show(this.getText("submitForReviewSuccess"));
-        this.getView().getElementBinding().refresh();
+        this.getView().getElementBinding("knowledge").refresh();
       }.bind(this)).catch(function(oError) {
         MessageBox.error(oError.message || this.getText("errorSubmitForReview"));
       }.bind(this));
@@ -126,7 +193,7 @@ sap.ui.define([
       var sContent = this.getViewModel().getProperty("/newCommentText");
       if (!sContent || !sContent.trim()) return;
 
-      var oActionContext = this.oModel.bindContext("/addComment")({
+      var oActionContext = this.bindAction(this.oModel, "/addComment", {
         itemID: this._sItemID,
         content: sContent.trim()
       });

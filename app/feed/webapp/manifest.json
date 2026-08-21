@@ -44,6 +44,13 @@
         "settings": {
           "odataVersion": "4.0"
         }
+      },
+      "knowledgeService": {
+        "uri": "/odata/v4/knowledge/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
       }
     }
   },
@@ -111,6 +118,14 @@
           "autoExpandSelect": true
         }
       },
+      "knowledge": {
+        "dataSource": "knowledgeService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
@@ -123,6 +138,9 @@
     },
     "resources": {
       "css": [
+        {
+          "uri": "css/tokens.css"
+        },
         {
           "uri": "css/style.css"
         },

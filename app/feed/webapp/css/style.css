@@ -23,7 +23,7 @@
 
 /* ===== PAGE CONTAINER ===== */
 .aymaxPage {
-  background: #f3f2ef;
+  background: var(--aymax-bg);
 }
 
 /* ===== NAVBAR MENU BUTTON ===== */
@@ -42,9 +42,10 @@
 }
 
 .aymaxPublishTextArea {
-  border: 1px solid #e0e0e0 !important;
+  border: 1px solid var(--aymax-border) !important;
   border-radius: 8px !important;
-  background: #ffffff !important;
+  background: var(--aymax-surface) !important;
+  color: var(--aymax-text) !important;
   font-size: 0.9375rem !important;
   line-height: 1.5 !important;
   resize: none;
@@ -56,17 +57,17 @@
 }
 
 .aymaxPublishToolbar {
-  border-top: 1px solid #e0e0e0;
-  border-bottom: 1px solid #e0e0e0;
+  border-top: 1px solid var(--aymax-border);
+  border-bottom: 1px solid var(--aymax-border);
   padding: 8px 12px !important;
-  background: #fafafa;
+  background: var(--aymax-neutral-100);
   border-radius: 6px !important;
 }
 
 .aymaxPublishToolbarBtn.sapMBtn {
   background: transparent !important;
   border: none !important;
-  color: rgba(0, 0, 0, 0.6) !important;
+  color: var(--aymax-text-muted) !important;
   min-width: 40px !important;
   height: 36px !important;
   border-radius: 4px !important;
@@ -74,8 +75,8 @@
 }
 
 .aymaxPublishToolbarBtn.sapMBtn:hover {
-  background: rgba(0, 0, 0, 0.06) !important;
-  color: rgba(0, 0, 0, 0.9) !important;
+  background: color-mix(in srgb, var(--aymax-text) 8%, transparent) !important;
+  color: var(--aymax-text) !important;
 }
 
 .aymaxPublishToolbarBtn.sapMBtn .sapMBtnIcon {
@@ -83,15 +84,15 @@
 }
 
 .aymaxPublishVisibilitySelect {
-  background: #ffffff !important;
-  border: 1px solid #e0e0e0 !important;
+  background: var(--aymax-surface) !important;
+  border: 1px solid var(--aymax-border) !important;
   border-radius: 4px !important;
 }
 
 .aymaxPublishMultiInput {
-  border: 1px solid #e0e0e0 !important;
+  border: 1px solid var(--aymax-border) !important;
   border-radius: 6px !important;
-  background: #ffffff !important;
+  background: var(--aymax-surface) !important;
 }
 
 .aymaxPublishBtn.sapMBtn {
@@ -114,9 +115,9 @@
 
 /* ===== CARDS ===== */
 .aymaxCard {
-  background: #ffffff;
+  background: var(--aymax-surface);
   border-radius: 12px;
-  border: 1px solid #e6e9ee;
+  border: 1px solid var(--aymax-border);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
@@ -132,9 +133,9 @@
 }
 
 .aymaxPostCard {
-  background: #ffffff;
+  background: var(--aymax-surface);
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--aymax-border);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01), 0 2px 4px rgba(0, 0, 0, 0.08);
   margin-bottom: 16px;
   overflow: hidden;
@@ -152,29 +153,29 @@
 /* Custom author header formatting for LinkedIn style */
 .aymaxAuthorName .sapMTitle {
   font-weight: 600 !important;
-  color: rgba(0, 0, 0, 0.9) !important;
+  color: var(--aymax-text) !important;
   font-size: 0.875rem !important;
 }
 
 .aymaxHeadline {
   font-size: 0.75rem !important;
-  color: rgba(0, 0, 0, 0.6) !important;
+  color: var(--aymax-text-muted) !important;
 }
 
 .aymaxPublicIcon {
-  color: rgba(0, 0, 0, 0.5) !important;
+  color: var(--aymax-text-muted) !important;
   margin-left: 4px;
 }
 
 .aymaxPostTitle .sapMTitle {
   font-size: 0.95rem !important;
   font-weight: 600 !important;
-  color: rgba(0, 0, 0, 0.9) !important;
+  color: var(--aymax-text) !important;
 }
 
 .aymaxPostContentText {
   font-size: 0.875rem !important;
-  color: rgba(0, 0, 0, 0.9) !important;
+  color: var(--aymax-text) !important;
   line-height: 1.42857 !important;
 }
 
@@ -247,7 +248,7 @@
 
 /* ===== POST STATS & ACTIONS (LINKEDIN STYLE) ===== */
 .aymaxPostStats {
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--aymax-border);
   padding: 8px 16px;
   margin-top: 4px;
 }
@@ -284,9 +285,9 @@
 }
 
 .aymaxPostActions {
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--aymax-border);
   padding: 4px 12px;
-  background: #ffffff;
+  background: var(--aymax-surface);
   gap: 4px;
 }
 
@@ -298,25 +299,26 @@
 .aymaxSoftActionButton.sapMBtn {
   background: transparent !important;
   border: none !important;
-  color: rgba(0, 0, 0, 0.6) !important;
+  color: var(--aymax-text-muted) !important;
   font-weight: 600 !important;
   font-size: 0.825rem !important;
   transition: background-color 0.15s, color 0.15s;
 }
 
 .aymaxSoftActionButton.sapMBtn .sapMBtnIcon {
-  color: rgba(0, 0, 0, 0.6) !important;
+  color: var(--aymax-text-muted) !important;
   font-size: 1rem !important;
 }
 
-/* Hover state */
+/* Hover state - mixed toward --aymax-text rather than pure black so the
+   overlay darkens on a light surface and lightens on a dark one. */
 .aymaxSoftActionButton.sapMBtn:hover {
-  background: rgba(0, 0, 0, 0.06) !important;
-  color: rgba(0, 0, 0, 0.9) !important;
+  background: color-mix(in srgb, var(--aymax-text) 8%, transparent) !important;
+  color: var(--aymax-text) !important;
 }
 
 .aymaxSoftActionButton.sapMBtn:hover .sapMBtnIcon {
-  color: rgba(0, 0, 0, 0.9) !important;
+  color: var(--aymax-text) !important;
 }
 
 /* Like active state */
@@ -387,8 +389,8 @@
 
 /* ===== ZONE PUBLICATION ===== */
 .aymaxPublishCard {
-  border: 1px solid #e6e9ee;
-  background: #ffffff;
+  border: 1px solid var(--aymax-border);
+  background: var(--aymax-surface);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -492,13 +494,14 @@
 }
 
 .aymaxPublishTextArea .sapMTextAreaInner {
-  border: 1px solid #dce1e7;
+  border: 1px solid var(--aymax-border);
   border-radius: 10px;
   padding: 12px 14px;
   font-size: 14px;
   line-height: 1.55;
   resize: none;
-  background: #ffffff;
+  background: var(--aymax-surface);
+  color: var(--aymax-text);
 }
 
 .aymaxPublishTextArea .sapMTextAreaInner:focus {
@@ -570,21 +573,22 @@
 }
 
 .aymaxReplyBanner {
-  background: #f6f8fa;
-  border: 1px solid #e6e9ee;
+  background: var(--aymax-neutral-100);
+  border: 1px solid var(--aymax-border);
   padding: 12px 14px;
 }
 
 .aymaxCommentComposer {
-  background: #ffffff;
-  border: 1px solid #e6e9ee;
+  background: var(--aymax-surface);
+  border: 1px solid var(--aymax-border);
   padding: 14px;
 }
 
 .aymaxCommentComposer .sapMTextAreaInner {
   border-radius: 10px;
-  border: 1px solid #dce1e7;
-  background: #ffffff;
+  border: 1px solid var(--aymax-border);
+  background: var(--aymax-surface);
+  color: var(--aymax-text);
 }
 
 .aymaxCommentComposer .sapMBtn {
@@ -593,8 +597,8 @@
 
 .aymaxCommentComposer .sapMBtnEmphasized,
 .aymaxCommentComposer .sapMBtnTransparent {
-  background: #ffffff !important;
-  border: 1px solid #dce1e7 !important;
+  background: var(--aymax-surface) !important;
+  border: 1px solid var(--aymax-border) !important;
 }
 
 .aymaxCommentItem {
@@ -606,11 +610,11 @@
   border-radius: 999px;
   padding-left: 12px;
   padding-right: 12px;
-  background: #f3f6f8;
+  background: color-mix(in srgb, var(--aymax-primary) 8%, transparent);
 }
 
 .aymaxCommentItem .sapMBtnTransparent:hover {
-  background: #eaf3fb;
+  background: color-mix(in srgb, var(--aymax-primary) 14%, transparent);
 }
 
 .aymaxReplyContext {

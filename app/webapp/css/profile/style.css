@@ -19,7 +19,7 @@
 /* Centered, max-width reading column - matches the Knowledge Center
    module's own convention instead of running ObjectPageLayout full-bleed. */
 .profilePageContainer {
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
   padding-left: 32px;
@@ -122,11 +122,15 @@
   font-weight: 600;
 }
 
+/* Border/radius/shadow aligned to .aymaxCard (css/lot3/tokens.css),
+   2026-08 polish pass. */
 .profileCard {
-  border-radius: 12px;
+  background: var(--aymax-surface);
+  border: 1px solid var(--aymax-border);
+  border-radius: var(--aymax-radius-md);
   padding: 16px 20px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--aymax-shadow-sm);
 }
 
 .profileCard:last-child {

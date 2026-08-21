@@ -3,6 +3,7 @@
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
   xmlns:f="sap.f"
+  xmlns:core="sap.ui.core"
   displayBlock="true">
 
   <f:DynamicPage id="questionDetailPage" headerExpanded="true">
@@ -16,14 +17,21 @@
         </f:heading>
         <f:actions>
           <ObjectStatus text="{path:'view>/question/status', formatter:'.formatter.formatQuestionStatusText'}" state="{path:'view>/question/status', formatter:'.formatter.formatQuestionStatusState'}"/>
-          <Button text="Marquer résolue" type="Accept" press=".onResolveQuestion" visible="{= ${view>/question/status} !== 'resolved'}"/>
+          <Button text="Marquer résolue" type="Accept" press=".onResolveQuestion" visible="{= ${view>/question/status} !== 'resolved' &amp;&amp; ${view>/question/author_userID} === ${view>/currentUser/userID} }"/>
           <Button text="Fermer" type="Reject" press=".onCloseQuestion" visible="{= ${view>/question/status} === 'open'}"/>
+          <Button
+            text="Promouvoir vers le Centre de connaissances"
+            icon="sap-icon://learning-assistant"
+            type="Emphasized"
+            press=".onPromoteQuestion"
+            tooltip="Publier cette question résolue comme article du Centre de connaissances"
+            visible="{= ${view>/question/status} === 'resolved' &amp;&amp; !!${view>/question/acceptedAnswer_ID} &amp;&amp; ${view>/currentUser/role} === 'Manager' }"/>
         </f:actions>
       </f:DynamicPageTitle>
     </f:title>
 
     <f:content>
-      <VBox class="sapUiContentPadding">
+      <VBox class="sapUiContentPadding aymaxQuestionDetailContent">
         <!-- DETAIL DE LA QUESTION -->
         <Panel class="aymaxCard sapUiMediumMarginBottom">
           <HBox alignItems="Start">
@@ -60,15 +68,15 @@
               <HBox alignItems="Start">
                 <VBox alignItems="Center" class="sapUiMediumMarginEnd">
                   <Button icon="sap-icon://navigation-up-arrow" type="Transparent" press=".onVoteAnswerUp"/>
-                  <Title text="{path:'voteCount', formatter:'.formatter.formatVoteCount'}" level="H4"/>
+                  <Title text="{path:'view>voteCount', formatter:'.formatter.formatVoteCount'}" level="H4"/>
                   <Button icon="sap-icon://navigation-down-arrow" type="Transparent" press=".onVoteAnswerDown"/>
-                  <Icon src="sap-icon://accept" color="Positive" size="1.5rem" visible="{isAccepted}" tooltip="Réponse acceptée"/>
+                  <core:Icon src="sap-icon://accept" color="Positive" size="1.5rem" visible="{view>isAccepted}" tooltip="Réponse acceptée"/>
                 </VBox>
                 <VBox width="100%">
-                  <Text text="{content}" class="sapUiSmallMarginBottom" wrapping="true"/>
+                  <Text text="{view>content}" class="sapUiSmallMarginBottom" wrapping="true"/>
                   <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxPostActions">
-                    <Text text="Répondu le {path:'createdAt', formatter:'.formatter.formatDate'}" class="aymaxMeta"/>
-                    <Button text="Accepter cette réponse" type="Accept" press=".onAcceptAnswer" visible="{= !${isAccepted}}"/>
+                    <Text text="Répondu le {path:'view>createdAt', formatter:'.formatter.formatDate'}" class="aymaxMeta"/>
+                    <Button text="Accepter cette réponse" type="Accept" press=".onAcceptAnswer" visible="{= !${view>isAccepted}}"/>
                   </HBox>
                 </VBox>
               </HBox>

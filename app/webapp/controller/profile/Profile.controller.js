@@ -182,7 +182,7 @@ sap.ui.define([
       var sAction = bIsFollowedByMe ? "unfollowUser" : "followUser";
       var sErrorKey = bIsFollowedByMe ? "errorUnfollow" : "errorFollow";
 
-      var oActionContext = this.oPeopleModel.bindContext("/" + sAction)({ userID: this._sUserID });
+      var oActionContext = this.bindAction(this.oPeopleModel, "/" + sAction, { userID: this._sUserID });
       oActionContext.execute().then(function() {
         // The action just succeeded, so the new state is known with
         // certainty - set it directly instead of re-deriving it from the

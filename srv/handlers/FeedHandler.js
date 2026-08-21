@@ -1,4 +1,5 @@
 import cds from '@sap/cds';
+import { notify, notifyMany } from '../lib/notify.js';
 
 /**
  * FeedHandler — Gestion du fil d'actualite, likes, commentaires, favoris, rooms
@@ -18,6 +19,9 @@ export default class FeedHandler extends cds.ApplicationService {
     // ---- HOOKS APRES ----
     this.after('READ',   'Posts',     this._enrichPosts.bind(this));
     this.after('CREATE', 'Posts',     this._incrementRoomPostCount.bind(this));
+    // Separate hook from the counter above on purpose (2026-08 addition) -
+    // keeps the pre-existing, already-tested counter logic untouched.
+    this.after('CREATE', 'Posts',     this._notifyRoomPost.bind(this));
 
     // ---- ACTIONS ----
     this.on('likePost',       this._likePost.bind(this));
@@ -160,10 +164,44 @@ export default class FeedHandler extends cds.ApplicationService {
   // ============================================================
   // HOOK APRES — Incrementer compteur posts de la room
   // ============================================================
-  async _incrementRoomPostCount(post, req) {
+  // data is an array with only the key populated (e.g. [{ID:...}]), not
+  // the full inserted row - found the hard way (2026-08) by tracing why
+  // this pre-existing hook silently never incremented anything: room_ID
+  // was always undefined on it. Re-fetching by ID is the fix, for this
+  // hook and _notifyRoomPost below.
+  async _incrementRoomPostCount(data) {
+    const postID = Array.isArray(data) ? data[0]?.ID : data?.ID;
+    if (!postID) return;
+    const post = await SELECT.one.from(this.entities.Posts).columns('room_ID').where({ ID: postID });
     if (post?.room_ID) {
       await UPDATE(this.entities.Rooms).set('postCount +=', 1).where({ ID: post.room_ID });
     }
+  }
+
+  // ============================================================
+  // HOOK APRES — Notifier les membres de la room (2026-08)
+  // ============================================================
+  async _notifyRoomPost(data) {
+    const postID = Array.isArray(data) ? data[0]?.ID : data?.ID;
+    if (!postID) return;
+
+    const db = cds.db;
+    const post = await db.run(SELECT.one.from('aymax.knowledgehub.Posts')
+      .columns('room_ID', 'author_userID').where({ ID: postID }));
+    if (!post?.room_ID) return;
+
+    const [room, author, members] = await Promise.all([
+      db.run(SELECT.one.from('aymax.knowledgehub.Rooms').columns('name').where({ ID: post.room_ID })),
+      db.run(SELECT.one.from('aymax.knowledgehub.UserProfiles').columns('displayName').where({ userID: post.author_userID })),
+      db.run(SELECT.from('aymax.knowledgehub.RoomMembers').columns('userID').where({ room_ID: post.room_ID })),
+    ]);
+    if (!room || !members.length) return;
+
+    notifyMany(
+      members.map((m) => m.userID).filter((id) => id !== post.author_userID),
+      'ROOM_POST',
+      { sourceType: 'ROOM', sourceId: post.room_ID, params: { actorName: author?.displayName || post.author_userID, roomName: room.name } },
+    );
   }
 
   // ============================================================
@@ -241,16 +279,32 @@ export default class FeedHandler extends cds.ApplicationService {
     const { postID, content, parentID } = req.data;
     if (!content?.trim()) return req.reject(400, 'Le contenu du commentaire est obligatoire');
 
-    const { Comments, Posts } = this.entities;
+    const { Comments, Posts, UserProfiles } = this.entities;
+    const commenterID = _currentUserID(req);
     const newComment = await INSERT.into(Comments).entries({
       ID:             cds.utils.uuid(),
       post_ID:        postID,
       parent_ID:      parentID || null,
-      author_userID:  _currentUserID(req),
+      author_userID:  commenterID,
       content:        content.trim()
     });
 
     await UPDATE(Posts).set('commentCount +=', 1).where({ ID: postID });
+
+    // Every other notify() trigger in the app fires on "someone engaged
+    // with your content" (Room posts, accepted answers, Knowledge
+    // approvals) except this one, the single most common social action
+    // in the app - a real, reported gap, not a new type: COMMENT is
+    // already defined and already used this exact way by Questions.
+    const post = await SELECT.one.from(Posts).columns('author_userID', 'title', 'content').where({ ID: postID });
+    if (post && post.author_userID !== commenterID) {
+      const commenter = await SELECT.one.from(UserProfiles).columns('displayName').where({ userID: commenterID });
+      notify(post.author_userID, 'COMMENT', {
+        sourceType: 'POST', sourceId: postID,
+        params: { actorName: commenter?.displayName || commenterID, title: post.title || post.content?.slice(0, 60) || '' },
+      });
+    }
+
     return newComment;
   }
 

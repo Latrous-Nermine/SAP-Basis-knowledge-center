@@ -19,9 +19,18 @@
   color: var(--aymax-text) !important;
 }
 
-.rewardsGridList {
-  display: flex;
-  flex-wrap: wrap;
+/* display:flex was on .rewardsGridList itself - that's sap.m.List's
+   OUTER wrapper div, which only ever has one child (the actual <ul>
+   holding the item <li>s), so it did nothing: every card kept
+   stacking in a single column at its natural width, leaving the rest
+   of the row empty (2026-08 fix). The real items container is
+   .sapMListItems, one level down - same grid recipe as
+   .certList .sapMListItems (css/certifications/style.css) for
+   consistency with the reference page. */
+.rewardsGridList .sapMListItems {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 16px !important;
 }
 
 .rewardsCard {

@@ -26,6 +26,7 @@
               type="Emphasized"
               icon="sap-icon://add"
               press=".onAddReward"
+              visible="{view-rewards>/canManage}"
               class="rewardsAddBtn"/>
           </HBox>
         </HBox>
@@ -60,7 +61,7 @@
           showSeparators="None"
           class="rewardsGridList"
           updateFinished=".onRewardsListUpdated">
-          <CustomListItem class="aymaxCard rewardsCard sapUiSmallMarginEnd sapUiSmallMarginBottom">
+          <CustomListItem class="aymaxCard rewardsCard">
             <VBox alignItems="Center" class="sapUiMediumMargin rewardsCardInner">
 
               <VBox class="rewardsIconWrapper sapUiSmallMarginBottom" alignItems="Center" justifyContent="Center">
@@ -71,12 +72,22 @@
 
               <HBox alignItems="Center" justifyContent="Center" class="rewardsPointsBadge sapUiSmallMarginBottom">
                 <core:Icon src="sap-icon://favorite" size="0.9rem" color="var(--aymax-accent)" class="sapUiTinyMarginEnd"/>
-                <Text text="{path: 'rewards>points', formatter: '.formatter.formatPointsLabel'}" class="rewardsPoints"/>
+                <Text text="{path: 'rewards>points', targetType: 'any', formatter: '.formatter.formatPointsLabel'}" class="rewardsPoints"/>
               </HBox>
 
               <Text text="{rewards>category}" class="rewardsCategory sapUiTinyMarginBottom"/>
 
-              <HBox class="sapUiSmallMarginTop" justifyContent="Center">
+              <!-- targetType:'any' on the points part - without it the
+                   OData Int32 type auto-formats it to a display STRING
+                   ("5,000") before the formatter ever sees it, and
+                   "5,000" - 1200 is NaN, not 3800 (confirmed live). -->
+              <ObjectStatus
+                text="{parts:[{path:'rewards>points', targetType:'any'},{path:'view-rewards>/myReputation'}], formatter:'.formatter.qualificationLabel'}"
+                state="{parts:[{path:'rewards>points', targetType:'any'},{path:'view-rewards>/myReputation'}], formatter:'.formatter.qualificationState'}"
+                inverted="true"
+                class="sapUiTinyMarginBottom"/>
+
+              <HBox class="sapUiSmallMarginTop" justifyContent="Center" visible="{view-rewards>/canManage}">
                 <Button text="{i18n-rewards>editReward}" type="Default" press=".onEditReward" class="rewardsBtnSecondary sapUiTinyMarginEnd"/>
                 <Button text="{i18n-rewards>deleteReward}" type="Transparent" press=".onDeleteReward" class="rewardsDeleteBtn"/>
               </HBox>

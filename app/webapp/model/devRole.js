@@ -49,7 +49,7 @@ sap.ui.define([], function() {
   var ODATA_MODEL_NAMES = [
     "notification", "people", "knowledge", "dashboard", "rewards",
     "certifications", "admin", "depot", "hr", "reports",
-    "rapportsStage", "validation", "feed", "tags"
+    "rapportsStage", "validation", "feed", "tags", "questions"
   ];
 
   function getStoredRole() {

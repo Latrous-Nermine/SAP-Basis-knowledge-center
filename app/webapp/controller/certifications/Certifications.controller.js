@@ -36,7 +36,7 @@ sap.ui.define([
       var sID = oContext.getProperty("ID");
       var sName = oContext.getProperty("certification").name;
 
-      var oActionContext = this.oModel.bindContext("/startCertification")({
+      var oActionContext = this.bindAction(this.oModel, "/startCertification", {
         userCertificationID: sID
       });
 
@@ -62,6 +62,28 @@ sap.ui.define([
       var oContext = oEvent.getSource().getBindingContext("certifications");
       var sName = oContext ? oContext.getProperty("certification").name : "";
       MessageToast.show("Reprise de la formation : " + sName);
+    },
+
+    // Real (2026-08) - the previously-missing other half of
+    // onStartCertification: in_progress -> earned. Same action-call
+    // shape, same self-service ownership check server-side.
+    onCompleteCertification: function(oEvent) {
+      var oContext = oEvent.getSource().getBindingContext("certifications");
+      var sID = oContext.getProperty("ID");
+      var sName = oContext.getProperty("certification").name;
+
+      var oActionContext = this.bindAction(this.oModel, "/completeCertification", {
+        userCertificationID: sID
+      });
+
+      oActionContext.execute().then(function() {
+        MessageToast.show(this.getText("certificationCompleted", [sName]));
+        this.byId("earnedList").getBinding("items").refresh();
+        this.byId("inProgressList").getBinding("items").refresh();
+        this.byId("recommendedList").getBinding("items").refresh();
+      }.bind(this)).catch(function(oError) {
+        MessageBox.error((oError && oError.message) || this.getText("errorCompleteCertification"));
+      }.bind(this));
     }
   });
 });
