@@ -92,7 +92,11 @@ sap.ui.define([
       if (sType === "knowledge") {
         this.getRouter().navTo("knowledgeDetail", { itemID: sId });
       } else if (sType === "expert") {
-        this.getRouter().navTo("profile", { userID: sId });
+        // "profileDetail", not "profile" (2026-08 fix) - see
+        // Profile.controller.js#onInit: navTo("profile", {userID}) used
+        // to silently drop the param and always land on the caller's own
+        // profile instead of the clicked result's.
+        this.getRouter().navTo("profileDetail", { userID: sId });
       } else if (sType === "question") {
         // Questions live in the standalone Lot 1/3 app, not this shell -
         // same cross-app pattern already used for Rooms/Questions/Tags

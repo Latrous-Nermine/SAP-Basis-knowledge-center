@@ -3,12 +3,14 @@ sap.ui.define([
   "../../model/knowledge/formatter",
   "../../model/knowledge/VotingHelper",
   "../../model/validation/formatter",
+  "../../model/shared/TagPicker",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator",
+  "sap/ui/model/json/JSONModel",
   "sap/ui/core/Fragment",
   "sap/m/MessageToast",
   "sap/m/MessageBox"
-], function(BaseController, formatter, VotingHelper, validationFormatter, Filter, FilterOperator, Fragment, MessageToast, MessageBox) {
+], function(BaseController, formatter, VotingHelper, validationFormatter, TagPicker, Filter, FilterOperator, JSONModel, Fragment, MessageToast, MessageBox) {
   "use strict";
 
   var CATEGORIES = [
@@ -76,6 +78,7 @@ sap.ui.define([
       this.oModel = this.getOwnerComponent().getModel("knowledge");
       this.oPeopleModel = this.getOwnerComponent().getModel("people");
       this.oValidationModel = this.getOwnerComponent().getModel("validation");
+      this.oModelTags = this.getOwnerComponent().getModel("tags");
       formatter.setResourceBundle(this.getResourceBundle());
 
       // "Contenu à valider" section (2026-08, Manager only) reuses
@@ -232,7 +235,21 @@ sap.ui.define([
         aCommonFilters.push(new Filter("category", FilterOperator.EQ, this._sActiveCategory));
       }
       if (this._sSearchQuery.trim()) {
-        aCommonFilters.push(new Filter("title", FilterOperator.Contains, this._sSearchQuery.trim()));
+        var sQuery = this._sSearchQuery.trim();
+        // Matches the title OR any linked tag's name - one search box
+        // covers both, rather than a second dedicated tag-filter control.
+        aCommonFilters.push(new Filter({
+          filters: [
+            new Filter("title", FilterOperator.Contains, sQuery),
+            new Filter({
+              path: "tags",
+              operator: "Any",
+              variable: "t",
+              condition: new Filter("t/tag/name", FilterOperator.Contains, sQuery)
+            })
+          ],
+          and: false
+        }));
       }
 
       var aMyFilters = [this._myKnowledgeOwnershipFilter()].concat(aCommonFilters);
@@ -280,12 +297,19 @@ sap.ui.define([
 
     onContribute: function() {
       if (!this._pDialog) {
+        // Dedicated JSONModel for the shared TagPicker fragment, set as
+        // THIS DIALOG's own default (unnamed) model - kept separate from
+        // view-knowledge so it can't collide with that model's existing
+        // {view-knowledge>...} prefixed bindings elsewhere in the fragment.
+        this._oTagPickerModel = new JSONModel({ tags: [], suggestions: [] });
         this._pDialog = Fragment.load({
           id: this.getView().getId(),
           name: "aymax.hub.view.knowledge.CreateItemDialog",
           controller: this
         }).then(function(oDialog) {
+          oDialog.setModel(this._oTagPickerModel);
           this.getView().addDependent(oDialog);
+          TagPicker.addFreeTextValidator(this.byId("tagPickerInput"));
           return oDialog;
         }.bind(this));
       }
@@ -293,11 +317,34 @@ sap.ui.define([
         title: "", category: "article", excerpt: "", content: "",
         pendingAttachments: [], uploading: false
       });
+      this._oTagPickerModel.setData({ tags: [], suggestions: [] });
+      var oTagInput = this.byId("tagPickerInput");
+      if (oTagInput) oTagInput.removeAllTokens();
+
+      if (!this._aAllTags) {
+        TagPicker.loadAllTags(this.oModelTags).then(function(aAllTags) {
+          this._aAllTags = aAllTags;
+          this._oTagPickerModel.setProperty("/suggestions", TagPicker.filterSuggestions(aAllTags, ""));
+        }.bind(this));
+      } else {
+        this._oTagPickerModel.setProperty("/suggestions", TagPicker.filterSuggestions(this._aAllTags, ""));
+      }
+
       this._pDialog.then(function(oDialog) { oDialog.open(); });
     },
 
     onCancelNewItem: function() {
       this._pDialog.then(function(oDialog) { oDialog.close(); });
+    },
+
+    onTagPickerTokenUpdate: function(oEvent) {
+      var aTags = TagPicker.applyTokenUpdate(oEvent, this._oTagPickerModel.getProperty("/tags"));
+      this._oTagPickerModel.setProperty("/tags", aTags);
+    },
+
+    onTagPickerLiveChange: function(oEvent) {
+      var sValue = oEvent.getParameter("value");
+      this._oTagPickerModel.setProperty("/suggestions", TagPicker.filterSuggestions(this._aAllTags || [], sValue));
     },
 
     // Client-side check only (UX, avoids a round-trip for an obviously
@@ -353,8 +400,13 @@ sap.ui.define([
 
       oContext.created().then(function() {
         var sItemID = oContext.getProperty("ID");
-        return this._uploadPendingAttachments(sItemID, oNewItem.pendingAttachments || []);
+        var aTags = this._oTagPickerModel.getProperty("/tags");
+        return Promise.all([
+          this._uploadPendingAttachments(sItemID, oNewItem.pendingAttachments || []),
+          TagPicker.linkTags(this.oModelTags, "/addTagToItem", { itemID: sItemID }, aTags)
+        ]);
       }.bind(this)).then(function() {
+        this._aAllTags = null; // usageCount changed - reload next time the dialog opens
         MessageToast.show(this.getText("newItemCreated"));
         this._pDialog.then(function(oDialog) { oDialog.close(); });
         this._applyFilters();

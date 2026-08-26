@@ -127,7 +127,10 @@ sap.ui.define([
             { label: oBundle.getText("teamActiveEmployees"), value: m.activeEmployees, unit: "", isFirst: true, icon: "sap-icon://group" },
             { label: oBundle.getText("teamContributions"), value: m.contributions, unit: "", isFirst: false, icon: "sap-icon://document-text" },
             { label: oBundle.getText("teamPendingValidations"), value: m.pendingValidations, unit: "", isFirst: false, icon: "sap-icon://activity-items" },
-            { label: oBundle.getText("teamTopContributor"), value: m.topContributor, unit: "", isFirst: false, icon: "sap-icon://person-placeholder" }
+            // The only non-numeric KPI value across every role (a person's
+            // name) - isText drives the card template to render it as a
+            // name, not a huge NumericHeader-style digit.
+            { label: oBundle.getText("teamTopContributor"), value: m.topContributor || oBundle.getText("teamTopContributorEmpty"), unit: "", isFirst: false, isText: true, icon: "sap-icon://person-placeholder" }
           ];
         }
         case "HR": {
@@ -266,7 +269,11 @@ sap.ui.define([
 
     onNavToExpertProfile: function(oEvent) {
       var sUserID = oEvent.getSource().getBindingContext("view-dashboard").getProperty("userID");
-      if (sUserID) this.getRouter().navTo("profile", { userID: sUserID });
+      // "profileDetail", not "profile" (2026-08 fix) - see
+      // Profile.controller.js#onInit: navTo("profile", {userID}) used to
+      // silently drop the param and always land on the caller's own
+      // profile instead of the clicked expert's.
+      if (sUserID) this.getRouter().navTo("profileDetail", { userID: sUserID });
     },
 
     onNavToUsers: function() {
@@ -279,10 +286,35 @@ sap.ui.define([
       window.location.href = "/feed/webapp/index.html";
     },
 
-    // Rooms has no standalone management page in this app yet - a real,
-    // honest message rather than a dead link.
-    onNavToRoom: function() {
-      MessageToast.show(this.getText("comingSoon"));
+    // Rooms has no page in THIS app, but a real one exists in the
+    // standalone Lot 3 app (app/feed/webapp, route rooms/{roomId}) -
+    // roomID is already in the row data (RoomProvider#getRoomActivity),
+    // just never read. Same cross-app redirect pattern as onNavToFeed
+    // above. 2026-08 fix: this row was type="Navigation" (looks
+    // clickable, chevron and all) but only ever showed a "coming soon"
+    // toast - a real destination existed the whole time.
+    onNavToRoom: function(oEvent) {
+      var oContext = oEvent.getSource().getBindingContext("view-dashboard");
+      var sRoomID = oContext && oContext.getProperty("roomID");
+      if (!sRoomID) {
+        MessageToast.show(this.getText("comingSoon"));
+        return;
+      }
+      window.location.href = "/feed/webapp/index.html#/rooms/" + sRoomID;
+    },
+
+    // Same cross-app redirect pattern as onNavToRoom above - questionID
+    // is already in the row data (QuestionProvider#getQuestionsMonitoring),
+    // this row just wasn't clickable at all yet (no type="Navigation",
+    // no press handler, unlike Room Activity's row).
+    onNavToQuestion: function(oEvent) {
+      var oContext = oEvent.getSource().getBindingContext("view-dashboard");
+      var sQuestionID = oContext && oContext.getProperty("questionID");
+      if (!sQuestionID) {
+        MessageToast.show(this.getText("comingSoon"));
+        return;
+      }
+      window.location.href = "/feed/webapp/index.html#/questions/" + sQuestionID;
     },
 
     onNavToRewards: function() {

@@ -33,21 +33,61 @@
              after getDashboard() resolves, so this markup never changes
              per role - see Dashboard.controller.js#_buildKpis.
 
-             HBox with flex:1 1 0 tiles (.dashboardKpiTile), NOT
-             GridContainer: every other row on this page uses this exact
-             primitive, which by flexbox definition always fills the full
-             row width - GridContainer's fixed-size auto-fill tiles do
-             not, and were leaving 260-540px of dead space on the right
-             depending on how many KPIs a role has, the single biggest
-             cause of rows not sharing the same right boundary. -->
+             Still an HBox in markup (avoids re-templating the whole
+             items= aggregation), but .dashboardKpiGrid overrides it to
+             a real CSS Grid (2026-08, matching Profile's own
+             profileKpiGrid) - flex's max-width:280px only ever capped
+             the largest tile, it never forced narrower ones to actually
+             match it, so tiles weren't truly equal-width the way a grid
+             makes them. auto-fit/minmax, not a fixed column count like
+             Profile's (always exactly 4 cards): this row's KPI count
+             varies by role (3 for HR/Admin, 4 for Manager/Employee), and
+             a hard "4" would leave a blank cell for the 3-KPI roles -
+             sap.f.GridContainer (the actual control, not this CSS
+             override) was tried and reverted earlier for the same
+             "leaves dead space" reason, still avoided here. -->
+        <!-- card:NumericHeader was used for every KPI including Manager's
+             "Top contributeur", whose value is a person's NAME - rendered
+             at NumericHeader's large digit-style font, that read as an
+             oversized, awkward digit rather than a name. A custom
+             icon+value content row (below) replaces NumericHeader
+             entirely so every tile shares one real height regardless of
+             value type, and isText (see Dashboard.controller.js#_buildKpis)
+             picks the right font treatment instead of the wrong control. -->
+        <!-- Every tile styled identically now (2026-08 - previously the
+             first tile got a gradient emphasis via a :first-child CSS
+             selector; removed per explicit request, all four tiles now
+             match Profile's own plain-white KPI card exactly, no
+             position-based exception).
+
+             Two Text controls + visible=, not one Text with a dynamic
+             class= (2026-08): confirmed via DOM inspection that NEITHER
+             an inline ternary (class="{= isText ? 'x' : 'y' }") NOR a
+             formatter-bound class= (class="{path:'isText',
+             formatter:'.formatter.kpiValueClass'}") ever actually applied
+             either class here - 0 matches for both, every time, on every
+             tile. class= on this control does not reliably support any
+             dynamic binding, only a static literal string - visible= is
+             the mechanism already proven reliable elsewhere on this exact
+             page (see the empty-state blocks in ManagerDashboard.fragment.xml). -->
         <HBox class="dashboardKpiGrid dashboardGap16" wrap="Wrap" width="100%" items="{view-dashboard>/kpis}">
-          <f:Card class="dashboardKpiCard dashboardKpiTile {= ${view-dashboard>isFirst} ? 'dashboardKpiCardEmphasized' : '' }">
-            <f:layoutData>
-              <FlexItemData growFactor="1" shrinkFactor="1" baseSize="200px" maxWidth="280px"/>
-            </f:layoutData>
+          <f:Card class="dashboardKpiCard dashboardKpiTile">
             <f:header>
-              <card:NumericHeader title="{view-dashboard>label}" number="{view-dashboard>value}" unitOfMeasurement="{view-dashboard>unit}" iconSrc="{view-dashboard>icon}" iconVisible="true"/>
+              <card:Header title="{view-dashboard>label}"/>
             </f:header>
+            <f:content>
+              <HBox alignItems="Center" class="dashboardKpiValueRow">
+                <core:Icon src="{view-dashboard>icon}" class="dashboardKpiIcon"/>
+                <Text
+                  text="{parts:[{path:'view-dashboard>value'},{path:'view-dashboard>unit'}], formatter:'.formatter.kpiValueText'}"
+                  class="dashboardKpiValueNumber"
+                  visible="{= !${view-dashboard>isText} }"/>
+                <Text
+                  text="{parts:[{path:'view-dashboard>value'},{path:'view-dashboard>unit'}], formatter:'.formatter.kpiValueText'}"
+                  class="dashboardKpiValueText"
+                  visible="{= !!${view-dashboard>isText} }"/>
+              </HBox>
+            </f:content>
           </f:Card>
         </HBox>
 

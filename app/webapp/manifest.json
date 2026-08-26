@@ -121,7 +121,8 @@
       "routes": [
         { "pattern": ["", "dashboard"], "name": "dashboard", "target": "dashboard" },
         { "pattern": "notifications", "name": "notifications", "target": "notifications" },
-        { "pattern": ["profile", "profile/{userID}"], "name": "profile", "target": "profile" },
+        { "pattern": "profile", "name": "profile", "target": "profile" },
+        { "pattern": "profile/{userID}", "name": "profileDetail", "target": "profile" },
         { "pattern": "experts", "name": "expertsList", "target": "expertsList" },
         { "pattern": "knowledge", "name": "knowledgeList", "target": "knowledgeList" },
         { "pattern": "knowledge/{itemID}", "name": "knowledgeDetail", "target": "knowledgeDetail" },

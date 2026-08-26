@@ -17,18 +17,23 @@ export default class ManagerDashboardStrategy {
     const manager = await SELECT.one.from(UserProfiles).columns('department').where({ userID: req.user.id });
     const department = manager && manager.department;
 
-    const [teamMembers, topContributors, pendingReviews, questionsMonitoring, roomActivity] = await Promise.all([
-      department ? this.repository.peopleInDepartment(department) : Promise.resolve([]),
-      department ? this.repository.topContributors(1, department) : Promise.resolve([]),
-      this.validationProvider.getPendingReviews(3),
-      this.questionProvider.getQuestionsMonitoring(3),
-      this.roomProvider.getRoomActivity(3)
-    ]);
-
+    // teamMembers/userIDs resolved first (not folded into the Promise.all
+    // below): ValidationProvider/QuestionProvider need the actual user ID
+    // list, not the department name - author_userID IN (...) is this
+    // codebase's own proven pattern for "people in a department" (see
+    // DashboardRepository#contributionCountsForUsers/skillsForUsers),
+    // not a dotted association path in .where() (tried first, silently
+    // matched zero rows: CAP's plain-object query filter maps keys to
+    // literal column names, it does not walk associations that way).
+    const teamMembers = department ? await this.repository.peopleInDepartment(department) : [];
     const activeEmployees = teamMembers.filter((m) => m.isActive).length;
     const userIDs = teamMembers.map((m) => m.userID);
 
-    const [skills, contributionRows] = await Promise.all([
+    const [topContributors, pendingReviews, questionsMonitoring, roomActivity, skills, contributionRows] = await Promise.all([
+      department ? this.repository.topContributors(1, department) : Promise.resolve([]),
+      this.validationProvider.getPendingReviews(3, userIDs),
+      this.questionProvider.getQuestionsMonitoring(3, userIDs),
+      this.roomProvider.getRoomActivity(3),
       this.repository.skillsForUsers(userIDs),
       this.repository.contributionCountsForUsers(userIDs)
     ]);
@@ -36,8 +41,6 @@ export default class ManagerDashboardStrategy {
     return {
       activeEmployees,
       contributions: contributionRows.length,
-      // Preview-list count, not a true total - ValidationProvider is a
-      // stub (TODO-INTEGRATION.md I-02) until Lot 3's queue exists.
       pendingValidations: pendingReviews.totalCount,
       topContributor: (topContributors[0] && topContributors[0].displayName) || '',
       pendingReviews: pendingReviews.items,

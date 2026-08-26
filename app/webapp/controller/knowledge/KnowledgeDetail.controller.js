@@ -57,7 +57,7 @@ sap.ui.define([
         path: "/KnowledgeItems('" + sItemID + "')",
         model: "knowledge",
         parameters: {
-          $expand: "contributors,comments,attachments"
+          $expand: "contributors,comments,attachments,tags($expand=tag($select=name,color))"
         }
       });
 

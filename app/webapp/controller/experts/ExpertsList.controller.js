@@ -252,7 +252,13 @@ sap.ui.define([
       // by the time Experts migrated, so this should have been navTo() from
       // the start rather than a full-page redirect to the old standalone
       // copy - caught while wiring the same pattern for Dashboard.
-      this.getRouter().navTo("profile", { userID: sUserID });
+      // "profileDetail", not "profile" (2026-08 fix): the route used to be
+      // one "profile" name covering both patterns
+      // (["profile","profile/{userID}"]), and navTo() with a userID
+      // silently built the param-less URL instead - every card click
+      // landed back on the caller's own profile, never the one clicked
+      // (see Profile.controller.js#onInit for the full explanation).
+      this.getRouter().navTo("profileDetail", { userID: sUserID });
     },
 
     onContactPress: function(oEvent) {

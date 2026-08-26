@@ -44,9 +44,10 @@ service DashboardService {
   }
 
   type QuestionStatus {
-    title    : String(300);
-    tagLabel : String(40);
-    tagState : String(20);
+    questionID : UUID;
+    title      : String(300);
+    tagLabel   : String(40);
+    tagState   : String(20);
   }
 
   type RoomActivity {
