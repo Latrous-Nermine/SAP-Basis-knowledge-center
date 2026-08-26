@@ -7,7 +7,7 @@
 
   <VBox fitContainer="true">
     <HBox class="aymaxHeader" alignItems="Center" justifyContent="SpaceBetween">
-      <HBox alignItems="Center">
+      <HBox alignItems="Center" class="aymaxHeaderLeft">
         <HBox class="aymaxLogo" alignItems="Center">
           <Avatar displaySize="XS" initials="A" class="sapUiTinyMarginEnd aymaxLogoAvatar"/>
           <VBox>

@@ -73,10 +73,15 @@
           </HBox>
           <List
             id="myKnowledgeList"
-            items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors' }, sorter: { path: 'createdAt', descending: true } }"
-            noDataText="{i18n-knowledge>noMyKnowledgeItems}"
+            items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors,tags($expand=tag($select=name,color))' }, sorter: { path: 'createdAt', descending: true } }"
             showSeparators="None"
             class="sapUiNoContentPadding">
+            <noData>
+              <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                <core:Icon src="sap-icon://documents" class="aymaxEmptyStateIcon"/>
+                <Text text="{i18n-knowledge>noMyKnowledgeItems}" class="aymaxEmptyStateText"/>
+              </VBox>
+            </noData>
             <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
           </List>
         </VBox>
@@ -105,10 +110,15 @@
                re-sort whatever the server returns and undo it. -->
           <List
             id="communityKnowledgeList"
-            items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors' } }"
-            noDataText="{i18n-knowledge>noCommunityItems}"
+            items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors,tags($expand=tag($select=name,color))' } }"
             showSeparators="None"
             class="sapUiNoContentPadding">
+            <noData>
+              <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                <core:Icon src="sap-icon://group" class="aymaxEmptyStateIcon"/>
+                <Text text="{i18n-knowledge>noCommunityItems}" class="aymaxEmptyStateText"/>
+              </VBox>
+            </noData>
             <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
           </List>
         </VBox>

@@ -2,12 +2,24 @@
    Structural only (radius/shadow/spacing/motion) - no color overrides here;
    semantic colour still comes from ObjectStatus states per CLAUDE.md §10. */
 
+/* Also reused (unmodified) by Search and Basis Academy - padding aligned to
+   .aymaxPageContent's uniform 24px on every side (2026-08 unification pass):
+   was 0 32px, no top/bottom padding at all, the one visible gap between
+   this container and the shared standard. */
 .knowledgeContentContainer {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 24px;
   box-sizing: border-box;
   width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .knowledgeContentContainer { padding-left: 24px; padding-right: 24px; }
+}
+
+@media (max-width: 600px) {
+  .knowledgeContentContainer { padding-left: 16px; padding-right: 16px; }
 }
 
 /* Keeps the search + category row visible while the card list scrolls, styled
@@ -75,6 +87,16 @@
 .knowledgeCardMeta {
   color: var(--sapContent_LabelColor, rgba(0, 0, 0, 0.55));
   font-size: 0.8rem;
+}
+
+/* Read-only tag chips, below the title (2026-08). Wraps onto multiple
+   lines rather than the Tokenizer's default single-line + "N more"
+   collapse - a card is wide enough that a handful of tags fit fine. */
+.knowledgeCardTags {
+  flex-wrap: wrap;
+}
+.knowledgeCardTags .sapMToken {
+  font-size: 0.75rem;
 }
 
 @keyframes knowledgeCardFadeIn {

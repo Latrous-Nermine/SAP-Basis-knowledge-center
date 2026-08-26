@@ -36,6 +36,17 @@
 
   --aymax-shadow-sm: 0 1px 3px rgba(41, 54, 129, 0.08);
   --aymax-shadow-md: 0 6px 20px rgba(41, 54, 129, 0.10);
+
+  /* Added 2026-08 (unification pass) - questions.css already referenced
+     --aymax-success for resolved-vote/accepted-answer styling, but it was
+     never defined anywhere in this file, so it silently resolved to
+     nothing. Same hex as the shell's own ad hoc sapPositiveColor/
+     sapCriticalColor/sapNegativeColor fallbacks (css/dashboard/style.css,
+     css/validation/style.css) - kept in sync by hand like every other
+     token in this file. */
+  --aymax-success: #257a3e;
+  --aymax-warning: #b35c00;
+  --aymax-danger: #b00000;
 }
 
 [data-theme="sap_horizon_dark"] {

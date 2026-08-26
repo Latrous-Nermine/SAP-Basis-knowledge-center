@@ -19,6 +19,8 @@ export default class TagsHandler extends cds.ApplicationService {
     this.on('removeTagFromPost',   this._removeTagFromPost.bind(this));
     this.on('addTagToQuestion',    this._addTagToQuestion.bind(this));
     this.on('removeTagFromQuestion', this._removeTagFromQuestion.bind(this));
+    this.on('addTagToItem',        this._addTagToItem.bind(this));
+    this.on('removeTagFromItem',   this._removeTagFromItem.bind(this));
 
     // ---- FONCTIONS ----
     this.on('searchTags',    this._searchTags.bind(this));
@@ -42,7 +44,8 @@ export default class TagsHandler extends cds.ApplicationService {
     const db = cds.db;
     await Promise.all([
       db.run(DELETE.from('aymax.knowledgehub.PostTags').where({ tag_ID: tag.ID })),
-      db.run(DELETE.from('aymax.knowledgehub.QuestionTags').where({ tag_ID: tag.ID }))
+      db.run(DELETE.from('aymax.knowledgehub.QuestionTags').where({ tag_ID: tag.ID })),
+      db.run(DELETE.from('aymax.knowledgehub.KnowledgeItemTags').where({ tag_ID: tag.ID }))
     ]);
   }
 
@@ -81,7 +84,8 @@ export default class TagsHandler extends cds.ApplicationService {
     const db = cds.db;
     await Promise.all([
       db.run(DELETE.from('aymax.knowledgehub.PostTags').where({ tag_ID: tagID })),
-      db.run(DELETE.from('aymax.knowledgehub.QuestionTags').where({ tag_ID: tagID }))
+      db.run(DELETE.from('aymax.knowledgehub.QuestionTags').where({ tag_ID: tagID })),
+      db.run(DELETE.from('aymax.knowledgehub.KnowledgeItemTags').where({ tag_ID: tagID }))
     ]);
     await DELETE.from(this.entities.Tags).where({ ID: tagID });
     return true;
@@ -124,6 +128,17 @@ export default class TagsHandler extends cds.ApplicationService {
         await db.run(DELETE.from('aymax.knowledgehub.QuestionTags').where({ ID: qt.ID }));
       } else {
         await db.run(UPDATE('aymax.knowledgehub.QuestionTags').set({ tag_ID: targetTagID }).where({ ID: qt.ID }));
+      }
+    }
+
+    // Reassigner KnowledgeItemTags
+    const sourceKTags = await db.run(SELECT.from('aymax.knowledgehub.KnowledgeItemTags').where({ tag_ID: sourceTagID }));
+    for (const kt of sourceKTags) {
+      const dup = await db.run(SELECT.one.from('aymax.knowledgehub.KnowledgeItemTags').where({ tag_ID: targetTagID, item_ID: kt.item_ID }));
+      if (dup) {
+        await db.run(DELETE.from('aymax.knowledgehub.KnowledgeItemTags').where({ ID: kt.ID }));
+      } else {
+        await db.run(UPDATE('aymax.knowledgehub.KnowledgeItemTags').set({ tag_ID: targetTagID }).where({ ID: kt.ID }));
       }
     }
 
@@ -172,6 +187,26 @@ export default class TagsHandler extends cds.ApplicationService {
     const existing = await db.run(SELECT.one.from('aymax.knowledgehub.QuestionTags').where({ tag_ID: tagID, question_ID: questionID }));
     if (!existing) return false;
     await db.run(DELETE.from('aymax.knowledgehub.QuestionTags').where({ ID: existing.ID }));
+    await UPDATE(this.entities.Tags).set('usageCount -=', 1).where({ ID: tagID });
+    return true;
+  }
+
+  async _addTagToItem(req) {
+    const { tagID, itemID } = req.data;
+    const db = cds.db;
+    const existing = await db.run(SELECT.one.from('aymax.knowledgehub.KnowledgeItemTags').where({ tag_ID: tagID, item_ID: itemID }));
+    if (existing) return false;
+    await db.run(INSERT.into('aymax.knowledgehub.KnowledgeItemTags').entries({ ID: cds.utils.uuid(), tag_ID: tagID, item_ID: itemID }));
+    await UPDATE(this.entities.Tags).set('usageCount +=', 1).where({ ID: tagID });
+    return true;
+  }
+
+  async _removeTagFromItem(req) {
+    const { tagID, itemID } = req.data;
+    const db = cds.db;
+    const existing = await db.run(SELECT.one.from('aymax.knowledgehub.KnowledgeItemTags').where({ tag_ID: tagID, item_ID: itemID }));
+    if (!existing) return false;
+    await db.run(DELETE.from('aymax.knowledgehub.KnowledgeItemTags').where({ ID: existing.ID }));
     await UPDATE(this.entities.Tags).set('usageCount -=', 1).where({ ID: tagID });
     return true;
   }

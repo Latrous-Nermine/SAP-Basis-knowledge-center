@@ -1,46 +1,40 @@
-/* Admin - Lot 3, integrated from Riadh's branch. Uses its own exact
-   original hex values (not the shared --aymax-* tokens in
-   css/lot3/tokens.css) since his admin style.css was already an
-   independent hex-based palette, slightly different from the token
-   values used elsewhere - kept faithful rather than normalized, and
-   classes are admin-prefixed so this never collides with the
-   token-based .aymaxCard/.aymaxPageTitle used by other modules. */
+/* Admin - Lot 3. Was its own independent hex-based palette (Tailwind
+   grays/indigo), deliberately kept unnormalized during integration to
+   avoid merge conflicts. Converted onto the shared --aymax-* tokens
+   (css/lot3/tokens.css) as part of the 2026-08 unification pass - the
+   view now uses .aymaxPageContent/.aymaxPageTitle directly (retired the
+   duplicate adminPageContent/adminPageTitle classes), and every remaining
+   admin-prefixed rule below maps its old literal hex to the matching
+   token instead of a fresh value, so nothing here changes visually beyond
+   the disagreements the audit found (esp. the title color and icon). */
 
-.adminPageContent {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-.adminPageTitle {
-  font-size: 24px !important;
-  font-weight: 700 !important;
-  color: #111827 !important;
+.adminHeaderIcon {
+  color: var(--aymax-primary) !important;
 }
 
 .adminRoleAvatar .sapFAvatarInitialsHolder {
-  background: linear-gradient(135deg, #6366f1, #4338ca) !important;
+  background: linear-gradient(135deg, var(--aymax-primary), var(--aymax-accent)) !important;
   color: #ffffff !important;
 }
 
 .adminCard {
-  background: #ffffff !important;
-  border-radius: 12px !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
-  border: 1px solid #e5e7eb !important;
+  background: var(--aymax-surface) !important;
+  border-radius: var(--aymax-radius-md) !important;
+  box-shadow: var(--aymax-shadow-sm) !important;
+  border: 1px solid var(--aymax-border) !important;
 }
 
 .adminBoldText {
   font-weight: 600 !important;
-  color: #1f2937 !important;
+  color: var(--aymax-text) !important;
 }
 
 .adminMetaText {
-  color: #6b7280 !important;
+  color: var(--aymax-text-muted) !important;
   font-size: 13px !important;
 }
 
 .adminLabel {
   font-weight: 600 !important;
-  color: #374151 !important;
+  color: var(--aymax-text-secondary) !important;
 }

@@ -17,6 +17,15 @@
           </VBox>
         </HBox>
 
+        <!-- Same full destination list, same order, as the shared shell's
+             own header (app/webapp/view/App.view.xml) - 2026-08 polish
+             pass. This app only ever listed 8 of the shell's 19
+             destinations, which made the navbar visibly "change"
+             crossing between the two apps for the same logged-in user.
+             navKey values matching mExternalRoutes/HIDDEN_FOR_ROLE in
+             App.controller.js; feed/questions/rooms/tags stay internal
+             routes (mRoutes there), everything else redirects to the
+             shell. -->
         <HBox class="aymaxNavLinks sapUiSmallMarginBegin">
           <Button text="Tableau de bord" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="dashboard"/></customData>
@@ -27,20 +36,53 @@
           <Button text="Questions" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="questions"/></customData>
           </Button>
-          <Button text="Centre de connaissances" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="knowledge"/></customData>
-          </Button>
           <Button text="Rooms" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="rooms"/></customData>
           </Button>
           <Button text="Tags" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="tags"/></customData>
           </Button>
+          <Button text="Notifications" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="notifications"/></customData>
+          </Button>
+          <Button text="Centre de connaissances" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="knowledge"/></customData>
+          </Button>
           <Button text="Experts" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="experts"/></customData>
           </Button>
           <Button text="Profil" type="Transparent" press=".onNavTo">
             <customData><core:CustomData key="navKey" value="profile"/></customData>
+          </Button>
+          <Button text="Centre d'excellence" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="excellenceCenter"/></customData>
+          </Button>
+          <Button text="Récompenses" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="rewards"/></customData>
+          </Button>
+          <Button text="Certifications" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="certifications"/></customData>
+          </Button>
+          <Button id="navBtnAdmin" text="Administration" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="admin"/></customData>
+          </Button>
+          <Button id="navBtnDepot" text="Dépôt de projet" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="depot"/></customData>
+          </Button>
+          <Button id="navBtnHr" text="Ressources humaines" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="hr"/></customData>
+          </Button>
+          <Button text="Vue d'ensemble" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="reports"/></customData>
+          </Button>
+          <Button id="navBtnRapportsStage" text="Rapport de stage" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="rapportsStage"/></customData>
+          </Button>
+          <Button id="navBtnValidation" text="Validation" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="validation"/></customData>
+          </Button>
+          <Button text="Basis Academy" type="Transparent" press=".onNavTo">
+            <customData><core:CustomData key="navKey" value="basisAcademy"/></customData>
           </Button>
         </HBox>
       </HBox>

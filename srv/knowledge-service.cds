@@ -70,6 +70,15 @@ service KnowledgeService {
   ]
   entity KnowledgeItemTags as projection on kh.KnowledgeItemTags;
 
+  /** Tags itself (name/color/...) - not exposed anywhere else in this
+      service, so KnowledgeItemTags.tag was being silently stripped from
+      the OData metadata as a navigation property pointing outside the
+      service's own entity set ($expand=tags($expand=tag) failed with
+      "Navigation property tag does not exist"). Read-only reference data,
+      same plain unrestricted projection Feed/Rooms already use for it. */
+  @readonly
+  entity Tags as projection on kh.Tags;
+
   // CREATE (not @readonly, unlike its three siblings above): real upload
   // needs a write path. Role-gated the same as KnowledgeItems; the handler
   // additionally checks the caller is actually a contributor on the target

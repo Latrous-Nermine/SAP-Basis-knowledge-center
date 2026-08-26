@@ -7,11 +7,17 @@
   border-bottom: 1px solid var(--sapList_BorderColor, #e5e5e5);
 }
 
+/* Radius/shadow tokenized (2026-08 unification pass) - this file's own
+   header comment claimed these already matched Knowledge/Profile/
+   Dashboard's "12px radius, 0 1px 4px shadow", but that was a
+   self-invented literal value, not the actual --aymax-shadow-sm token
+   those pages use (different rgba color/blur) - now genuinely the same
+   rule, not just a similar-looking one. */
 .excellenceProjectCard {
-  border-radius: 12px;
+  border-radius: var(--aymax-radius-md);
   padding: 16px;
   margin: 8px 8px 0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--aymax-shadow-sm);
 }
 
 .excellenceMetaText {
@@ -63,15 +69,15 @@
 }
 
 .excellenceKpiCard {
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border-radius: var(--aymax-radius-md);
+  box-shadow: var(--aymax-shadow-sm);
 }
 
 .excellenceComparisonRow {
   padding: 12px 16px;
-  border-radius: 12px;
-  background: var(--sapGroup_ContentBackground, #ffffff);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border-radius: var(--aymax-radius-md);
+  background: var(--aymax-surface);
+  box-shadow: var(--aymax-shadow-sm);
 }
 
 /* Phase detail (Section 10/14/21) - same values as Knowledge Detail's
@@ -82,10 +88,10 @@
 }
 
 .excellenceDiscussionCard {
-  border-radius: 10px;
+  border-radius: var(--aymax-radius-md);
   padding: 12px 14px;
   margin-bottom: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--aymax-shadow-sm);
 }
 
 .excellenceDiscussionComposer {

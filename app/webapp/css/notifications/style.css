@@ -2,6 +2,10 @@
    (radius/shadow/spacing) - no color overrides; semantic colour still comes
    from NotificationListItem's own unread/priority states. */
 
+.notificationsHeaderActions {
+  gap: 8px;
+}
+
 /* Border/radius/shadow aligned to .aymaxCard (css/lot3/tokens.css),
    2026-08 polish pass. */
 .notificationsCard {

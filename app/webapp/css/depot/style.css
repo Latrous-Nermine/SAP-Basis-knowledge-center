@@ -41,9 +41,9 @@
 }
 
 .depotDeleteBtn .sapMBtnInner {
-  color: #ef4444 !important;
+  color: var(--aymax-danger) !important;
 }
 
 .depotDeleteBtn .sapMBtnInner:hover {
-  background: #fef2f2 !important;
+  background: color-mix(in srgb, var(--aymax-danger) 8%, transparent) !important;
 }

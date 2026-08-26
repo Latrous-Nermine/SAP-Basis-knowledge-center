@@ -23,6 +23,18 @@
         </HBox>
       </HBox>
       <Title text="{knowledge>title}" wrapping="true"/>
+      <!-- No visible= binding: "tags" is a collection (KnowledgeItemTags
+           composition) and an ODataPropertyBinding can't resolve a
+           collection path as a primitive to feed a formatter/expression
+           ("Accessed value is not primitive") - same structural limit
+           already hit and fixed the same way for Feed's own tags/documents
+           bindings. An empty Tokenizer renders with negligible height. -->
+      <Tokenizer
+        editable="false"
+        tokens="{path:'knowledge>tags', templateShareable:'false'}"
+        class="knowledgeCardTags">
+        <Token text="{knowledge>tag/name}"/>
+      </Tokenizer>
       <Text text="{knowledge>excerpt}" maxLines="3" class="knowledgeCardExcerpt"/>
       <Text
         text="{parts: [{path:'knowledge>contributors'}, {path:'knowledge>createdAt', targetType:'any'}], formatter:'.formatter.metaLine'}"

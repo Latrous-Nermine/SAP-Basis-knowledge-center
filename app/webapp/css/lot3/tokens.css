@@ -29,6 +29,15 @@
 
   --aymax-shadow-sm: 0 1px 3px rgba(41, 54, 129, 0.08);
   --aymax-shadow-md: 0 6px 20px rgba(41, 54, 129, 0.10);
+
+  /* Added 2026-08 (unification pass) - mirrors the standalone app's own
+     tokens.css (app/feed/webapp/css/tokens.css), which needed these to fix
+     an undefined --aymax-success reference. Same hex as this file's own ad
+     hoc sapPositiveColor/sapCriticalColor/sapNegativeColor fallbacks
+     already used in dashboard/style.css and validation/style.css. */
+  --aymax-success: #257a3e;
+  --aymax-warning: #b35c00;
+  --aymax-danger: #b00000;
 }
 
 [data-theme="sap_horizon_dark"] {
@@ -55,6 +64,20 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Promoted from Dashboard's and Experts' own, previously-duplicated
+   breakpoints (2026-08 unification pass) - every consumer of this shared
+   container now gets the same responsive padding instead of each module
+   redeclaring it slightly differently. */
+@media (max-width: 1024px) {
+  .aymaxPageContent { padding-left: 24px; padding-right: 24px; }
+}
+
+@media (max-width: 600px) {
+  .aymaxPageContent { padding-left: 16px; padding-right: 16px; }
 }
 
 .aymaxPageTitle {
@@ -85,6 +108,44 @@
   margin-bottom: 4px;
   padding: 4px 10px;
 }
+
+/* Shared empty-state block - icon + centered muted text, replacing a bare
+   noDataText row. Promoted from Dashboard's own .dashboardEmptyState*
+   (css/dashboard/style.css, 2026-08 polish pass) which stays as-is since it
+   already works there (JSON view-model array, visible= on .length); this is
+   the version for real OData-bound lists, wired via each List's <noData>
+   aggregation instead of a length binding (an OData collection binding
+   can't reliably back a visible= expression - see project memory). */
+.aymaxEmptyState {
+  padding: 20px 16px;
+  gap: 8px;
+}
+
+.aymaxEmptyStateIcon {
+  font-size: 24px;
+  color: var(--aymax-text-muted);
+  opacity: 0.6;
+}
+
+.aymaxEmptyStateText {
+  font-size: 13px;
+  color: var(--aymax-text-muted);
+  text-align: center;
+}
+
+/* Icon color utilities (2026-08 unification pass) - sap.ui.core.Icon's
+   `color` property is typed sap.ui.core.CSSColor, which rejects a raw
+   var(...) string set as a literal XML attribute (confirmed via console:
+   "var(--aymax-primary)" is not of type sap.ui.core.CSSColor nor of type
+   sap.ui.core.IconColor - found live in Knowledge, Validation, Depot,
+   Rewards and HR, all silently rendering unstyled/default-black icons).
+   These classes are the fix: set color via real CSS instead of the XML
+   property, same mechanism already used correctly by Dashboard's
+   .dashboardKpiIcon. Use instead of color="var(--aymax-*)" everywhere. */
+.aymaxIconPrimary { color: var(--aymax-primary) !important; }
+.aymaxIconAccent { color: var(--aymax-accent) !important; }
+.aymaxIconMuted { color: var(--aymax-text-muted) !important; }
+.aymaxIconFaint { color: var(--aymax-neutral-400) !important; }
 
 .aymaxTagAccent {
   background: color-mix(in srgb, var(--aymax-accent) 10%, transparent) !important;

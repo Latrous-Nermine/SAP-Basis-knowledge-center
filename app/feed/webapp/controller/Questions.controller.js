@@ -4,9 +4,11 @@ sap.ui.define([
   "sap/ui/core/Fragment",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator",
+  "sap/ui/model/json/JSONModel",
   "aymax/feed/service/ODataService",
-  "aymax/feed/model/formatter"
-], function(Controller, MessageToast, Fragment, Filter, FilterOperator, ODataService, formatter) {
+  "aymax/feed/model/formatter",
+  "aymax/feed/model/TagPicker"
+], function(Controller, MessageToast, Fragment, Filter, FilterOperator, JSONModel, ODataService, formatter, TagPicker) {
   "use strict";
 
   return Controller.extend("aymax.feed.controller.Questions", {
@@ -19,6 +21,7 @@ sap.ui.define([
     onInit: function() {
       this.oModel     = this.getOwnerComponent().getModel("questions");
       this.oViewModel = this.getOwnerComponent().getModel("view");
+      this.oModelTags = this.getOwnerComponent().getModel("tags");
     },
 
     // ============================================================
@@ -27,16 +30,46 @@ sap.ui.define([
     onCreateQuestion: function() {
       this.oViewModel.setProperty("/questionDialog", { title: "", content: "", roomID: "" });
       if (!this._pQuestionDialog) {
+        // Dedicated JSONModel for the shared TagPicker fragment, set as
+        // THIS DIALOG's own default (unnamed) model - kept separate from
+        // "view" so it can't collide with that model's existing
+        // {view>...} prefixed bindings elsewhere in the fragment.
+        this._oTagPickerModel = new JSONModel({ tags: [], suggestions: [] });
         this._pQuestionDialog = Fragment.load({
           id:         this.getView().getId(),
           name:       "aymax.feed.view.fragments.QuestionCreateDialog",
           controller: this
         }).then(function(oDialog) {
+          oDialog.setModel(this._oTagPickerModel);
           this.getView().addDependent(oDialog);
+          TagPicker.addFreeTextValidator(this.byId("tagPickerInput"));
           return oDialog;
         }.bind(this));
       }
+      this._oTagPickerModel.setData({ tags: [], suggestions: [] });
+      var oTagInput = this.byId("tagPickerInput");
+      if (oTagInput) oTagInput.removeAllTokens();
+
+      if (!this._aAllTags) {
+        TagPicker.loadAllTags(this.oModelTags).then(function(aAllTags) {
+          this._aAllTags = aAllTags;
+          this._oTagPickerModel.setProperty("/suggestions", TagPicker.filterSuggestions(aAllTags, ""));
+        }.bind(this));
+      } else {
+        this._oTagPickerModel.setProperty("/suggestions", TagPicker.filterSuggestions(this._aAllTags, ""));
+      }
+
       this._pQuestionDialog.then(function(oDialog) { oDialog.open(); });
+    },
+
+    onTagPickerTokenUpdate: function(oEvent) {
+      var aTags = TagPicker.applyTokenUpdate(oEvent, this._oTagPickerModel.getProperty("/tags"));
+      this._oTagPickerModel.setProperty("/tags", aTags);
+    },
+
+    onTagPickerLiveChange: function(oEvent) {
+      var sValue = oEvent.getParameter("value");
+      this._oTagPickerModel.setProperty("/suggestions", TagPicker.filterSuggestions(this._aAllTags || [], sValue));
     },
 
     onConfirmCreateQuestion: function() {
@@ -46,13 +79,16 @@ sap.ui.define([
         return;
       }
 
-      ODataService.callAction(this.oModel, "/createQuestion", {
-        title:    oData.title.trim(),
-        content:  oData.content.trim(),
-        roomID:   oData.roomID || null,
-        tagIDs:   [],
-        topicIDs: []
-      }).then(function() {
+      TagPicker.resolveTagIDs(this.oModelTags, this._oTagPickerModel.getProperty("/tags")).then(function(aTagIDs) {
+        return ODataService.callAction(this.oModel, "/createQuestion", {
+          title:    oData.title.trim(),
+          content:  oData.content.trim(),
+          roomID:   oData.roomID || null,
+          tagIDs:   aTagIDs,
+          topicIDs: []
+        });
+      }.bind(this)).then(function() {
+        this._aAllTags = null; // usageCount changed - reload next time the dialog opens
         MessageToast.show("Question publiée !");
         this.onCancelQuestionDialog();
         this.byId("questionsList").getBinding("items").refresh();
@@ -162,15 +198,21 @@ sap.ui.define([
         }));
       }
 
-      // Filtre tag — recherche dans les tags associés à la question
-      // (filtrage côté client sur la propriété dénormalisée, ou côté serveur si disponible)
+      // Filtre tag — vrai filtre serveur sur les tags associés (lambda Any,
+      // même mécanisme que contributors/any(...) ailleurs dans ce projet),
+      // plus le fallback titre/contenu pour rester tolérant si l'utilisateur
+      // tape un mot qui n'est pas exactement un nom de tag.
       if (this._sActiveTag) {
-        // Filtre sur le titre/contenu contenant le nom du tag comme fallback client
-        // En production : utiliser $filter=tags/any(t: contains(t/tag/name, '...'))
         aFilters.push(new Filter({
           filters: [
             new Filter("title",   FilterOperator.Contains, this._sActiveTag),
-            new Filter("content", FilterOperator.Contains, this._sActiveTag)
+            new Filter("content", FilterOperator.Contains, this._sActiveTag),
+            new Filter({
+              path: "tags",
+              operator: "Any",
+              variable: "t",
+              condition: new Filter("t/tag/name", FilterOperator.Contains, this._sActiveTag)
+            })
           ],
           and: false
         }));

@@ -47,7 +47,17 @@ sap.ui.define([
       this.setModel(oViewModel, "view");
 
       // 5. Charger le profil utilisateur depuis le backend
-      this._loadCurrentUser();
+      this._pCurrentUserLoaded = this._loadCurrentUser();
+    },
+
+    // Exposed so App.controller.js's nav role-gating (2026-08 polish
+    // pass, matching the shared shell's own HIDDEN_FOR_ROLE logic) can
+    // await the SAME already-in-flight profile fetch instead of reading
+    // /currentUser/role synchronously at its own onInit - which used to
+    // always see the JSONModel's initial "Employee" default, since this
+    // async call had not resolved yet at that point.
+    getCurrentUserLoadedPromise: function() {
+      return this._pCurrentUserLoaded || Promise.resolve();
     },
 
     _loadCurrentUser: function() {
@@ -56,11 +66,11 @@ sap.ui.define([
 
       if (!oModel) {
         console.warn("OData model not ready yet");
-        return;
+        return Promise.resolve();
       }
 
       var oContext = oModel.bindContext("/getCurrentUserProfile()");
-      oContext.requestObject().then(function(oData) {
+      return oContext.requestObject().then(function(oData) {
         if (oData) {
           oViewModel.setProperty("/currentUser", {
             userID: oData.userID || "",

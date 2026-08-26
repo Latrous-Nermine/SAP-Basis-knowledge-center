@@ -1,0 +1,26 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <!-- Included (spliced) into a hosting dialog via <core:Fragment
+       fragmentName="aymax.hub.view.shared.fragments.TagPicker" type="XML"/>
+       - inherits whatever model the host set as ITS OWN default (unnamed)
+       model, so every host must give the fragment a dedicated JSONModel
+       with /tags and /suggestions (see model/shared/TagPicker.js), kept
+       separate from the host's own named view model (e.g. view-knowledge)
+       to avoid colliding with its existing prefixed bindings. -->
+  <MultiInput
+    id="tagPickerInput"
+    placeholder="Tapez un tag et appuyez sur Entrée (ex: SAP, ABAP)..."
+    showSuggestion="true"
+    suggestionItems="{/suggestions}"
+    maxTokens="15"
+    width="100%"
+    tokenUpdate=".onTagPickerTokenUpdate"
+    liveChange=".onTagPickerLiveChange"
+    class="aymaxTagPickerInput">
+    <suggestionItems>
+      <core:Item key="{ID}" text="{name}"/>
+    </suggestionItems>
+  </MultiInput>
+</core:FragmentDefinition>

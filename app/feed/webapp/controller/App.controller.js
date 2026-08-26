@@ -12,25 +12,55 @@ sap.ui.define([
     "topics": "topics"
   };
 
-  // These four used to be real routes in THIS app before Lot 2 existed
-  // (hence the "Page en cours de développement" stub below), but Lot 2
-  // was actually built into the separate shared shell (app/webapp), not
+  // These used to be real routes in THIS app before Lot 2 existed (hence
+  // the "Page en cours de développement" stub below), but Lot 2 was
+  // actually built into the separate shared shell (app/webapp), not
   // here - clicking these from any page in this app (Rooms/Questions/
   // Tags included) redirects there instead of showing a message about
   // a page that, by now, genuinely exists.
+  // 2026-08 polish pass: extended from 4 entries to the shell's full set
+  // (app/webapp/controller/App.controller.js's own mRoutes) - this
+  // header only ever listed feed/questions/knowledge/rooms/tags/experts/
+  // profile, 11 fewer destinations than the shell's header lists for the
+  // exact same logged-in user, which is what made the navbar look like
+  // it "changes" crossing between the two apps rather than looking like
+  // one consistent site.
   var mExternalRoutes = {
     "dashboard": "/webapp/index.html#/dashboard",
+    "notifications": "/webapp/index.html#/notifications",
     "knowledge": "/webapp/index.html#/knowledge",
     "experts": "/webapp/index.html#/experts",
-    "profile": "/webapp/index.html#/profile"
+    "profile": "/webapp/index.html#/profile",
+    "excellenceCenter": "/webapp/index.html#/excellenceCenter",
+    "rewards": "/webapp/index.html#/rewards",
+    "certifications": "/webapp/index.html#/certifications",
+    "admin": "/webapp/index.html#/admin",
+    "depot": "/webapp/index.html#/depot",
+    "hr": "/webapp/index.html#/hr",
+    "reports": "/webapp/index.html#/reports",
+    "rapportsStage": "/webapp/index.html#/rapportsStage",
+    "validation": "/webapp/index.html#/validation",
+    "basisAcademy": "/webapp/index.html#/basisAcademy"
   };
 
-  var mRoleLabels = {
-    "Administrator": "Administrateur",
-    "Manager": "Manager",
-    "Employee": "Employé",
-    "Intern": "Stagiaire",
-    "HR": "RH"
+  // Same permission matrix as the shell (app/webapp/controller/
+  // App.controller.js#HIDDEN_FOR_ROLE) - both headers must agree on what
+  // a given role can see, or the nav visibly differs depending on which
+  // of the two apps you happen to be standing in.
+  var HIDDEN_FOR_ROLE = {
+    Employee: ["hr", "rapportsStage", "depot", "validation", "admin"],
+    Intern: ["hr", "validation", "admin"],
+    Manager: ["admin", "validation"],
+    HR: [],
+    Administrator: []
+  };
+
+  var NAVKEY_TO_BUTTON_ID = {
+    hr: "navBtnHr",
+    rapportsStage: "navBtnRapportsStage",
+    depot: "navBtnDepot",
+    validation: "navBtnValidation",
+    admin: "navBtnAdmin"
   };
 
   return Controller.extend("aymax.feed.controller.App", {
@@ -38,13 +68,26 @@ sap.ui.define([
     onInit: function() {
       var oRouter = this.getOwnerComponent().getRouter();
       oRouter.attachRouteMatched(this._onRouteMatched, this);
-      this._loadUserRole();
+      this._applyNavVisibility();
     },
 
-    _loadUserRole: function() {
-      var oViewModel = this.getOwnerComponent().getModel("view");
-      var sRole = oViewModel.getProperty("/currentUser/role") || "Employee";
-      oViewModel.setProperty("/userRole", mRoleLabels[sRole] || sRole);
+    // Awaits Component.js's own profile fetch (getCurrentUserLoadedPromise)
+    // instead of reading /currentUser/role synchronously here - that read
+    // used to always see the JSONModel's initial "Employee" default,
+    // since Component.js's async call had not resolved yet at this point
+    // in the page lifecycle. Same HIDDEN_FOR_ROLE matrix as the shell
+    // (app/webapp/controller/App.controller.js) - both headers must
+    // agree on what a given role can see.
+    _applyNavVisibility: function() {
+      this.getOwnerComponent().getCurrentUserLoadedPromise().then(function() {
+        var oViewModel = this.getOwnerComponent().getModel("view");
+        var sRole = oViewModel.getProperty("/currentUser/role") || "Employee";
+        var aHidden = HIDDEN_FOR_ROLE[sRole] || [];
+        Object.keys(NAVKEY_TO_BUTTON_ID).forEach(function(sNavKey) {
+          var oButton = this.byId(NAVKEY_TO_BUTTON_ID[sNavKey]);
+          if (oButton) oButton.setVisible(aHidden.indexOf(sNavKey) === -1);
+        }.bind(this));
+      }.bind(this));
     },
 
     _onRouteMatched: function(oEvent) {

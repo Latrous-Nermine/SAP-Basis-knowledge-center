@@ -12,18 +12,6 @@
   width: 100%;
 }
 
-/* QuestionDetail.view.xml (f:DynamicPage) - its content VBox only had
-   sapUiContentPadding (a flat 1rem), which reads as "no padding" next
-   to the rest of the app's 1200px-centered, generously-padded pages -
-   the cards stretched edge to edge at wide viewports (confirmed live:
-   48px total gutter on a 1600px window vs. ~200px on every list page). */
-.aymaxQuestionDetailContent {
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-
 /* Titre principal */
 .aymaxQuestionsTitle .sapMTitle {
   font-size: 1.75rem;

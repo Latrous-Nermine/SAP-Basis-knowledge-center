@@ -7,7 +7,7 @@
 
   <Page showHeader="false" class="rewardsPage">
     <content>
-      <VBox class="sapUiContentPadding rewardsPageContent">
+      <VBox class="sapUiContentPadding aymaxPageContent">
 
         <!-- Page Header - identical to the original design, with just
              one small addition: a home icon before the Add button, the
@@ -16,7 +16,7 @@
              a way back to Feed that the original didn't). -->
         <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
           <VBox>
-            <Title text="{i18n-rewards>pageTitle}" level="H1" class="rewardsPageTitle"/>
+            <Title text="{i18n-rewards>pageTitle}" level="H1" class="aymaxPageTitle"/>
             <Text text="{i18n-rewards>pageSubtitle}" class="aymaxMeta sapUiTinyMarginTop"/>
           </VBox>
           <HBox alignItems="Center">
@@ -61,17 +61,23 @@
           showSeparators="None"
           class="rewardsGridList"
           updateFinished=".onRewardsListUpdated">
+          <noData>
+            <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+              <core:Icon src="sap-icon://gift" class="aymaxEmptyStateIcon"/>
+              <Text text="{i18n-rewards>noRewards}" class="aymaxEmptyStateText"/>
+            </VBox>
+          </noData>
           <CustomListItem class="aymaxCard rewardsCard">
             <VBox alignItems="Center" class="sapUiMediumMargin rewardsCardInner">
 
               <VBox class="rewardsIconWrapper sapUiSmallMarginBottom" alignItems="Center" justifyContent="Center">
-                <core:Icon src="{path: 'rewards>icon', formatter: '.formatter.formatRewardIcon'}" size="1.8rem" color="var(--aymax-primary)"/>
+                <core:Icon src="{path: 'rewards>icon', formatter: '.formatter.formatRewardIcon'}" size="1.8rem" class="aymaxIconPrimary"/>
               </VBox>
 
               <Title text="{rewards>name}" level="H4" class="rewardsTitle sapUiTinyMarginBottom" textAlign="Center"/>
 
               <HBox alignItems="Center" justifyContent="Center" class="rewardsPointsBadge sapUiSmallMarginBottom">
-                <core:Icon src="sap-icon://favorite" size="0.9rem" color="var(--aymax-accent)" class="sapUiTinyMarginEnd"/>
+                <core:Icon src="sap-icon://favorite" size="0.9rem" class="sapUiTinyMarginEnd aymaxIconAccent"/>
                 <Text text="{path: 'rewards>points', targetType: 'any', formatter: '.formatter.formatPointsLabel'}" class="rewardsPoints"/>
               </HBox>
 

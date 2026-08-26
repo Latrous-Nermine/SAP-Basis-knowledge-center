@@ -19,7 +19,7 @@
 
         <!-- DROP ZONE -->
         <VBox class="aymaxCard depotDropZone sapUiMediumMarginBottom" alignItems="Center" justifyContent="Center">
-          <core:Icon src="sap-icon://upload-to-cloud" size="3rem" color="var(--aymax-neutral-400)" class="sapUiSmallMarginBottom"/>
+          <core:Icon src="sap-icon://upload-to-cloud" size="3rem" class="sapUiSmallMarginBottom aymaxIconFaint"/>
           <Title text="{i18n-depot>dropZoneTitle}" level="H3" class="sapUiTinyMarginBottom"/>
           <Text text="{i18n-depot>dropZoneOr}" class="aymaxMeta sapUiSmallMarginBottom"/>
 
@@ -43,14 +43,19 @@
             <Toolbar style="Clear"><Title level="H5" text="{i18n-depot>filesListTitle}"/></Toolbar>
           </headerToolbar>
           <List items="{depot>/DepotFiles}" showSeparators="None" class="depotFileList">
+            <noData>
+              <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                <core:Icon src="sap-icon://document" class="aymaxEmptyStateIcon"/>
+                <Text text="{i18n-depot>noFiles}" class="aymaxEmptyStateText"/>
+              </VBox>
+            </noData>
             <CustomListItem>
               <HBox justifyContent="SpaceBetween" alignItems="Center" class="depotFileItem">
                 <HBox alignItems="Center">
                   <core:Icon
                     src="{path: 'depot>type', formatter: '.formatter.formatIcon'}"
                     size="1.5rem"
-                    color="var(--aymax-primary)"
-                    class="sapUiSmallMarginEnd"/>
+                    class="sapUiSmallMarginEnd aymaxIconPrimary"/>
                   <VBox>
                     <Text text="{depot>name}" class="depotFileName"/>
                     <Text

@@ -10,6 +10,14 @@
           <Label text="Titre de la question" required="true"/>
           <Input value="{view>/questionDialog/title}" placeholder="Ex: Comment intercepter les erreurs OData V4 dans UI5 ?"/>
 
+          <!-- Tags : sélection parmi les tags existants ou saisie libre d'un
+               nouveau tag (résolu en ID réel au moment de la publication).
+               Le fragment attend son propre modèle par défaut ({/tags},
+               {/suggestions}), posé par onCreateQuestion - voir
+               model/TagPicker.js. -->
+          <Label text="Tags"/>
+          <core:Fragment fragmentName="aymax.feed.view.fragments.TagPicker" type="XML"/>
+
           <Label text="Room associée (Optionnel)"/>
           <Select selectedKey="{view>/questionDialog/roomID}" items="{rooms>/Rooms}">
             <items>

@@ -40,6 +40,17 @@
     </f:header>
 
     <f:content>
+      <!-- aymaxDetailPageContent (2026-08 fix): this page's tab bar and
+           every tab's content sat directly under the page chrome with no
+           width constraint at all, stretching edge to edge next to the
+           rest of the app's 1200px-centered, generously-padded pages -
+           same fix QuestionDetail already needed for the same reason
+           (see that class's own comment in css/style.css). Wraps the
+           WHOLE IconTabBar, not just each tab's content VBox, so the
+           tab-selector row (Fil d'actualité/Membres/Fichiers) is
+           centered along with what's below it, not left full-width on
+           its own. -->
+      <VBox class="aymaxDetailPageContent">
       <IconTabBar selectedKey="{view>/selectedTab}" select=".onTabSelect">
         <items>
           <!-- ONGLET FIL D'ACTUALITÉ -->
@@ -152,6 +163,7 @@
           </IconTabFilter>
         </items>
       </IconTabBar>
+      </VBox>
     </f:content>
   </f:DynamicPage>
 </mvc:View>

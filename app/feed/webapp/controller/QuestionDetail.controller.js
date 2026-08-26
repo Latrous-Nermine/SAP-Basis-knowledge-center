@@ -35,7 +35,7 @@ sap.ui.define([
     _loadQuestionData: function() {
       var self = this;
       this.oModel.bindContext("/Questions(" + this._sQuestionId + ")", null, {
-        $expand: "author,answers"
+        $expand: "author,answers,tags($expand=tag($select=name,color))"
       }).requestObject().then(function(oData) {
         var aAnswers = oData.answers || [];
         self.oViewModel.setProperty("/question", oData);

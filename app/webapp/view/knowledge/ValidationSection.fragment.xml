@@ -14,7 +14,7 @@
     visible="{= ${view-knowledge>/isManager} === true &amp;&amp; ${view-knowledge>/validation/sectionVisible} === true }"
     class="sapUiLargeMarginBottom knowledgeValidationSection">
     <HBox alignItems="Center" class="sapUiTinyMarginBottom">
-      <core:Icon src="sap-icon://task" size="1.1rem" color="var(--aymax-primary)" class="sapUiTinyMarginEnd"/>
+      <core:Icon src="sap-icon://task" size="1.1rem" class="sapUiTinyMarginEnd aymaxIconPrimary"/>
       <Title text="{i18n-knowledge>validationSectionTitle}" level="H2" class="aymaxPageTitle"/>
     </HBox>
     <Text text="{i18n-knowledge>validationSectionSubtitle}" class="aymaxMeta sapUiSmallMarginBottom"/>
@@ -92,12 +92,12 @@
 
           <Title text="{validation>title}" level="H3" class="aymaxItemTitle sapUiTinyMarginBottom"/>
           <HBox alignItems="Center" class="sapUiSmallMarginBottom">
-            <core:Icon src="sap-icon://employee" size="0.85rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
+            <core:Icon src="sap-icon://employee" size="0.85rem" class="sapUiTinyMarginEnd aymaxIconMuted"/>
             <Text text="{validation>authorName}" class="aymaxMetaText sapUiTinyMarginEnd"/>
             <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
             <Text text="{validation>dept}" class="aymaxMetaText sapUiTinyMarginEnd"/>
             <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
-            <core:Icon src="sap-icon://time" size="0.75rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
+            <core:Icon src="sap-icon://time" size="0.75rem" class="sapUiTinyMarginEnd aymaxIconMuted"/>
             <Text text="{path: 'validation>createdAt', formatter: '.validationFormatter.formatCreatedAt'}" class="aymaxMetaText"/>
           </HBox>
           <Text text="{validation>excerpt}" class="aymaxExcerpt sapUiMediumMarginBottom" wrapping="true"/>

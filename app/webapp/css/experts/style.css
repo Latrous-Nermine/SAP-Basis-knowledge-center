@@ -2,23 +2,9 @@
    already used in Profile/Notifications (radius/shadow/spacing only -
    colour stays semantic via ObjectStatus states and Avatar tokens). */
 
-.expertsContentContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  padding-left: 32px;
-  padding-right: 32px;
-  padding-bottom: 40px;
-  box-sizing: border-box;
-}
-
-@media (max-width: 1024px) {
-  .expertsContentContainer { padding-left: 24px; padding-right: 24px; }
-}
-
-@media (max-width: 600px) {
-  .expertsContentContainer { padding-left: 16px; padding-right: 16px; }
-}
+/* Container consolidated into the shared .aymaxPageContent (css/lot3/tokens.css)
+   2026-08 unification pass - this module's view now uses that class
+   directly instead of redeclaring an equivalent one here. */
 
 .expertsStickyFilters {
   position: sticky;

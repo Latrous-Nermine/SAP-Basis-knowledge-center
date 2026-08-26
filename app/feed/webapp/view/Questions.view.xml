@@ -84,7 +84,7 @@
           <!-- Liste des questions -->
           <List
             id="questionsList"
-            items="{questions>/Questions}"
+            items="{path:'questions>/Questions', parameters:{$expand:'tags($expand=tag($select=name,color))'}}"
             growing="true"
             growingThreshold="10"
             showSeparators="None"
@@ -115,6 +115,16 @@
                       state="{path:'questions>status', formatter:'.formatter.formatQuestionStatusState'}"
                       class="aymaxStatusBadge"/>
                   </HBox>
+                  <!-- No visible= binding: "tags" is a collection and an
+                       ODataPropertyBinding can't resolve a collection path
+                       as a primitive - an empty Tokenizer renders with
+                       negligible height instead. -->
+                  <Tokenizer
+                    editable="false"
+                    tokens="{path:'questions>tags', templateShareable:'false'}"
+                    class="aymaxQuestionTags">
+                    <Token text="{questions>tag/name}" class="aymaxTag"/>
+                  </Tokenizer>
                   <Text text="{questions>content}" maxLines="2" class="aymaxMeta sapUiTinyMarginTop" wrapping="true"/>
                   <HBox class="sapUiSmallMarginTop" justifyContent="SpaceBetween" alignItems="Center">
                     <Text text="{path:'questions>createdAt', formatter:'.formatter.formatRelativeTime'}" class="aymaxMeta"/>

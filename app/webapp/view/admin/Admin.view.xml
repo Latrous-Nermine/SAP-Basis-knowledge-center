@@ -8,14 +8,14 @@
 
   <Page showHeader="false" class="aymaxPage adminPage">
     <content>
-      <VBox class="sapUiContentPadding adminPageContent">
+      <VBox class="sapUiContentPadding aymaxPageContent">
 
         <!-- Page Title Area -->
         <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
           <VBox>
             <HBox alignItems="Center" class="sapUiTinyMarginBottom">
-              <core:Icon src="sap-icon://action-settings" size="1.2rem" color="#4338ca" class="sapUiSmallMarginEnd"/>
-              <Title text="{i18n-admin>pageTitle}" level="H1" class="adminPageTitle"/>
+              <core:Icon src="sap-icon://action-settings" size="1.2rem" class="sapUiSmallMarginEnd adminHeaderIcon"/>
+              <Title text="{i18n-admin>pageTitle}" level="H1" class="aymaxPageTitle"/>
             </HBox>
             <Text text="{i18n-admin>pageSubtitle}" class="adminMetaText"/>
           </VBox>
@@ -52,6 +52,12 @@
               </Toolbar>
             </headerToolbar>
             <Table items="{admin>/Roles}" class="adminTable">
+              <noData>
+                <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                  <core:Icon src="sap-icon://user-settings" class="aymaxEmptyStateIcon"/>
+                  <Text text="{i18n-admin>noRoles}" class="aymaxEmptyStateText"/>
+                </VBox>
+              </noData>
               <columns>
                 <Column width="25%"><Text text="{i18n-admin>colRole}"/></Column>
                 <Column width="50%"><Text text="{i18n-admin>colDescription}"/></Column>
@@ -92,6 +98,12 @@
               </Toolbar>
             </headerToolbar>
             <Table items="{admin>/Permissions}" class="adminTable adminPermTable">
+              <noData>
+                <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                  <core:Icon src="sap-icon://locked" class="aymaxEmptyStateIcon"/>
+                  <Text text="{i18n-admin>noPermissions}" class="aymaxEmptyStateText"/>
+                </VBox>
+              </noData>
               <columns>
                 <Column width="30%"><Text text="{i18n-admin>colPermission}"/></Column>
                 <Column hAlign="Center"><Text text="{i18n-admin>colAdmin}"/></Column>

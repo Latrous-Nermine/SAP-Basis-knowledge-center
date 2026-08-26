@@ -12,7 +12,15 @@
         <f:heading>
           <HBox alignItems="Center">
             <Button icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiSmallMarginEnd"/>
-            <Title text="{view>/question/title}" titleStyle="H3" wrapping="true"/>
+            <VBox>
+              <Title text="{view>/question/title}" titleStyle="H3" wrapping="true"/>
+              <Tokenizer
+                editable="false"
+                tokens="{view>/question/tags}"
+                class="aymaxQuestionTags">
+                <Token text="{view>tag/name}" class="aymaxTag"/>
+              </Tokenizer>
+            </VBox>
           </HBox>
         </f:heading>
         <f:actions>
@@ -31,7 +39,7 @@
     </f:title>
 
     <f:content>
-      <VBox class="sapUiContentPadding aymaxQuestionDetailContent">
+      <VBox class="sapUiContentPadding aymaxDetailPageContent">
         <!-- DETAIL DE LA QUESTION -->
         <Panel class="aymaxCard sapUiMediumMarginBottom">
           <HBox alignItems="Start">

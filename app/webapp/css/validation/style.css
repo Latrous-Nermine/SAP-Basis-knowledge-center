@@ -1,40 +1,41 @@
 /* ════════════════════════════════════════════════
-   Validation (content review queue) - Lot 3, integrated from
-   Riadh's branch. Uses its own literal hex values rather than the
-   shared css/lot3/tokens.css variables - same as this originally
-   shipped, and same reasoning as Admin's own module CSS (kept
-   separately prefixed so it can't silently collide with the
-   token-based rules other modules share).
+   Validation (content review queue) - Lot 3. Was its own literal hex
+   palette (same reasoning as Admin's - kept unnormalized during
+   integration to avoid merge conflicts). Converted onto the shared
+   --aymax-* tokens (css/lot3/tokens.css) as part of the 2026-08
+   unification pass - every value below maps to the same token the rest
+   of the app already uses for that role (surface/border/text/muted),
+   nothing here changes visually beyond removing the drift.
    ════════════════════════════════════════════════ */
 
 #validationPage .sapFDynamicPageTitle {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--aymax-surface);
+  border-bottom: 1px solid var(--aymax-border);
 }
 
 .aymaxSubtitle {
   font-size: 14px !important;
-  color: #6b7280 !important;
+  color: var(--aymax-text-muted) !important;
 }
 
 .aymaxAvatar .sapFAvatarInitialsHolder {
-  background: linear-gradient(135deg, #6366f1, #4338ca) !important;
+  background: linear-gradient(135deg, var(--aymax-primary), var(--aymax-accent)) !important;
   color: #ffffff !important;
 }
 
 .aymaxItemTitle {
   font-weight: 600 !important;
-  color: #111827 !important;
+  color: var(--aymax-text) !important;
 }
 
 .aymaxMetaText {
-  color: #6b7280 !important;
+  color: var(--aymax-text-muted) !important;
   font-size: 13px !important;
 }
 
 .aymaxExcerpt {
   font-size: 14px !important;
-  color: #374151 !important;
+  color: var(--aymax-text-secondary) !important;
   line-height: 1.6 !important;
 }
 
@@ -43,18 +44,21 @@
   font-weight: 600 !important;
 }
 
+/* Neutral/outline category label - deliberately distinct from the
+   filled .aymaxTag/.aymaxTagAccent pills (a category marker, not an
+   accent tag), kept as its own variant but now token-based. */
 .aymaxTagOutline {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--aymax-border);
   font-size: 12px;
-  color: #4b5563;
+  color: var(--aymax-text-muted);
   font-weight: 500;
 }
 
 .aymaxItemActions {
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid var(--aymax-border-subtle);
   padding-top: 12px;
 }
 

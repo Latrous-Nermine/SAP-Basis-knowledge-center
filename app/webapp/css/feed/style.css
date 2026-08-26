@@ -12,6 +12,55 @@
 
 .aymaxLogo {
   margin-right: 16px;
+  flex-shrink: 0;
+}
+
+/* Lets this wrapper (logo + nav) actually shrink below its content's
+   natural width, the same reason .aymaxNavLinks below needs it - a flex
+   item's default min-width is "auto" (content-based), which would
+   otherwise keep growing the whole header instead of ever handing the
+   nav row a reason to scroll internally. */
+.aymaxHeaderLeft {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* Plain sap.m.Button row (19 items, not an OverflowToolbar) with no
+   wrap/scroll safety net previously - at narrower-than-desktop widths
+   this pushed the header's right side (search/notifications/avatar) off
+   screen and forced the WHOLE PAGE to scroll horizontally, not just the
+   nav. Scoping overflow-x to this row alone keeps the rest of the header
+   always visible; min-width:0 is required for a flex child to shrink
+   below its content's natural width at all (Chrome/Firefox default flex
+   children to min-width:auto, which ignores overflow-x entirely). */
+.aymaxNavLinks {
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  /* min-width:0, not a fixed floor: the header's right side (search field
+     240px + role select 170px + icons, none of which shrink) already
+     needs ~500px on its own, so any explicit floor here wider than what's
+     actually left over makes this row bigger than its own parent
+     (.aymaxHeaderLeft) - it then renders UNDER the search field instead
+     of visibly overflowing, which looks like the nav vanished rather than
+     scrolling. 0 lets it shrink honestly to whatever room genuinely
+     remains; overflow-x still makes every item reachable by scrolling
+     down to that width, it just won't force space that isn't there. */
+  min-width: 0;
+  scrollbar-width: thin;
+  /* Signals "more items, scroll for them" instead of items just stopping
+     mid-word at the container edge - a plain overflow:auto with no visual
+     affordance reads as broken, not as an intentional scroll area. */
+  mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+}
+
+/* Tighter than the default sap.m.Button horizontal padding - lets more
+   of the 19 nav items fit before .aymaxNavLinks' own scroll/fade even
+   kicks in, without shrinking anything else in the header. */
+.aymaxNavLinks .sapMBtn {
+  padding: 0 6px !important;
+  min-width: auto !important;
 }
 
 .aymaxLogoSub {
@@ -563,88 +612,59 @@
   color: var(--aymax-text-muted);
 }
 
-/* ===== SECTION COMMENTAIRES ===== */
-.aymaxCommentsSection {
+/* ===== COMMENTAIRES EN LIGNE (style Facebook) =====
+   Remplace l'ancienne popup CommentDialog (2026-08) - les commentaires
+   étaient auparavant invisibles sur le post lui-même (juste un compteur
+   + un bouton ouvrant une fenêtre séparée). */
+.aymaxInlineComments {
   border-top: 1px solid var(--aymax-border-subtle);
-  margin-top: 8px;
   padding-top: 10px;
 }
 
-.aymaxCommentDialog .sapMDialogSection {
-  border-radius: 12px;
-}
-
-.aymaxCommentDialogBody {
-  min-height: 420px;
-}
-
-.aymaxReplyBanner,
-.aymaxCommentComposer,
-.aymaxCommentItem,
-.aymaxReplyContext {
+.aymaxInlineCommentBubble {
+  background: var(--aymax-neutral-100);
   border-radius: 14px;
-}
-
-.aymaxReplyBanner {
-  background: #f6f8fa;
-  border: 1px solid #e6e9ee;
-  padding: 12px 14px;
-}
-
-.aymaxCommentComposer {
-  background: #ffffff;
-  border: 1px solid #e6e9ee;
-  padding: 14px;
-}
-
-.aymaxCommentComposer .sapMTextAreaInner {
-  border-radius: 10px;
-  border: 1px solid #dce1e7;
-  background: #ffffff;
-}
-
-.aymaxCommentComposer .sapMBtn {
-  border-radius: 999px;
-}
-
-.aymaxCommentComposer .sapMBtnEmphasized,
-.aymaxCommentComposer .sapMBtnTransparent {
-  background: #ffffff !important;
-  border: 1px solid #dce1e7 !important;
-}
-
-.aymaxCommentItem {
-  padding: 10px 0;
-}
-
-.aymaxCommentItem .sapMBtnTransparent {
-  color: #0a66c2;
-  border-radius: 999px;
-  padding-left: 12px;
-  padding-right: 12px;
-  background: #f3f6f8;
-}
-
-.aymaxCommentItem .sapMBtnTransparent:hover {
-  background: #eaf3fb;
-}
-
-.aymaxReplyContext {
   padding: 8px 12px;
-  background: color-mix(in srgb, var(--aymax-primary) 6%, transparent);
-  border-left: 3px solid var(--aymax-primary);
 }
 
-.aymaxCommentReplyLabel {
-  font-weight: 600;
+.aymaxInlineCommentText {
+  font-size: 13.5px;
+  color: var(--aymax-text);
 }
 
-.aymaxCommentsHeader {
-  font-size: 12px;
-  font-weight: 600;
+.aymaxReplyContextInline {
+  font-size: 11.5px;
   color: var(--aymax-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-style: italic;
+}
+
+.aymaxInlineCommentMeta {
+  padding-left: 12px;
+  gap: 4px;
+}
+
+.aymaxInlineCommentMeta .aymaxMeta {
+  font-size: 11.5px;
+}
+
+.aymaxInlineReplyLink {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.aymaxInlineReplyComposer,
+.aymaxCommentComposerInline {
+  padding-left: 34px;
+}
+
+.aymaxCommentComposerInline {
+  padding-left: 0;
+}
+
+.aymaxCommentInlineInput .sapMInputBaseInner {
+  border-radius: 999px;
+  background: var(--aymax-neutral-100);
+  border: 1px solid var(--aymax-border);
 }
 
 /* ===== PIÈCE JOINTE CARD ===== */

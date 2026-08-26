@@ -2,75 +2,70 @@
   controllerName="aymax.hub.controller.notifications.Notifications"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
-  xmlns:f="sap.f"
   xmlns:core="sap.ui.core"
   displayBlock="true">
 
-  <!-- sap.f.DynamicPage needs a height:100% ancestor to size itself against -
-       UI5's own theme CSS provides that chain starting from sap.m.App, not
-       from DynamicPage itself. Without this wrapper the page silently
-       collapses to its intrinsic header height and clips everything below
-       it - this was the real cause behind this app's long-standing
-       "renders once then goes blank" issue. -->
-  <App>
-  <f:DynamicPage id="notificationsPage" headerExpanded="false" class="aymaxPage">
+  <!-- Page showHeader="false" + a self-built title row, same convention as
+       every other module (Dashboard/Profile/Knowledge/Experts/Search) -
+       2026-08 unification pass. This used to be sap.f.DynamicPage wrapped
+       in an extra <App>, a workaround for a real DynamicPage-specific
+       height-chain bug (see git history) that doesn't exist for sap.m.Page:
+       every other routed view in this shell already renders correctly as a
+       plain Page with no wrapper, so switching control removes the need for
+       the workaround rather than papering over it. -->
+  <Page showHeader="false" class="aymaxPage">
+    <content>
+      <VBox class="aymaxPageContent">
 
-    <f:title>
-      <f:DynamicPageTitle>
-        <f:heading>
-          <HBox alignItems="Center">
-            <Title text="{i18n-notifications>appTitle}" level="H3"/>
-          </HBox>
-        </f:heading>
-        <f:actions>
-          <Button
-            icon="sap-icon://home"
-            type="Transparent"
-            tooltip="{i18n-notifications>backToFeed}"
-            press=".onHomePress"/>
-          <Button
-            icon="sap-icon://bell"
-            type="Transparent"
-            text="{view-notifications>/unreadCount}"
-            tooltip="{i18n-notifications>appTitle}"/>
-        </f:actions>
-      </f:DynamicPageTitle>
-    </f:title>
-
-    <f:content>
-      <!-- Design (docs/design/Notifications.md) uses a centered, 760px wide
-           reading column, not a full width list. HBox plus justifyContent
-           reproduces that with layout properties only, no inline style. -->
-      <HBox justifyContent="Center" class="sapUiContentPadding">
-        <VBox width="760px" class="sapUiResponsiveMargin notificationsCard">
-
-          <Toolbar>
-            <Title text="{i18n-notifications>pageTitle}" level="H2"/>
-            <ToolbarSpacer/>
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+          <Title text="{i18n-notifications>pageTitle}" level="H1" class="aymaxPageTitle"/>
+          <HBox alignItems="Center" class="notificationsHeaderActions">
             <Button
-              text="{i18n-notifications>markAllRead}"
+              icon="sap-icon://home"
               type="Transparent"
-              press=".onMarkAllRead"/>
-          </Toolbar>
+              tooltip="{i18n-notifications>backToFeed}"
+              press=".onHomePress"/>
+            <Button
+              icon="sap-icon://bell"
+              type="Transparent"
+              text="{view-notifications>/unreadCount}"
+              tooltip="{i18n-notifications>appTitle}"/>
+          </HBox>
+        </HBox>
 
-          <List
-            id="notificationList"
-            class="notificationsList"
-            items="{ path: 'notification>/Notifications', sorter: { path: 'createdAt', descending: true } }"
-            growing="true"
-            growingThreshold="20"
-            noDataText="{i18n-notifications>noNotifications}">
-            <NotificationListItem
-              title="{ parts: [{ path: 'notification>type' }, { path: 'notification>params' }], formatter: '.formatter.notificationText' }"
-              description="{ parts: [{ path: 'notification>type' }, { path: 'notification>createdAt', targetType: 'any' }], formatter: '.formatter.notificationMeta' }"
-              authorPicture="{ path: 'notification>type', formatter: '.formatter.notificationIcon' }"
-              priority="{ path: 'notification>severity', formatter: '.formatter.notificationPriority' }"
-              unread="{= !${notification>isRead} }"
-              press=".onNotificationPress"/>
-          </List>
-        </VBox>
-      </HBox>
-    </f:content>
-  </f:DynamicPage>
-  </App>
+        <!-- Design (docs/design/Notifications.md) uses a centered, 760px wide
+             reading column, not a full width list - kept as-is, this width
+             was never the inconsistency (the root control was). -->
+        <HBox justifyContent="Center" width="100%">
+          <VBox width="760px" class="sapUiResponsiveMargin notificationsCard">
+
+            <Toolbar>
+              <ToolbarSpacer/>
+              <Button
+                text="{i18n-notifications>markAllRead}"
+                type="Transparent"
+                press=".onMarkAllRead"/>
+            </Toolbar>
+
+            <List
+              id="notificationList"
+              class="notificationsList"
+              items="{ path: 'notification>/Notifications', sorter: { path: 'createdAt', descending: true } }"
+              growing="true"
+              growingThreshold="20"
+              noDataText="{i18n-notifications>noNotifications}">
+              <NotificationListItem
+                title="{ parts: [{ path: 'notification>type' }, { path: 'notification>params' }], formatter: '.formatter.notificationText' }"
+                description="{ parts: [{ path: 'notification>type' }, { path: 'notification>createdAt', targetType: 'any' }], formatter: '.formatter.notificationMeta' }"
+                authorPicture="{ path: 'notification>type', formatter: '.formatter.notificationIcon' }"
+                priority="{ path: 'notification>severity', formatter: '.formatter.notificationPriority' }"
+                unread="{= !${notification>isRead} }"
+                press=".onNotificationPress"/>
+            </List>
+          </VBox>
+        </HBox>
+
+      </VBox>
+    </content>
+  </Page>
 </mvc:View>

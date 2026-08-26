@@ -19,18 +19,26 @@
 }
 
 /* ===== ROOMS ===== */
+/* Was defined twice (here and in style.css) with conflicting values - the
+   style.css copy's transition included transform, this one didn't, and
+   since this file loads after style.css in manifest.json its rule won the
+   cascade - so the hover lift (transform below) was set but never actually
+   animated. Consolidated into one definition (2026-08 unification pass):
+   kept this file's border-color hover accent, took style.css's token-based
+   shadow and correct transition, removed the style.css copy entirely. */
 .aymaxRoomCard {
   background: var(--aymax-surface);
   border-radius: var(--aymax-radius-md);
   border: 1px solid var(--aymax-border);
+  box-shadow: var(--aymax-shadow-sm);
   padding: 16px 20px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
   width: 100%;
 }
 
 .aymaxRoomCard:hover {
   border-color: var(--aymax-primary);
-  box-shadow: 0 4px 16px color-mix(in srgb, var(--aymax-primary) 10%, transparent);
+  box-shadow: var(--aymax-shadow-md);
   transform: translateY(-1px);
 }
 

@@ -186,17 +186,20 @@
   object-fit: cover;
 }
 
-.aymaxRoomCard {
-  background: var(--aymax-surface);
-  border-radius: var(--aymax-radius-md);
-  border: 1px solid var(--aymax-border);
-  box-shadow: var(--aymax-shadow-sm);
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
-}
-
-.aymaxRoomCard:hover {
-  box-shadow: var(--aymax-shadow-md);
-  transform: translateY(-1px);
+/* Shared by every f:DynamicPage-based detail view (QuestionDetail,
+   RoomDetail) - each one's content sat directly under the page chrome
+   with only sapUiContentPadding (a flat 1rem), which reads as "no
+   padding" next to the rest of the app's 1200px-centered, generously-
+   padded list pages (Questions.view.xml's aymaxQuestionsWrapper/Center) -
+   cards stretched edge to edge at wide viewports. Was
+   .aymaxQuestionDetailContent, QuestionDetail-only, before RoomDetail
+   turned out to need the exact same fix (2026-08) - one shared class
+   instead of a second near-identical copy. */
+.aymaxDetailPageContent {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* ===== TAGS ===== */
@@ -234,6 +237,12 @@
 .aymaxMeta {
   color: var(--aymax-text-muted);
   font-size: 12px;
+}
+
+/* Read-only tag chips below the question title (2026-08) - reuses
+   .aymaxTag (already styled above for post tags) so both look the same. */
+.aymaxQuestionTags {
+  flex-wrap: wrap;
 }
 
 /* ===== COMMENTAIRE — auteur ===== */

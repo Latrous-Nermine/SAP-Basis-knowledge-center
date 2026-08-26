@@ -234,14 +234,26 @@
                   <uxap:subSections>
                     <uxap:ObjectPageSubSection title="{i18n-excellence>reviewTeamTitle}">
                       <uxap:blocks>
-                        <List items="{path:'view-excellence>reviewTeam', templateShareable: false}" noDataText=" " showSeparators="None" class="sapUiNoContentPadding">
+                        <List items="{path:'view-excellence>reviewTeam', templateShareable: false}" showSeparators="None" class="sapUiNoContentPadding">
+                          <noData>
+                            <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                              <core:Icon src="sap-icon://group" class="aymaxEmptyStateIcon"/>
+                              <Text text="{i18n-excellence>noTeamMembers}" class="aymaxEmptyStateText"/>
+                            </VBox>
+                          </noData>
                           <StandardListItem icon="sap-icon://person-placeholder" title="{view-excellence>name}" description="{view-excellence>role}"/>
                         </List>
                       </uxap:blocks>
                     </uxap:ObjectPageSubSection>
                     <uxap:ObjectPageSubSection title="{i18n-excellence>originalTeamTitle}">
                       <uxap:blocks>
-                        <List items="{path:'view-excellence>originalTeam', templateShareable: false}" noDataText=" " showSeparators="None" class="sapUiNoContentPadding">
+                        <List items="{path:'view-excellence>originalTeam', templateShareable: false}" showSeparators="None" class="sapUiNoContentPadding">
+                          <noData>
+                            <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                              <core:Icon src="sap-icon://group" class="aymaxEmptyStateIcon"/>
+                              <Text text="{i18n-excellence>noTeamMembers}" class="aymaxEmptyStateText"/>
+                            </VBox>
+                          </noData>
                           <StandardListItem icon="sap-icon://person-placeholder" title="{view-excellence>name}" description="{view-excellence>role}"/>
                         </List>
                       </uxap:blocks>
@@ -637,11 +649,23 @@
 
                 <IconTabFilter text="{i18n-excellence>teamSectionTitle}" key="team">
                   <Title text="{i18n-excellence>reviewTeamTitle}" level="H5" class="sapUiTinyMarginBottom"/>
-                  <List items="{path:'view-excellence>reviewTeam', templateShareable: false}" noDataText=" " showSeparators="None" class="sapUiNoContentPadding">
+                  <List items="{path:'view-excellence>reviewTeam', templateShareable: false}" showSeparators="None" class="sapUiNoContentPadding">
+                    <noData>
+                      <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                        <core:Icon src="sap-icon://group" class="aymaxEmptyStateIcon"/>
+                        <Text text="{i18n-excellence>noTeamMembers}" class="aymaxEmptyStateText"/>
+                      </VBox>
+                    </noData>
                     <StandardListItem icon="sap-icon://person-placeholder" title="{view-excellence>name}" description="{view-excellence>role}"/>
                   </List>
                   <Title text="{i18n-excellence>originalTeamTitle}" level="H5" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
-                  <List items="{path:'view-excellence>originalTeam', templateShareable: false}" noDataText=" " showSeparators="None" class="sapUiNoContentPadding">
+                  <List items="{path:'view-excellence>originalTeam', templateShareable: false}" showSeparators="None" class="sapUiNoContentPadding">
+                    <noData>
+                      <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                        <core:Icon src="sap-icon://group" class="aymaxEmptyStateIcon"/>
+                        <Text text="{i18n-excellence>noTeamMembers}" class="aymaxEmptyStateText"/>
+                      </VBox>
+                    </noData>
                     <StandardListItem icon="sap-icon://person-placeholder" title="{view-excellence>name}" description="{view-excellence>role}"/>
                   </List>
                 </IconTabFilter>

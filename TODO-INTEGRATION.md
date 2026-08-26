@@ -6,9 +6,9 @@ demo.** Add a row the moment you write a mock — not later, because later never
 | ID | What is mocked | File | Owned by | Replace when | Status |
 |----|----------------|------|----------|--------------|--------|
 | I-01 | `SecurityGuardian.analyze()` returns risk 0 (decision C6) | `srv/domain/security/NoOpSecurityGuardian.js` | Lot 3 (AI Security Guardian) | The real analyzer exists | ⬜ Open |
-| I-02 | Manager dashboard "Validations en attente" count | `srv/domain/dashboard/providers/ValidationProvider.js` | Lot 3 (Validation) | Validation queue entity exists | ⬜ Open |
+| I-02 | ~~Manager dashboard "Validations en attente" count~~ — built for real (2026-08-26): ValidationItems exists (Lot 3), same department-scoped query as KnowledgeList's own embedded "Contenu à valider" section | `srv/domain/dashboard/providers/ValidationProvider.js` | Me | — | ✅ Resolved |
 | I-03 | ~~Manager dashboard "Activité des rooms"~~ — built for real (2026-08-06): Rooms/Posts.room/followersCount already exist in Lot 1's schema, no Lot 3 dependency after all | `srv/domain/dashboard/providers/RoomProvider.js` | Me | — | ✅ Resolved |
-| I-04 | Manager dashboard "Suivi des questions" | `srv/domain/dashboard/providers/QuestionProvider.js` | Lot 3 (Questions) | Questions entity exists — it does now (Lot 1 integration, 2026-08-13, `db/schema.cds` from `nermine`) | 🟡 Unblocked |
+| I-04 | ~~Manager dashboard "Suivi des questions"~~ — built for real (2026-08-26): Questions entity exists (Lot 1 integration), department-scoped, unanswered-first | `srv/domain/dashboard/providers/QuestionProvider.js` | Me | — | ✅ Resolved |
 | I-05 | Search provider for Questions | `srv/domain/search/providers/QuestionSearchProvider.js` | Lot 3 | Questions entity exists — it does now (Lot 1 integration, 2026-08-13) | 🟡 Unblocked |
 | I-06 | Search provider for Rooms | `srv/domain/search/providers/RoomSearchProvider.js` | Lot 3 | Rooms split from Topics (C1) — true now: `nermine`'s `db/schema.cds` has real, separate `Rooms`/`Topics` entities | 🟡 Unblocked |
 | I-07 | `promoteQuestion()` — reads a Question to create a KC item | `srv/domain/KnowledgeWorkflow.js` | Lot 3 | Questions entity + `kind` discriminator (C3) agreed — entity exists now (2026-08-13); `kind` discriminator still needs C3 sign-off | 🟡 Unblocked |

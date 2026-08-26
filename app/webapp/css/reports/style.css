@@ -3,9 +3,35 @@
    css/lot3/tokens.css; this file only carries what's specific to
    this module. */
 
+/* The view already referenced .aymaxKpiList/.aymaxKpiCard (comment: "KPIs
+   GRID - use List with CustomListItem") but neither class existed anywhere
+   in the repo - the KPI row was rendering as a plain single-column stack of
+   full-width cards, not a grid, in production (2026-08 unification pass,
+   real bug found in the audit). Same technique as Experts'/Dashboard's own
+   KPI grids: sap.m.List renders its <ul> as flex/block by default, so the
+   grid is applied on top with a higher-specificity override. */
+.aymaxKpiList.sapMList .sapMListItems {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 8px 0 24px;
+}
+
+@media (max-width: 600px) {
+  .aymaxKpiList.sapMList .sapMListItems { grid-template-columns: 1fr; }
+}
+
+.aymaxKpiCard {
+  margin: 0 !important;
+}
+
+/* 32px -> 28px (2026-08 unification pass): matches Dashboard's own KPI
+   numeral size (.dashboardKpiValueNumber, css/dashboard/style.css) - the
+   two apps' "big number in a card" treatment now reads as the same
+   component instead of two similar-but-different sizes. */
 .aymaxKpiValue {
   font-family: "72", "Arial", sans-serif !important;
-  font-size: 32px !important;
+  font-size: 28px !important;
   font-weight: 700 !important;
   color: var(--aymax-primary) !important;
   margin-bottom: 8px !important;

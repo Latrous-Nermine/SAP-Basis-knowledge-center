@@ -13,7 +13,7 @@
         <!-- Page Header -->
         <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
           <HBox alignItems="Center">
-            <core:Icon src="sap-icon://task" size="1.2rem" color="var(--aymax-primary)" class="sapUiSmallMarginEnd"/>
+            <core:Icon src="sap-icon://task" size="1.2rem" class="sapUiSmallMarginEnd validationHeaderIcon"/>
             <Title text="{i18n-validation>pageTitle}" level="H1" class="aymaxPageTitle"/>
           </HBox>
           <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-validation>backToFeed}" press=".onHomePress"/>
@@ -95,7 +95,7 @@
               <!-- Content -->
               <Title text="{validation>title}" level="H3" class="aymaxItemTitle sapUiTinyMarginBottom"/>
               <HBox alignItems="Center" class="sapUiSmallMarginBottom">
-                <core:Icon src="sap-icon://employee" size="0.85rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
+                <core:Icon src="sap-icon://employee" size="0.85rem" class="sapUiTinyMarginEnd aymaxIconMuted"/>
                 <!-- Riadh's original bound author/name (his own Employees.name)
                      via $expand - UserProfiles isn't exposed as its own
                      entity in this service, so this is flattened server-side
@@ -104,7 +104,7 @@
                 <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
                 <Text text="{validation>dept}" class="aymaxMetaText sapUiTinyMarginEnd"/>
                 <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
-                <core:Icon src="sap-icon://time" size="0.75rem" color="var(--aymax-text-muted)" class="sapUiTinyMarginEnd"/>
+                <core:Icon src="sap-icon://time" size="0.75rem" class="sapUiTinyMarginEnd aymaxIconMuted"/>
                 <Text text="{path: 'validation>createdAt', formatter: '.formatter.formatCreatedAt'}" class="aymaxMetaText"/>
               </HBox>
               <Text text="{validation>excerpt}" class="aymaxExcerpt sapUiMediumMarginBottom" wrapping="true"/>

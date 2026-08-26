@@ -12,7 +12,7 @@
         <layout:VerticalLayout width="100%" class="knowledgeContentContainer">
 
           <VBox class="sapUiMediumMarginBottom">
-            <Title text="{i18n-search>pageTitle}" titleStyle="H2" class="aymaxPageTitle"/>
+            <Title text="{i18n-search>pageTitle}" level="H1" class="aymaxPageTitle"/>
             <Text text="{i18n-search>pageSubtitle}" class="aymaxMeta sapUiTinyMarginTop"/>
           </VBox>
 

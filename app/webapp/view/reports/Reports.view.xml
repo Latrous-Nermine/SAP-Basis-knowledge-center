@@ -28,7 +28,7 @@
           items="{reports>/KPIs}"
           showSeparators="None"
           class="aymaxKpiList sapUiMediumMarginBottom">
-          <CustomListItem class="aymaxCard sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxKpiCard">
+          <CustomListItem class="aymaxCard aymaxKpiCard">
             <VBox class="sapUiSmallMargin">
               <Text text="{reports>label}" class="aymaxMeta sapUiTinyMarginBottom"/>
               <Title text="{reports>value}" level="H2" class="aymaxKpiValue"/>

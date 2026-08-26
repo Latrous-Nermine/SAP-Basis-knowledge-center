@@ -21,7 +21,20 @@
         <uxap:headerTitle>
           <uxap:ObjectPageDynamicHeaderTitle>
             <uxap:heading>
-              <Title text="{knowledge>title}" wrapping="true"/>
+              <VBox>
+                <Title text="{knowledge>title}" wrapping="true"/>
+                <!-- No visible= binding: "tags" is a collection, and an
+                     ODataPropertyBinding can't resolve a collection path as
+                     a primitive (see KnowledgeCard.fragment.xml's own
+                     tags Tokenizer for the same note) - an empty Tokenizer
+                     renders with negligible height instead. -->
+                <Tokenizer
+                  editable="false"
+                  tokens="{path:'knowledge>tags', templateShareable:'false'}"
+                  class="knowledgeCardTags sapUiTinyMarginTop">
+                  <Token text="{knowledge>tag/name}"/>
+                </Tokenizer>
+              </VBox>
             </uxap:heading>
             <uxap:actions>
             <!-- Visibility for every control below is set IMPERATIVELY from

@@ -7,17 +7,9 @@
   background: var(--aymax-bg);
 }
 
-.rewardsPageContent {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-.rewardsPageTitle {
-  font-size: 24px !important;
-  font-weight: 700 !important;
-  color: var(--aymax-text) !important;
-}
+/* Container/title consolidated into the shared .aymaxPageContent/
+   .aymaxPageTitle (css/lot3/tokens.css), 2026-08 unification pass - both
+   were byte-identical redeclarations of those same rules. */
 
 /* display:flex was on .rewardsGridList itself - that's sap.m.List's
    OUTER wrapper div, which only ever has one child (the actual <ul>
@@ -49,7 +41,7 @@
 .rewardsIconWrapper {
   width: 56px !important;
   height: 56px !important;
-  border-radius: 12px !important;
+  border-radius: var(--aymax-radius-md) !important;
   background: var(--aymax-neutral-100) !important;
 }
 

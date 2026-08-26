@@ -9,7 +9,15 @@
         <Label text="{i18n-knowledge>fieldTitle}" labelFor="newItemTitle" class="sapUiTinyMarginBottom"/>
         <Input id="newItemTitle" value="{view-knowledge>/newItem/title}" width="100%" class="sapUiSmallMarginBottom"/>
 
-        <Label text="{i18n-knowledge>fieldCategory}" labelFor="newItemCategory" class="sapUiTinyMarginBottom"/>
+        <!-- Tags : sélection parmi les tags existants ou saisie libre d'un
+             nouveau tag (créé au moment de la publication). Le fragment
+             partagé attend son propre modèle par défaut ({/tags},
+             {/suggestions}), posé par onContribute - voir
+             model/shared/TagPicker.js. -->
+        <Label text="{i18n-knowledge>fieldTags}" labelFor="tagPickerInput" class="sapUiTinyMarginBottom"/>
+        <core:Fragment fragmentName="aymax.hub.view.shared.fragments.TagPicker" type="XML"/>
+
+        <Label text="{i18n-knowledge>fieldCategory}" labelFor="newItemCategory" class="sapUiTinyMarginBottom sapUiTinyMarginTop"/>
         <Select id="newItemCategory" selectedKey="{view-knowledge>/newItem/category}" width="100%" class="sapUiSmallMarginBottom">
           <items>
             <core:Item key="article" text="{i18n-knowledge>category.article}"/>

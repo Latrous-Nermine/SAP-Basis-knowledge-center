@@ -21,6 +21,12 @@ service TagsService {
   action removeTagFromPost(tagID : UUID, postID : UUID)                       returns Boolean;
   action addTagToQuestion(tagID : UUID, questionID : UUID)                    returns Boolean;
   action removeTagFromQuestion(tagID : UUID, questionID : UUID)               returns Boolean;
+  // Knowledge Centre (Lot 2, 2026-08): mirrors addTagToPost/addTagToQuestion
+  // above exactly. KnowledgeItemTags itself is @readonly in
+  // knowledge-service.cds (like PostTags/QuestionTags are in their own
+  // services) - this action is the real write path.
+  action addTagToItem(tagID : UUID, itemID : UUID)                           returns Boolean;
+  action removeTagFromItem(tagID : UUID, itemID : UUID)                      returns Boolean;
 
   // --- FONCTIONS ---
   function searchTags(query : String)              returns many Tags;
