@@ -7,7 +7,7 @@
 
   <Page showHeader="false" showNavButton="false" busy="{view-experts>/busy}" busyIndicatorDelay="0" class="aymaxPage">
     <content>
-      <VBox class="expertsContentContainer">
+      <VBox class="aymaxPageContent">
 
         <!-- Title row matches Certification's pattern (showHeader=false +
              self-built title), 2026-08 polish pass. -->
@@ -50,14 +50,20 @@
           items="{ path: 'people>/People', parameters: { $expand: 'skills,userBadges($expand=badge),technologies' }, sorter: { path: 'reputation', descending: true } }"
           growing="true"
           growingThreshold="20"
-          noDataText="{i18n-experts>noExperts}"
           showSeparators="None"
           class="expertsGrid">
+          <noData>
+            <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+              <core:Icon src="sap-icon://person-placeholder" class="aymaxEmptyStateIcon"/>
+              <Text text="{i18n-experts>noExperts}" class="aymaxEmptyStateText"/>
+            </VBox>
+          </noData>
           <CustomListItem type="Navigation" press=".onCardPress" class="expertsCard">
             <VBox>
               <HBox alignItems="Center" class="sapUiSmallMarginBottom">
                 <Avatar
                   displaySize="L"
+                  src="{parts:[{path:'people>userID'},{path:'people>avatarMimeType'}], formatter:'.formatter.avatarSrc'}"
                   initials="{path:'people>displayName', formatter:'.formatter.initials'}"
                   backgroundColor="{path:'people>userID', formatter:'.formatter.avatarColorFromID'}"
                   class="sapUiSmallMarginEnd"/>

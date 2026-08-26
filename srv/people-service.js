@@ -44,6 +44,11 @@ function rewriteExpertiseLevelFilter(tokens) {
  * actual convention (Notifications, Knowledge Center) keeps handler logic
  * directly in the service .js file, not a separate handlers/ file.
  */
+// Kept in sync by hand with the frontend's own MAX_IMAGE_BYTES
+// (Profile.controller.js) - see this file's own upload hook for why the
+// size cap is enforced client-side only, not here.
+const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
+
 export default class PeopleService extends cds.ApplicationService {
 
   async init() {
@@ -115,6 +120,41 @@ export default class PeopleService extends cds.ApplicationService {
       // Name/position/skill/technology search (Experts) - case-insensitive,
       // see CaseInsensitiveSearch.js for why this is a backend query rewrite.
       makeSearchCaseInsensitive(req.query);
+    });
+
+    // ────────────────────────────────────────────────────────────
+    // Profile picture / cover photo upload - a media-stream PUT (e.g.
+    // .../MyProfile('sami')/avatar, raw image bytes as the body) surfaces
+    // here as an UPDATE with just that one property in req.data - as a
+    // live IncomingMessage stream, not a Buffer, and its MIME type is NOT
+    // auto-populated into the companion column; it only exists on the
+    // request's own Content-Type header (confirmed empirically, not
+    // assumed). @restrict already confines this to the caller's own row
+    // (where: userID = $user) - this hook adds the content guard (reject
+    // anything that isn't actually an image) and writes the real MIME
+    // type into its companion column, since nothing else will.
+    // No server-side byte-count cap: the body arrives as a stream, so
+    // enforcing one here means buffering/counting it manually - the
+    // FileUploader on the frontend checks file.size before it ever starts
+    // the PUT, which is enough for an internal tool with authenticated
+    // employees, not a hardened public upload endpoint.
+    // ────────────────────────────────────────────────────────────
+    this.before('UPDATE', 'MyProfile', (req) => {
+      const sContentType = req.headers['content-type'];
+
+      if (req.data.avatar !== undefined) {
+        if (!ALLOWED_IMAGE_TYPES.has(sContentType)) {
+          return req.reject(415, 'Only PNG, JPEG or WebP images are allowed');
+        }
+        req.data.avatarMimeType = sContentType;
+      }
+
+      if (req.data.coverPhoto !== undefined) {
+        if (!ALLOWED_IMAGE_TYPES.has(sContentType)) {
+          return req.reject(415, 'Only PNG, JPEG or WebP images are allowed');
+        }
+        req.data.coverPhotoMimeType = sContentType;
+      }
     });
 
     // ────────────────────────────────────────────────────────────

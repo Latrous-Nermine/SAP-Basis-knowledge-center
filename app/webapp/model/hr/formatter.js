@@ -1,4 +1,6 @@
-sap.ui.define([], function() {
+sap.ui.define([
+  "../shared/avatarSrc"
+], function(avatarSrcUtil) {
   "use strict";
 
   var OBJ_STATUS_META = {
@@ -35,6 +37,7 @@ sap.ui.define([], function() {
 
     initials: initials,
     starRating: starRating,
+    avatarSrc: avatarSrcUtil.avatarSrc,
 
     formatObjStatusText: function(sStatus) {
       if (!oResourceBundle) return sStatus;

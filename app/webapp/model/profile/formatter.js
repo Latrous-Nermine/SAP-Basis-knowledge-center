@@ -3,8 +3,9 @@ sap.ui.define([
 ], function(DateFormat) {
   "use strict";
 
-  // No Profile picture upload (product decision) - initials + a deterministic
-  // sap.m.AvatarColor token instead of a stored hex value. Using the
+  // Fallback only now (2026-08: real upload added, see avatarSrc/
+  // coverPhotoSrc below) - initials + a deterministic sap.m.AvatarColor
+  // token, shown whenever a user hasn't uploaded a real photo. Using the
   // framework's own accent set means this never violates the "never hex"
   // rule and needs no custom CSS.
   var AVATAR_COLOR_TOKENS = [
@@ -62,6 +63,26 @@ sap.ui.define([
     return AVATAR_COLOR_TOKENS[iHash % AVATAR_COLOR_TOKENS.length];
   }
 
+  // sap.m.Avatar/Image only fall back to initials/placeholder when `src` is
+  // genuinely empty - so this returns "" whenever no image has ever been
+  // uploaded (mimeType null), not a broken/guessed URL. `iVersion` is a
+  // plain counter bumped by the controller after a successful upload - the
+  // media stream lives at a fixed URL per user, so without a change to the
+  // URL itself the browser's own image cache would keep showing the old
+  // picture after a re-upload.
+  function profileImageSrc(sUserID, sMimeType, sProperty, iVersion) {
+    if (!sUserID || !sMimeType) return "";
+    return "/odata/v4/people/People('" + encodeURIComponent(sUserID) + "')/" + sProperty + "?v=" + (iVersion || 0);
+  }
+
+  function avatarSrc(sUserID, sMimeType, iVersion) {
+    return profileImageSrc(sUserID, sMimeType, "avatar", iVersion);
+  }
+
+  function coverPhotoSrc(sUserID, sMimeType, iVersion) {
+    return profileImageSrc(sUserID, sMimeType, "coverPhoto", iVersion);
+  }
+
   return {
 
     setResourceBundle: function(oBundle) {
@@ -70,6 +91,8 @@ sap.ui.define([
 
     initials: initials,
     avatarColorFromID: avatarColorFromID,
+    avatarSrc: avatarSrc,
+    coverPhotoSrc: coverPhotoSrc,
     relativeDateTime: relativeDateTime,
 
     roleLabel: function(sRole) {

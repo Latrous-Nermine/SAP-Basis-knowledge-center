@@ -316,6 +316,20 @@ extend UserProfiles with {
       association instead of guessing its flattened FK column name. */
   followers        : Association to many Follows on followers.followedUser.userID = $self.userID;
   following        : Association to many Follows on following.userID              = $self.userID;
+
+  /** Real profile picture + cover photo (2026-08, explicit request -
+      supersedes the "initials/colour only, no persisted avatar" decision
+      noted above for these two fields specifically). CAP media-stream
+      pattern: the LargeBinary holds the raw bytes, never inlined into an
+      ordinary People/Experts/Dashboard read - OData exposes it as its own
+      GET/PUT sub-resource (.../avatar), so a page that lists 50 profiles
+      never drags 50 images along with it. The companion String column
+      carries the picked file's real MIME type (browsers upload PNG/JPEG/
+      WebP interchangeably here), not a fixed one. */
+  avatar             : LargeBinary @Core.MediaType: avatarMimeType;
+  avatarMimeType     : String(100) @Core.IsMediaType: true;
+  coverPhoto         : LargeBinary @Core.MediaType: coverPhotoMimeType;
+  coverPhotoMimeType : String(100) @Core.IsMediaType: true;
 }
 
 entity UserTechnologyTags : cuid {

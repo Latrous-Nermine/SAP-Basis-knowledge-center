@@ -18,7 +18,7 @@
           <Panel class="aymaxCard">
             <VBox alignItems="Center" class="sapUiMediumMarginBottom">
               <Avatar
-                src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}"
+                src="{parts:[{path:'view>/currentUser/avatarMimeType'},{path:'view>/currentUser/userID'},{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}"
                 displaySize="XL"
                 class="sapUiMediumMarginBottom"/>
               <Title text="{view>/currentUser/displayName}" level="H3"/>
@@ -101,7 +101,7 @@
           <Panel class="aymaxCard sapUiContentPadding">
             <HBox alignItems="Start">
               <Avatar
-                src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}"
+                src="{parts:[{path:'view>/currentUser/avatarMimeType'},{path:'view>/currentUser/userID'},{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}"
                 displaySize="S"
                 class="sapUiSmallMarginEnd"/>
               <VBox width="100%">
@@ -137,10 +137,10 @@
             growingThreshold="10"
             noDataText="Aucune publication — soyez le premier à partager !">
             <CustomListItem>
-              <VBox class="{path:'type', formatter:'.formatPostCardClass'} aymaxPostCard sapUiLargeMarginBottom">
+              <VBox class="aymaxPostCard sapUiLargeMarginBottom">
 
                 <!-- Bannière republication -->
-                <VBox visible="{= !!${repostOf} }" class="aymaxRepostBanner sapUiTinyMarginBottom">
+                <VBox visible="{path:'repostOf_ID', formatter:'.isTruthy', targetType:'any'}" class="aymaxRepostBanner sapUiTinyMarginBottom">
                   <HBox alignItems="Center">
                     <core:Icon src="sap-icon://redo" size="1rem" class="sapUiTinyMarginEnd"/>
                     <Text text="Republication de {repostOf/author/displayName}" class="aymaxRepostLabel"/>
@@ -152,7 +152,7 @@
                   <!-- En-tête auteur -->
                   <HBox alignItems="Center" class="sapUiSmallMarginBottom">
                     <Avatar
-                      src="{parts:[{path:'author/avatarUrl'},{path:'author/displayName'}], formatter:'.formatAvatar'}"
+                      src="{parts:[{path:'author/avatarMimeType'},{path:'author/userID'},{path:'author/avatarUrl'},{path:'author/displayName'}], formatter:'.formatAvatar'}"
                       displaySize="S"
                       class="sapUiSmallMarginEnd"/>
                     <VBox class="sapUiSmallMarginEnd">
@@ -175,7 +175,7 @@
                       type="Transparent"
                       press=".onPostOverflow"
                       tooltip="Modifier / Supprimer"
-                      visible="{= ${author/userID} === ${view>/currentUser/userID} }"/>
+                      visible="{parts:[{path:'author/userID', targetType:'any'},{path:'view>/currentUser/userID', targetType:'any'}], formatter:'.formatIsOwnPost'}"/>
                   </HBox>
 
                   <!-- Titre du post (optionnel) -->
@@ -190,7 +190,7 @@
                   <Text text="{content}" class="sapUiSmallMarginBottom aymaxPostContentText" wrapping="true"/>
 
                   <!-- Encadré Résumé IA du document (si présent) -->
-                  <VBox visible="{= !!${summary}}" class="aymaxAiSummaryBox sapUiSmallMarginBottom">
+                  <VBox visible="{path:'summary', formatter:'.isTruthy', targetType:'any'}" class="aymaxAiSummaryBox sapUiSmallMarginBottom">
                     <HBox alignItems="Center" class="sapUiTinyMarginBottom">
                       <core:Icon src="sap-icon://write-new-document" class="aymaxAiIcon sapUiTinyMarginEnd"/>
                       <Title text="Résumé IA du document" level="H6" class="aymaxAiSummaryTitle"/>
@@ -198,8 +198,14 @@
                     <Text text="{summary}" wrapping="true" class="aymaxAiSummaryText"/>
                   </VBox>
 
-                  <!-- Tags -->
-                  <HBox wrap="Wrap" visible="{= ${tags}.length > 0}" class="sapUiTinyMarginBottom">
+                  <!-- Tags. No visible= binding: "tags" is a Composition
+                       (collection), and an ODataPropertyBinding can't
+                       resolve a collection-valued path as a primitive to
+                       feed a formatter - the same reason the documents
+                       List below relies on showNoData instead. An empty
+                       Tokenizer inside this HBox already renders with
+                       negligible height, so hiding it isn't needed. -->
+                  <HBox wrap="Wrap" class="sapUiTinyMarginBottom">
                     <Tokenizer
                       tokens="{path:'tags', templateShareable:'false'}"
                       editable="false"
@@ -209,17 +215,21 @@
                     </Tokenizer>
                   </HBox>
 
-                  <!-- Pièces jointes. showNoData=false (2026-08 fix): the
-                       visible= expression was meant to hide this control
-                       entirely for posts with zero documents, but
-                       sap.m.List still renders its own default "No data"
+                  <!-- Pièces jointes. showNoData=false (2026-08 fix): a
+                       visible= expression was originally meant to hide this
+                       control entirely for posts with zero documents, but
+                       sap.m.List still rendered its own default "No data"
                        placeholder row underneath regardless - every post
                        without an attachment was showing a stray "No data"
                        line. This is the actual, direct fix for that
-                       placeholder rather than depending on visible= alone. -->
+                       placeholder. A separate visible= binding on
+                       "documents" was tried too, but "documents" is a
+                       Composition (collection) - an ODataPropertyBinding
+                       can't resolve a collection path as a primitive to
+                       feed a formatter ("Accessed value is not primitive"),
+                       so showNoData alone is what actually does the job. -->
                   <List
                     items="{path:'documents', templateShareable:'false'}"
-                    visible="{= ${documents}.length > 0}"
                     showSeparators="None"
                     showNoData="false"
                     class="sapUiTinyMarginBottom">
@@ -248,10 +258,10 @@
                 <!-- LinkedIn style social counters -->
                 <HBox justifyContent="SpaceBetween" alignItems="Center" class="aymaxPostStats">
                   <HBox alignItems="Center">
-                    <HBox alignItems="Center" class="aymaxReactionIconContainerLike" visible="{= ${likeCount} > 0 }">
+                    <HBox alignItems="Center" class="aymaxReactionIconContainerLike" visible="{path:'likeCount', formatter:'.isPositive', targetType:'any'}">
                       <core:Icon src="sap-icon://thumb-up" class="aymaxStatIconLike" size="0.7rem"/>
                     </HBox>
-                    <HBox alignItems="Center" class="aymaxReactionIconContainerDislike" visible="{= ${dislikeCount} > 0 }">
+                    <HBox alignItems="Center" class="aymaxReactionIconContainerDislike" visible="{path:'dislikeCount', formatter:'.isPositive', targetType:'any'}">
                       <core:Icon src="sap-icon://thumb-down" class="aymaxStatIconDislike" size="0.7rem"/>
                     </HBox>
                     <Text text="{parts:[{path:'likeCount'},{path:'dislikeCount'}], formatter:'.formatReactionsStatText'}" class="aymaxMeta sapUiTinyMarginBegin"/>
@@ -284,7 +294,7 @@
                       icon="sap-icon://comment"
                       type="Transparent"
                       press=".onCommentPress"
-                      tooltip="Voir et répondre aux commentaires"
+                      tooltip="Écrire un commentaire"
                       class="sapUiTinyMarginEnd aymaxSoftActionButton"/>
                     <ToggleButton
                       text="Republier"
@@ -303,6 +313,60 @@
                     tooltip="Enregistrer ce contenu"
                     class="aymaxSoftActionButton"/>
                 </HBox>
+
+                <!-- Commentaires en ligne (style Facebook) - remplace l'ancienne
+                     popup CommentDialog: les commentaires étaient auparavant
+                     invisibles sur le post lui-même (juste un compteur + un
+                     bouton ouvrant une fenêtre séparée). $orderby dans le
+                     $expand imbriqué ci-dessus trie déjà les commentaires par
+                     date, donc aucun tri/normalisation côté client n'est
+                     nécessaire ici - liaison purement déclarative, relative
+                     au post lui-même, exactement comme documents/tags. -->
+                <VBox class="aymaxInlineComments sapUiTinyMarginTop">
+                  <List
+                    class="aymaxInlineCommentsList"
+                    items="{path:'comments', templateShareable:'false'}"
+                    growing="true"
+                    growingThreshold="2"
+                    showSeparators="None"
+                    noDataText=" ">
+                    <CustomListItem>
+                      <VBox class="aymaxInlineCommentItem sapUiTinyMarginBottom">
+                        <HBox alignItems="Start">
+                          <Avatar
+                            src="{parts:[{path:'author/avatarMimeType'},{path:'author/userID'},{path:'author/avatarUrl'},{path:'author/displayName'}], formatter:'.formatAvatar'}"
+                            displaySize="XS"
+                            class="sapUiTinyMarginEnd"/>
+                          <VBox width="100%" class="aymaxInlineCommentBubble">
+                            <Text text="{author/displayName}" class="aymaxCommentAuthor"/>
+                            <Text
+                              visible="{path:'parent_ID', formatter:'.isTruthy', targetType:'any'}"
+                              text="{= 'En réponse à ' + (${parent/author/displayName} || '') }"
+                              class="aymaxReplyContextInline"/>
+                            <Text text="{content}" wrapping="true" class="aymaxInlineCommentText"/>
+                          </VBox>
+                        </HBox>
+                        <HBox class="aymaxInlineCommentMeta" alignItems="Center">
+                          <Text text="{path:'createdAt', formatter:'.formatRelativeTime'}" class="aymaxMeta"/>
+                          <Link text="Répondre" press=".onToggleInlineReply" class="sapUiTinyMarginBegin aymaxInlineReplyLink"/>
+                        </HBox>
+                        <HBox class="aymaxInlineReplyComposer sapUiTinyMarginTop" visible="false" alignItems="Center">
+                          <Input placeholder="Écrire une réponse..." width="100%" class="aymaxCommentInlineInput" submit=".onSendInlineReply"/>
+                          <Button icon="sap-icon://paper-plane" type="Transparent" tooltip="Envoyer" press=".onSendInlineReply" class="sapUiTinyMarginBegin"/>
+                        </HBox>
+                      </VBox>
+                    </CustomListItem>
+                  </List>
+
+                  <HBox class="aymaxCommentComposerInline sapUiTinyMarginTop" alignItems="Center">
+                    <Avatar
+                      src="{parts:[{path:'view>/currentUser/avatarMimeType'},{path:'view>/currentUser/userID'},{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}"
+                      displaySize="XS"
+                      class="sapUiTinyMarginEnd"/>
+                    <Input placeholder="Écrire un commentaire..." width="100%" class="aymaxCommentInlineInput" submit=".onSendInlineComment"/>
+                    <Button icon="sap-icon://paper-plane" type="Transparent" tooltip="Envoyer" press=".onSendInlineComment" class="sapUiTinyMarginBegin"/>
+                  </HBox>
+                </VBox>
               </VBox>
             </CustomListItem>
           </List>
@@ -317,7 +381,7 @@
               <CustomListItem>
                 <HBox alignItems="Center" class="sapUiTinyMarginBottom">
                   <Avatar
-                    src="{parts:[{path:'avatarUrl'},{path:'displayName'}], formatter:'.formatAvatar'}"
+                    src="{parts:[{path:'avatarMimeType'},{path:'userID'},{path:'avatarUrl'},{path:'displayName'}], formatter:'.formatAvatar'}"
                     displaySize="S"
                     class="sapUiTinyMarginEnd"/>
                   <VBox>

@@ -1,6 +1,8 @@
 sap.ui.define([
-  "sap/ui/core/format/DateFormat"
-], function(DateFormat) {
+  "sap/ui/core/format/DateFormat",
+  "../shared/notificationIcons",
+  "../shared/avatarSrc"
+], function(DateFormat, notificationIcons, avatarSrcUtil) {
   "use strict";
 
   var oResourceBundle = null;
@@ -38,25 +40,11 @@ sap.ui.define([
   // NotificationType enum values (db/lot2.cds) -> icon. Presentation only -
   // the Notifications widget itself stays type="Inactive" (no per-item
   // destination exists), this just gives each entry a distinct glyph
-  // instead of the same bell for everything.
-  var NOTIFICATION_ICONS = {
-    COMMENT: "sap-icon://comment",
-    MENTION: "sap-icon://person-placeholder",
-    ANSWER_ACCEPTED: "sap-icon://accept",
-    ARTICLE_PUBLISHED: "sap-icon://document-text",
-    DOC_PUBLISHED: "sap-icon://document-text",
-    ROOM_POST: "sap-icon://discussion-2",
-    BADGE_EARNED: "sap-icon://favorite",
-    CERTIFICATION_COMPLETED: "sap-icon://certificate",
-    RECOMMENDATION: "sap-icon://lightbulb",
-    VALIDATION_REQUESTED: "sap-icon://request",
-    VALIDATION_RESULT: "sap-icon://approvals",
-    UPDATE_REMINDER: "sap-icon://reminder",
-    SECURITY_EVENT: "sap-icon://shield"
-  };
-
+  // instead of the same bell for everything. Shared with the Notifications
+  // page's own formatter (model/shared/notificationIcons.js, 2026-08
+  // unification pass) - was a second, disagreeing copy of this map before.
   function notificationIcon(sType) {
-    return NOTIFICATION_ICONS[sType] || "sap-icon://bell";
+    return notificationIcons.getIcon(sType);
   }
 
   return {
@@ -67,6 +55,7 @@ sap.ui.define([
 
     initials: initials,
     avatarColorFromID: avatarColorFromID,
+    avatarSrc: avatarSrcUtil.avatarSrc,
     relativeDateTime: relativeDateTime,
     notificationIcon: notificationIcon,
 
@@ -97,6 +86,21 @@ sap.ui.define([
     pointsLabel: function(iPoints) {
       if (!oResourceBundle) return "";
       return oResourceBundle.getText("pointsLabel", [iPoints || 0]);
+    },
+
+    skillBarLabel: function(iHeadcount, iPercent) {
+      if (!oResourceBundle) return "";
+      return oResourceBundle.getText("skillBarLabel", [iHeadcount || 0, iPercent || 0]);
+    },
+
+    // Replaces NumericHeader's own number+unitOfMeasurement composition,
+    // now that KPI tiles render their value as a plain Text (see
+    // Dashboard.view.xml's KPI card) - "value unit" for numeric KPIs
+    // (unit is "" for Manager/HR/Admin, "pts" for Employee), or just the
+    // value as-is for text KPIs (isText, e.g. a contributor's name).
+    kpiValueText: function(vValue, sUnit) {
+      if (vValue === undefined || vValue === null) return "";
+      return sUnit ? vValue + " " + sUnit : String(vValue);
     }
   };
 });

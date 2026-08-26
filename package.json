@@ -34,6 +34,10 @@
             "admin":     { "roles": ["Administrator"],"attr": { "department": "IT" } },
             "stagiaire": { "roles": ["Intern"],       "attr": { "department": "SAP Technical" } }
           }
+        },
+        "db": {
+          "kind": "sqlite",
+          "credentials": { "url": "db/dev.sqlite" }
         }
       },
       "[production]": {

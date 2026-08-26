@@ -13,7 +13,7 @@
         <!-- Page Title Area -->
         <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
           <HBox alignItems="Center">
-            <core:Icon src="sap-icon://hr-approval" size="1.2rem" color="var(--aymax-primary)" class="sapUiSmallMarginEnd"/>
+            <core:Icon src="sap-icon://hr-approval" size="1.2rem" class="sapUiSmallMarginEnd aymaxIconPrimary"/>
             <Title text="{i18n-hr>pageTitle}" level="H1" class="aymaxPageTitle"/>
           </HBox>
           <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-hr>backToFeed}" press=".onHomePress"/>
@@ -49,6 +49,12 @@
                 class="aymaxTable"
                 mode="SingleSelectMaster"
                 selectionChange=".onEmployeePress">
+                <noData>
+                  <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                    <core:Icon src="sap-icon://employee" class="aymaxEmptyStateIcon"/>
+                    <Text text="{i18n-hr>noEmployees}" class="aymaxEmptyStateText"/>
+                  </VBox>
+                </noData>
                 <columns>
                   <Column width="25%"><Text text="{i18n-hr>colEmployee}"/></Column>
                   <Column width="20%"><Text text="{i18n-hr>colDepartment}"/></Column>
@@ -60,7 +66,11 @@
                   <ColumnListItem type="Active" press=".onEmployeePress">
                     <cells>
                       <HBox alignItems="Center">
-                        <Avatar initials="{path:'hr>name', formatter:'.formatter.initials'}" displaySize="XS" class="sapUiSmallMarginEnd aymaxAvatarAccent"/>
+                        <Avatar
+                          src="{parts:[{path:'hr>userID'},{path:'hr>avatarMimeType'}], formatter:'.formatter.avatarSrc'}"
+                          initials="{path:'hr>name', formatter:'.formatter.initials'}"
+                          displaySize="XS"
+                          class="sapUiSmallMarginEnd aymaxAvatarAccent"/>
                         <Text text="{hr>name}" class="aymaxEmployeeName"/>
                       </HBox>
                       <Text text="{hr>dept}" class="aymaxMetaText"/>
@@ -94,6 +104,7 @@
                 <Panel class="aymaxProfileDetailCard">
                   <VBox alignItems="Center" class="sapUiMediumMargin">
                     <Avatar
+                      src="{parts:[{path:'hr>userID'},{path:'hr>avatarMimeType'}], formatter:'.formatter.avatarSrc'}"
                       initials="{path:'hr>name', formatter:'.formatter.initials'}"
                       displaySize="XL"
                       class="sapUiSmallMarginBottom aymaxAvatarAccent"/>
@@ -192,14 +203,26 @@
         <!-- ═══════ TAB: COMPETENCES ═══════ -->
         <VBox visible="{= ${view-hr>/activeTab} === 'competences'}">
           <List items="{hr>/SkillGaps}" showSeparators="None" class="aymaxSkillGapList">
+            <noData>
+              <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                <core:Icon src="sap-icon://competitor" class="aymaxEmptyStateIcon"/>
+                <Text text="{i18n-hr>noSkillGaps}" class="aymaxEmptyStateText"/>
+              </VBox>
+            </noData>
             <CustomListItem class="aymaxSkillGapItem">
               <Panel headerText="" class="aymaxCard aymaxSkillGapCard sapUiSmallMarginBottom sapUiSmallMarginEnd" width="280px">
                 <VBox class="sapUiSmallMargin">
                   <Title text="{hr>name}" level="H5" class="card-title"/>
                   <Text text="{i18n-hr>lblTeamCoverage}" class="aymaxMetaText sapUiTinyMarginBottom"/>
-                  <layout:HorizontalLayout class="aymaxProgressBarOuter">
-                    <layout:HorizontalLayout class="aymaxProgressBarInner" width="{path: 'hr>percent', formatter: '.formatter.formatSkillWidth'}"/>
-                  </layout:HorizontalLayout>
+                  <!-- sap.ui.layout.HorizontalLayout's width property doesn't
+                       reliably reach the DOM (confirmed broken here: every bar
+                       rendered at 0px fill regardless of percent - 2026-08
+                       unification pass) - sap.m.HBox with the same width=
+                       binding is the established, working replacement (see
+                       ManagerDashboard.fragment.xml's own history). -->
+                  <HBox class="aymaxProgressBarOuter">
+                    <HBox class="aymaxProgressBarInner" width="{path: 'hr>percent', formatter: '.formatter.formatSkillWidth'}"/>
+                  </HBox>
                   <Text text="{parts:[{path:'hr>percent'},{path:'hr>headcount'}], formatter:'.formatter.skillGapMetaLabel'}" class="aymaxMetaText sapUiTinyMarginTop"/>
                 </VBox>
               </Panel>
@@ -210,6 +233,12 @@
         <!-- ═══════ TAB: OBJECTIFS ═══════ -->
         <VBox visible="{= ${view-hr>/activeTab} === 'objectifs'}">
           <List items="{hr>/Objectives}" class="aymaxObjectiveList">
+            <noData>
+              <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                <core:Icon src="sap-icon://target-group" class="aymaxEmptyStateIcon"/>
+                <Text text="{i18n-hr>noObjectives}" class="aymaxEmptyStateText"/>
+              </VBox>
+            </noData>
             <CustomListItem class="aymaxCard sapUiSmallMarginBottom">
               <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiSmallMargin">
                 <VBox class="aymaxObjInfo">

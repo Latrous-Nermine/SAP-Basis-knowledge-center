@@ -1,10 +1,17 @@
 sap.ui.define([
-  "sap/ui/core/format/DateFormat"
-], function(DateFormat) {
+  "sap/ui/core/format/DateFormat",
+  "../shared/avatarSrc"
+], function(DateFormat, avatarSrcUtil) {
   "use strict";
 
   return {
-    formatAvatar: function(sUrl, sName) {
+    // sMimeType/sUserID (2026-08, real upload added) take priority when
+    // present - falls through to the original avatarUrl-then-ui-avatars.com
+    // chain otherwise, unchanged, for anyone who hasn't uploaded a real
+    // photo yet.
+    formatAvatar: function(sMimeType, sUserID, sUrl, sName) {
+      var sRealSrc = avatarSrcUtil.avatarSrc(sUserID, sMimeType);
+      if (sRealSrc) return sRealSrc;
       if (sUrl && sUrl !== "null" && sUrl !== "") return sUrl;
       var initials = sName ? sName.replace(/[^A-Z]/g, "").substring(0, 2) : "AY";
       return "https://ui-avatars.com/api/?name=" + encodeURIComponent(sName || "AYMAX") + "&background=1E3A8A&color=fff&size=128";

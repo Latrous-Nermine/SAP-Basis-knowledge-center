@@ -2,10 +2,18 @@ sap.ui.define([
   "../BaseController",
   "../../model/profile/formatter",
   "sap/m/MessageBox",
+  "sap/m/MessageToast",
   "sap/ui/core/Fragment",
   "sap/ui/model/Filter"
-], function(BaseController, formatter, MessageBox, Fragment, Filter) {
+], function(BaseController, formatter, MessageBox, MessageToast, Fragment, Filter) {
   "use strict";
+
+  var ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
+  // Kept in sync by hand with the server's own ALLOWED_IMAGE_TYPES/hook
+  // (srv/people-service.js) - this is the fast client-side check so a
+  // wrong pick fails instantly, not the security boundary itself (the
+  // server enforces both regardless of what this ever lets through).
+  var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
   return BaseController.extend("aymax.hub.controller.profile.Profile", {
 
@@ -41,7 +49,18 @@ sap.ui.define([
       // any module's own constants), so this needs setting explicitly here.
       this.getViewModel().setProperty("/badgeGoal", 1000);
 
+      // Two separate route names sharing this same target/view (2026-08
+      // fix), not one "profile" route with two patterns
+      // (["profile","profile/{userID}"]) as this used to be declared in
+      // manifest.json - confirmed via testing that navTo("profile",
+      // {userID:...}) silently built the bare "#/profile" URL instead of
+      // "#/profile/<id>", dropping the parameter every time. The router
+      // couldn't reliably tell the two patterns apart under one name, so
+      // clicking any OTHER person's card always ended up back on the
+      // caller's own profile (_onRouteMatched's own no-userID fallback).
+      // Both route names still resolve to this identical handler.
       this.getRouter().getRoute("profile").attachPatternMatched(this._onRouteMatched, this);
+      this.getRouter().getRoute("profileDetail").attachPatternMatched(this._onRouteMatched, this);
     },
 
     onHomePress: function() {
@@ -73,6 +92,13 @@ sap.ui.define([
 
       this.getViewModel().setProperty("/busy", true);
       this.getViewModel().setProperty("/userID", sUserID);
+      // Cache-busting counters for the avatar/cover photo <img> src
+      // (formatter.avatarSrc/coverPhotoSrc) - the media stream lives at a
+      // fixed URL per user, so re-navigating to the same profile must
+      // still show whatever's actually stored now, not a stale browser
+      // cache hit from an earlier visit.
+      this.getViewModel().setProperty("/avatarVersion", Date.now());
+      this.getViewModel().setProperty("/coverPhotoVersion", Date.now());
 
       this.getView().bindElement({
         path: "/People('" + sUserID + "')",
@@ -173,6 +199,62 @@ sap.ui.define([
         this.getViewModel().setProperty("/publications", aContexts.map(function(c) { return c.getObject(); }));
       }.bind(this)).catch(function() {
         this.getViewModel().setProperty("/publications", []);
+      }.bind(this));
+    },
+
+    onAvatarFileChange: function(oEvent) {
+      this._uploadProfileImage(oEvent, "avatar", "avatarVersion", "avatarUpdated");
+    },
+
+    onCoverPhotoFileChange: function(oEvent) {
+      this._uploadProfileImage(oEvent, "coverPhoto", "coverPhotoVersion", "coverPhotoUpdated");
+    },
+
+    // Deliberately bypasses UI5's OData v4 model for the actual write:
+    // this PUTs raw bytes to the media-stream sub-resource CAP generates
+    // for `avatar`/`coverPhoto` (srv/people-service.cds MyProfile), which
+    // is a different shape of request than anything the model's own
+    // create()/PATCH machinery is built for. FileUploader only supplies
+    // the picked File object here (via change) - its own built-in
+    // .upload() sends multipart/form-data, which is the wrong body shape
+    // for this endpoint, so it's never called.
+    _uploadProfileImage: function(oEvent, sProperty, sVersionProp, sSuccessKey) {
+      var oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
+      var oUploader = oEvent.getSource();
+      oUploader.setValue("");
+      if (!oFile) return;
+
+      if (ALLOWED_IMAGE_TYPES.indexOf(oFile.type) === -1) {
+        MessageBox.error(this.getText("errorImageType"));
+        return;
+      }
+      if (oFile.size > MAX_IMAGE_BYTES) {
+        MessageBox.error(this.getText("errorImageSize"));
+        return;
+      }
+
+      var sUrl = "/odata/v4/people/MyProfile('" + encodeURIComponent(this._sUserID) + "')/" + sProperty;
+
+      fetch(sUrl, {
+        method: "PUT",
+        headers: { "Content-Type": oFile.type },
+        body: oFile,
+        credentials: "same-origin"
+      }).then(function(oResponse) {
+        if (!oResponse.ok) throw new Error("Upload failed (" + oResponse.status + ")");
+        this.getViewModel().setProperty("/" + sVersionProp, Date.now());
+        // The write above went straight to fetch(), bypassing the OData
+        // model entirely - it has no idea avatarMimeType/coverPhotoMimeType
+        // just changed server-side, so the Avatar/Image src binding (which
+        // reads those two properties) would otherwise keep showing the
+        // fallback until the next full page load. Same refresh() the
+        // existing onToggleFollow already uses to pick up a server-side
+        // change the model wasn't part of.
+        var oContext = this.getView().getBindingContext("people");
+        if (oContext) oContext.refresh();
+        MessageToast.show(this.getText(sSuccessKey));
+      }.bind(this)).catch(function() {
+        MessageBox.error(this.getText("errorImageUpload"));
       }.bind(this));
     },
 

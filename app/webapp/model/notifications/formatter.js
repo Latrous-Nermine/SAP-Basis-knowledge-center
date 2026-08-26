@@ -1,6 +1,7 @@
 sap.ui.define([
-  "sap/ui/core/format/DateFormat"
-], function(DateFormat) {
+  "sap/ui/core/format/DateFormat",
+  "../shared/notificationIcons"
+], function(DateFormat, notificationIcons) {
   "use strict";
 
   // Which fields of the JSON `params` blob fill the {0}/{1}… placeholders
@@ -20,22 +21,6 @@ sap.ui.define([
     VALIDATION_RESULT: ["title", "result"],
     UPDATE_REMINDER: ["title"],
     SECURITY_EVENT: ["detail"]
-  };
-
-  var ICONS = {
-    COMMENT: "sap-icon://comment",
-    MENTION: "sap-icon://discussion-2",
-    ANSWER_ACCEPTED: "sap-icon://accept",
-    ARTICLE_PUBLISHED: "sap-icon://document-text",
-    DOC_PUBLISHED: "sap-icon://document",
-    ROOM_POST: "sap-icon://group",
-    BADGE_EARNED: "sap-icon://badge",
-    CERTIFICATION_COMPLETED: "sap-icon://certificate",
-    RECOMMENDATION: "sap-icon://lightbulb",
-    VALIDATION_REQUESTED: "sap-icon://request",
-    VALIDATION_RESULT: "sap-icon://complete",
-    UPDATE_REMINDER: "sap-icon://reminder",
-    SECURITY_EVENT: "sap-icon://alert"
   };
 
   // Set once from Controller#onInit (getResourceBundle() needs the owner
@@ -90,7 +75,7 @@ sap.ui.define([
     },
 
     notificationIcon: function(sType) {
-      return ICONS[sType] || "sap-icon://bell";
+      return notificationIcons.getIcon(sType);
     },
 
     /** severity (INFO/WARNING/CRITICAL) -> sap.ui.core.Priority */

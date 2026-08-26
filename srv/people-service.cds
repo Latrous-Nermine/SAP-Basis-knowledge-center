@@ -18,6 +18,13 @@ using { aymax.knowledgehub as kh } from '../db/lot2';
 @requires: 'authenticated-user'
 service PeopleService {
 
+  // MyProfile (below) is a second projection of the same base entity
+  // (UserProfiles), which leaves CAP unable to auto-pick which one every
+  // Association-to-UserProfiles elsewhere in this service (Comments:author,
+  // Answers:author, UserSkills:user, ...) should redirect to. People is the
+  // one actually used for those - MyProfile exists only to scope writes to
+  // the caller's own row, nothing else navigates to it.
+  @cds.redirection.target
   @readonly
   @restrict: [
     { grant: 'READ', to: ['Employee', 'Manager', 'HR', 'Administrator', 'Intern'] }
@@ -39,6 +46,21 @@ service PeopleService {
         would otherwise need its own reconciliation workflow. */
     virtual contributionsCount : Integer
   } excluding { isActive, posts, comments, reputationEvents, followers, following };
+
+  /** The one writable slice of UserProfiles this service exposes - People
+      above stays fully @readonly. Scoped to the caller's own row only
+      (`where: userID = $user`), so a PATCH/media-PUT against anyone
+      else's userID is rejected before it reaches the handler, whatever
+      the request claims. Deliberately narrow: just the two media
+      properties (+ userID to address the row, + displayName so the
+      upload dialog can show whose profile it's editing) - not a general
+      "edit my profile" endpoint, since nothing else was asked for. */
+  @restrict: [
+    { grant: ['READ', 'UPDATE'], to: 'authenticated-user', where: 'userID = $user' }
+  ]
+  entity MyProfile as projection on kh.UserProfiles {
+    userID, displayName, avatar, avatarMimeType, coverPhoto, coverPhotoMimeType
+  };
 
   @readonly
   entity UserSkills as projection on kh.UserSkills;

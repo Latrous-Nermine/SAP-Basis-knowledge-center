@@ -7,6 +7,7 @@
   xmlns:card="sap.f.cards"
   xmlns:form="sap.ui.layout.form"
   xmlns:core="sap.ui.core"
+  xmlns:u="sap.ui.unified"
   displayBlock="true">
 
   <Page showNavButton="true" navButtonPress=".onNavBack" busy="{view-profile>/busy}" class="aymaxPage">
@@ -15,18 +16,56 @@
     </headerContent>
     <content>
 
+      <!-- Cover photo - new (2026-08, real upload). A plain sap.m.Image over a
+           gradient-fallback band (class alone, no visible= flip needed: an
+           empty src just shows the band underneath through). Sits above
+           ObjectPageLayout rather than inside its header - that control has
+           no "before everything" slot, and layering it INTO the existing
+           header risked the exact "touched the design" mistake flagged
+           before (see feedback_preserve_lot3_design memory) for a cosmetic
+           gain not worth that risk. -->
+      <VBox class="profilePageContainer profileCoverWrapper">
+        <VBox class="profileCoverBand">
+          <Image
+            src="{parts:[{path:'people>userID'},{path:'people>coverPhotoMimeType'},{path:'view-profile>/coverPhotoVersion'}], formatter:'.formatter.coverPhotoSrc'}"
+            class="profileCoverImage"
+            densityAware="false"/>
+          <u:FileUploader
+            id="coverPhotoUploader"
+            visible="{view-profile>/isOwnProfile}"
+            buttonOnly="true"
+            iconOnly="true"
+            icon="sap-icon://camera"
+            tooltip="{i18n-profile>changeCoverPhoto}"
+            change=".onCoverPhotoFileChange"
+            class="profileCoverEditBtn"/>
+        </VBox>
+      </VBox>
+
       <uxap:ObjectPageLayout id="profileObjectPage" showTitleInHeaderContent="true" class="profilePageContainer">
 
         <uxap:headerTitle>
           <uxap:ObjectPageDynamicHeaderTitle>
             <uxap:heading>
               <HBox alignItems="Center" class="profileGap16">
-                <Avatar
-                  class="profileHeaderAvatar"
-                  displaySize="XL"
-                  initials="{path:'people>displayName', formatter:'.formatter.initials'}"
-                  backgroundColor="{path:'people>userID', formatter:'.formatter.avatarColorFromID'}"
-                  tooltip="{people>displayName}"/>
+                <VBox class="profileAvatarWrapper">
+                  <Avatar
+                    class="profileHeaderAvatar"
+                    displaySize="XL"
+                    src="{parts:[{path:'people>userID'},{path:'people>avatarMimeType'},{path:'view-profile>/avatarVersion'}], formatter:'.formatter.avatarSrc'}"
+                    initials="{path:'people>displayName', formatter:'.formatter.initials'}"
+                    backgroundColor="{path:'people>userID', formatter:'.formatter.avatarColorFromID'}"
+                    tooltip="{people>displayName}"/>
+                  <u:FileUploader
+                    id="avatarUploader"
+                    visible="{view-profile>/isOwnProfile}"
+                    buttonOnly="true"
+                    iconOnly="true"
+                    icon="sap-icon://camera"
+                    tooltip="{i18n-profile>changeAvatar}"
+                    change=".onAvatarFileChange"
+                    class="profileAvatarEditBtn"/>
+                </VBox>
                 <VBox class="profileGap4">
                   <Title text="{people>displayName}" level="H2" wrapping="true"/>
                   <HBox alignItems="Center" class="profileGap8">

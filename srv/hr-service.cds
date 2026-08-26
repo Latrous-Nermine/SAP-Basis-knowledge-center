@@ -35,6 +35,7 @@ service HRService {
         reputation,
         objectiveStatus as objStatus,
         objectiveTitle,
+        avatarMimeType,
         skills          : redirected to Skills,
         virtual certsEarnedCount   : Integer,
         virtual certsProgressCount : Integer

@@ -92,6 +92,99 @@
   transform-origin: left center;
 }
 
+/* ============================================================
+   Cover photo + real avatar upload (2026-08). Gradient band is the
+   permanent background - the Image sits on top and only ever shows
+   through it once a real photo exists (empty src = band alone, matching
+   how Avatar's own initials fallback already works). Same radius/shadow
+   as every other card (.aymaxCard, css/lot3/tokens.css), so the band
+   reads as part of this app's card language, not a one-off banner.
+   ============================================================ */
+.profileCoverWrapper {
+  margin-top: 16px;
+}
+
+.profileCoverBand {
+  position: relative;
+  height: 200px;
+  border-radius: var(--aymax-radius-md);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--aymax-primary), var(--aymax-accent));
+  box-shadow: var(--aymax-shadow-sm);
+}
+
+/* .profileCoverBand is a VBox (column flex) - each direct child (the Image,
+   the FileUploader) gets auto-wrapped by the framework in its own
+   flex-item div with flex:0 1 auto, which collapses to 0 height for any
+   child whose own sizing doesn't come from normal content flow - exactly
+   what position:absolute on the <img> itself did (confirmed via DOM
+   inspection: img loaded fine, naturalWidth/Height correct, but rendered
+   at height:0 because its position:absolute box never fed back into that
+   wrapper's height). Targeting the wrapper directly (same :first-child
+   structural-selector technique already used for Dashboard's KPI
+   emphasis, for the same underlying reason: the wrapper is framework-
+   generated, there's no class to put on it from the view) and giving IT
+   the real height fixes this at the source instead of fighting it. */
+.profileCoverBand > .sapMFlexItem:first-child {
+  height: 200px;
+  min-height: 0;
+  position: relative;
+}
+
+/* sap.m.Image puts this class directly on the rendered <img> (no wrapper
+   element to target separately) - confirmed via DOM inspection. Now sized
+   through normal flow against its own (correctly-sized) wrapper above,
+   not position:absolute against a farther ancestor. */
+.profileCoverImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileCoverEditBtn {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+}
+.profileCoverEditBtn .sapMBtn {
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+  background: rgba(26, 33, 56, 0.55) !important;
+  border: none !important;
+}
+.profileCoverEditBtn .sapMBtn .sapMBtnIcon {
+  color: #fff !important;
+}
+
+/* Wraps just the Avatar (not the name/role text beside it) so the edit
+   button anchors to its corner regardless of the scale(1.12) transform
+   above - a plain HBox sibling would let the button drift wherever the
+   surrounding layout happened to put it. */
+.profileAvatarWrapper {
+  position: relative;
+  width: fit-content;
+}
+
+.profileAvatarEditBtn {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+}
+.profileAvatarEditBtn .sapMBtn {
+  border-radius: 50% !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  background: var(--aymax-primary) !important;
+  border: 2px solid var(--aymax-surface) !important;
+}
+.profileAvatarEditBtn .sapMBtn .sapMBtnIcon {
+  color: #fff !important;
+  font-size: 0.75rem !important;
+}
+
 .profileBioText {
   max-width: 720px;
   line-height: 1.6;

@@ -6,12 +6,11 @@ sap.ui.define([
   "sap/m/ActionSheet",
   "sap/m/Button",
   "sap/ui/core/Fragment",
-  "sap/ui/model/json/JSONModel",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator",
   "../../model/feed/ODataService",
   "../../model/feed/formatter"
-], function(BaseController, MessageToast, MessageBox, Token, ActionSheet, Button, Fragment, JSONModel, Filter, FilterOperator, ODataService, formatter) {
+], function(BaseController, MessageToast, MessageBox, Token, ActionSheet, Button, Fragment, Filter, FilterOperator, ODataService, formatter) {
   "use strict";
 
   return BaseController.extend("aymax.hub.controller.feed.Feed", {
@@ -35,16 +34,6 @@ sap.ui.define([
       this.oModelTags = this.getOwnerComponent().getModel("tags");
       this.getView().setModel(this.oModel);
       this.getView().setModel(this.oViewModel, "view");
-
-      this.oCommentModel = new JSONModel({
-        postID: "",
-        postTitle: "",
-        comments: [],
-        newText: "",
-        replyTo: null,
-        sending: false
-      });
-      this.getView().setModel(this.oCommentModel, "comment");
 
       var sSavedApiKey = localStorage.getItem("aymax_gemini_api_key") || "";
 
@@ -1026,170 +1015,124 @@ sap.ui.define([
         });
     },
 
+    // Comments now show inline on every post (Facebook-style) instead of
+    // behind a separate popup - this button just focuses this post's own
+    // comment box instead of opening anything.
     onCommentPress: function(oEvent) {
-      var oContext = oEvent.getSource().getBindingContext();
-      if (!oContext) return;
-      this._openCommentDialog(oContext);
+      var oPostCard = this._findPostCardAncestor(oEvent.getSource());
+      var oInput = oPostCard && this._findInlineInput(oPostCard, "aymaxCommentComposerInline");
+      if (oInput) oInput.focus();
     },
 
-    _openCommentDialog: function(oContext) {
-      var oPost = oContext.getObject() || {};
-      this._commentContext = oContext;
-      this.oCommentModel.setData({
-        postID: oPost.ID || "",
-        postTitle: oPost.title || "",
-        comments: this._normalizeCommentThread(oPost.comments || []),
-        newText: "",
-        replyTo: null,
-        sending: false
-      });
-
-      if (!this._pCommentDialog) {
-        this._pCommentDialog = Fragment.load({
-          id:         this.getView().getId(),
-          name:       "aymax.hub.view.feed.fragments.CommentDialog",
-          controller: this
-        }).then(function(oDialog) {
-          this.getView().addDependent(oDialog);
-          return oDialog;
-        }.bind(this));
+    // Walks up from any control inside a post's template to that post's
+    // own root VBox - the shared anchor every inline-comment lookup below
+    // starts from, since a growing list clones this template once per
+    // post and every clone's controls otherwise have generated, non-fixed
+    // ids.
+    _findPostCardAncestor: function(oControl) {
+      var oNode = oControl;
+      while (oNode && (!oNode.hasStyleClass || !oNode.hasStyleClass("aymaxPostCard"))) {
+        oNode = oNode.getParent();
       }
-
-      this._pCommentDialog.then(function(oDialog) {
-        oDialog.setTitle(oPost.title ? "Commentaires - " + oPost.title : "Commentaires");
-        oDialog.open();
-        setTimeout(function() {
-          var oArea = this.byId("commentTextArea");
-          if (oArea) oArea.focus();
-        }.bind(this), 60);
-      }.bind(this));
+      return oNode;
     },
 
-    _normalizeCommentThread: function(aComments) {
-      var aCloned = JSON.parse(JSON.stringify(aComments || []));
-      var mById = {};
-
-      aCloned.forEach(function(oComment) {
-        oComment.level = 0;
-        mById[oComment.ID] = oComment;
+    // Finds the Input inside the composer HBox carrying sComposerClass
+    // (either the post-level "new comment" composer or one specific
+    // comment's own reply composer) within oScope's subtree.
+    _findInlineInput: function(oScope, sComposerClass) {
+      var aComposers = oScope.findElements(true, function(oElem) {
+        return oElem.hasStyleClass && oElem.hasStyleClass(sComposerClass);
       });
-
-      aCloned.forEach(function(oComment) {
-        if (oComment.parent_ID && mById[oComment.parent_ID]) {
-          oComment.level = Math.min(2, (mById[oComment.parent_ID].level || 0) + 1);
-          oComment.parentDisplayName = (oComment.parent && oComment.parent.author && oComment.parent.author.displayName)
-            || (mById[oComment.parent_ID].author && mById[oComment.parent_ID].author.displayName)
-            || "";
-        }
-      });
-
-      return aCloned.sort(function(a, b) {
-        var iA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        var iB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return iA - iB;
-      });
+      if (!aComposers.length) return null;
+      var aInputs = aComposers[0].findElements ? aComposers[0].findElements(true, function(oElem) { return oElem.isA("sap.m.Input"); }) : [];
+      return aInputs[0] || null;
     },
 
-    _buildLocalComment: function(sText, oParent) {
-      var oUser = this.oViewModel.getProperty("/currentUser") || {};
-      return {
-        ID: "local-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
-        content: sText,
-        createdAt: new Date().toISOString(),
-        author: {
-          userID: oUser.userID || "",
-          displayName: oUser.displayName || "Moi",
-          avatarUrl: oUser.avatarUrl || ""
-        },
-        parent_ID: oParent && oParent.ID ? oParent.ID : null,
-        parent: oParent ? {
-          ID: oParent.ID,
-          author: oParent.author || null,
-          content: oParent.content || ""
-        } : null
-      };
-    },
-
-    onReplyToComment: function(oEvent) {
-      var oContext = oEvent.getSource().getBindingContext("comment");
-      if (!oContext) return;
-      this.oCommentModel.setProperty("/replyTo", oContext.getObject());
-
-      setTimeout(function() {
-        var oArea = this.byId("commentTextArea");
-        if (oArea) oArea.focus();
-      }.bind(this), 40);
-    },
-
-    onCancelReplyToComment: function() {
-      this.oCommentModel.setProperty("/replyTo", null);
-    },
-
-    onCloseCommentDialog: function() {
-      if (this._pCommentDialog) {
-        this._pCommentDialog.then(function(oDialog) {
-          oDialog.close();
-        });
+    // "Répondre" on a comment reveals/hides that SPECIFIC comment's own
+    // reply composer - each comment carries its own (initially hidden)
+    // composer in the template, found here as this comment row's own
+    // third child (header HBox, meta HBox, reply composer HBox).
+    onToggleInlineReply: function(oEvent) {
+      var oCommentRow = oEvent.getSource().getParent().getParent();
+      var oComposer = oCommentRow.getItems().filter(function(o) {
+        return o.hasStyleClass && o.hasStyleClass("aymaxInlineReplyComposer");
+      })[0];
+      if (!oComposer) return;
+      var bNowVisible = !oComposer.getVisible();
+      oComposer.setVisible(bNowVisible);
+      if (bNowVisible) {
+        var oInput = oComposer.findElements(true, function(oElem) { return oElem.isA("sap.m.Input"); })[0];
+        if (oInput) setTimeout(function() { oInput.focus(); }, 40);
       }
-      this.oCommentModel.setProperty("/replyTo", null);
-      this.oCommentModel.setProperty("/newText", "");
     },
 
-    onSendComment: function() {
-      var sText = (this.oCommentModel.getProperty("/newText") || "").trim();
-      var sPostID = this.oCommentModel.getProperty("/postID");
-      var oReplyTo = this.oCommentModel.getProperty("/replyTo");
-
-      if (!sText) {
-        MessageToast.show("Veuillez saisir un commentaire.");
-        return;
-      }
-
-      this.oCommentModel.setProperty("/sending", true);
+    // Shared by both the post-level composer (new top-level comment) and
+    // any comment's own reply composer - the only difference is which
+    // context/input the caller resolves before calling this. Takes the
+    // POST CARD control (not just its ID) so it can refresh that one row's
+    // context afterwards - refreshing the whole feedList binding does not
+    // reliably pull fresh data into the nested $expand'd "comments"
+    // collection of each row, since OData V4 treats it as a separate
+    // relative binding. A just-posted comment always lands at the end of
+    // that collection, so the nested List's own "growing" truncation
+    // (2/4 visible) would hide it - bumping growingThreshold alone doesn't
+    // retroactively widen an already-rendered growing window, so the items
+    // aggregation is rebound to force it to pick up the new threshold and
+    // show the full, now-refreshed thread (sap.m.List#setGrowing(false) at
+    // runtime was tried first but throws an internal UI5 "extended change
+    // detection protocol violation" - avoid that route).
+    _postComment: function(oInput, oPostCard, sParentID) {
+      var sText = (oInput.getValue() || "").trim();
+      if (!sText) return;
+      var oPostContext = oPostCard.getBindingContext();
 
       ODataService.callAction(this.oModel, "/addComment", {
-        postID: sPostID,
+        postID: oPostContext.getProperty("ID"),
         content: sText,
-        parentID: oReplyTo && oReplyTo.ID ? oReplyTo.ID : null
-      }).then(function(oCreatedComment) {
-        var aComments = (this.oCommentModel.getProperty("/comments") || []).slice();
-        var oLocalComment = this._buildLocalComment(sText, oReplyTo);
-
-        if (oCreatedComment && oCreatedComment.ID) {
-          oLocalComment.ID = oCreatedComment.ID;
+        parentID: sParentID || null
+      }).then(function() {
+        oInput.setValue("");
+        // requestRefresh(), not refresh(): the rebind below must wait for
+        // the fresh $expand'd comments data to actually land in the model
+        // before it re-reads from it, or it just re-renders the stale
+        // pre-refresh cache (refresh() alone is fire-and-forget).
+        return oPostContext.requestRefresh();
+      }).then(function() {
+        var oCommentsList = oPostCard.findElements(true, function(oElem) {
+          return oElem.hasStyleClass && oElem.hasStyleClass("aymaxInlineCommentsList");
+        })[0];
+        if (oCommentsList) {
+          oCommentsList.setGrowingThreshold(9999);
+          oCommentsList.bindItems(oCommentsList.getBindingInfo("items"));
         }
-
-        if (oReplyTo && oReplyTo.ID) {
-          var iIndex = aComments.findIndex(function(oComment) {
-            return oComment.ID === oReplyTo.ID;
-          });
-          if (iIndex >= 0) {
-            aComments.splice(iIndex + 1, 0, oLocalComment);
-          } else {
-            aComments.push(oLocalComment);
-          }
-        } else {
-          aComments.push(oLocalComment);
-        }
-
-        this.oCommentModel.setProperty("/comments", this._normalizeCommentThread(aComments));
-        this.oCommentModel.setProperty("/newText", "");
-        this.oCommentModel.setProperty("/replyTo", null);
-        this.oCommentModel.setProperty("/sending", false);
-
-        if (this._commentContext && this._commentContext.refresh) {
-          this._commentContext.refresh();
-        }
-        var oFeedBinding = this.byId("feedList") && this.byId("feedList").getBinding("items");
-        if (oFeedBinding) {
-          oFeedBinding.refresh();
-        }
-        this._loadShortcuts();
-        MessageToast.show("Commentaire ajouté ✓");
-      }.bind(this)).catch(function(oError) {
-        this.oCommentModel.setProperty("/sending", false);
+      }).catch(function(oError) {
         MessageBox.error("Erreur lors de l'ajout du commentaire : " + (oError.message || oError));
-      }.bind(this));
+      });
+    },
+
+    onSendInlineComment: function(oEvent) {
+      var oPostCard = this._findPostCardAncestor(oEvent.getSource());
+      if (!oPostCard) return;
+      var oInput = oEvent.getSource().isA("sap.m.Input") ? oEvent.getSource() : this._findInlineInput(oPostCard, "aymaxCommentComposerInline");
+      if (!oInput || !oPostCard.getBindingContext()) return;
+      this._postComment(oInput, oPostCard, null);
+    },
+
+    // The reply composer sits inside its own comment's row, so its own
+    // binding context IS that comment (post_ID / ID are real Comments
+    // columns) - but the POST CARD is still needed for the shared refresh
+    // + growing-reveal logic above, found the same way as the top-level
+    // composer.
+    onSendInlineReply: function(oEvent) {
+      var oCommentContext = oEvent.getSource().getBindingContext();
+      if (!oCommentContext) return;
+      var oPostCard = this._findPostCardAncestor(oEvent.getSource());
+      if (!oPostCard || !oPostCard.getBindingContext()) return;
+      var oComposer = oEvent.getSource().getParent();
+      var oInput = oEvent.getSource().isA("sap.m.Input") ? oEvent.getSource() : oComposer.findElements(true, function(oElem) { return oElem.isA("sap.m.Input"); })[0];
+      if (!oInput) return;
+      this._postComment(oInput, oPostCard, oCommentContext.getProperty("ID"));
     },
 
     onFavoritePress: function(oEvent) {
@@ -1394,7 +1337,7 @@ sap.ui.define([
     // ============================================================
     // FORMATTERS
     // ============================================================
-    formatAvatar:        function(sUrl, sName)  { return formatter.formatAvatar(sUrl, sName); },
+    formatAvatar:        function(sMimeType, sUserID, sUrl, sName) { return formatter.formatAvatar(sMimeType, sUserID, sUrl, sName); },
     formatDate:          function(sDate)         { return formatter.formatDate(sDate); },
     formatRelativeTime:  function(sDate)         { return formatter.formatRelativeTime(sDate); },
     formatFileSize:      function(iBytes)        { return formatter.formatFileSize(iBytes); },
@@ -1445,11 +1388,6 @@ sap.ui.define([
     },
 
     // En-tête de la zone commentaires : "Commentaires (N)"
-    formatCommentsHeader: function(iCount) {
-      var n = parseInt(iCount, 10) || 0;
-      return n === 0 ? "Commentaires" : "Commentaires (" + n + ")";
-    },
-
     // Métadonnée de fichier : "123 Ko · PDF"
     formatFileMeta: function(iBytes, sType) {
       var sSize = formatter.formatFileSize(iBytes);
@@ -1475,12 +1413,37 @@ sap.ui.define([
       return mStates[sType] || "None";
     },
 
-    formatPostCardClass: function(sType) {
-      return "aymaxPostType-" + (sType || "knowledge");
-    },
-
     formatFavoriteIcon: function(bFavorited) {
       return bFavorited ? "sap-icon://favorite" : "sap-icon://unfavorite";
+    },
+
+    // Generic "visible" helpers for properties whose OData V4 type
+    // (Association FK / Guid / Int64 / LargeString) UI5 cannot
+    // auto-convert to boolean inside an expression binding
+    // (`{= !!${prop} }` or `{= ${prop} > 0 }` throws a FormatException for
+    // these). Using a formatter binding with targetType:'any' on the XML
+    // side skips that automatic conversion, so the formatter always
+    // receives the raw value directly. Note this only works for
+    // primitive-valued paths - a Composition/collection path (like "tags"
+    // or "documents") can't back an ODataPropertyBinding at all ("Accessed
+    // value is not primitive"), so those two rely on showNoData/natural
+    // empty rendering instead of a visible= binding - see the comments
+    // above the tags HBox and documents List.
+    isTruthy: function(vValue) {
+      return !!vValue;
+    },
+
+    isPositive: function(vValue) {
+      return Number(vValue) > 0;
+    },
+
+    // Same underlying cause as isTruthy/isPositive above: comparing
+    // ${author/userID} === ${view>/currentUser/userID} directly inside an
+    // expression binding threw "X is not a valid boolean value", since one
+    // side comes from a different named model - kept as an explicit
+    // multi-part formatter instead.
+    formatIsOwnPost: function(sAuthorID, sCurrentUserID) {
+      return !!sAuthorID && sAuthorID === sCurrentUserID;
     }
   });
 });

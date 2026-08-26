@@ -1,4 +1,6 @@
-sap.ui.define([], function() {
+sap.ui.define([
+  "../shared/avatarSrc"
+], function(avatarSrcUtil) {
   "use strict";
 
   // Same token set and hash as Profile's formatter - same user ID resolves
@@ -38,6 +40,8 @@ sap.ui.define([], function() {
     setResourceBundle: function(oBundle) {
       oResourceBundle = oBundle;
     },
+
+    avatarSrc: avatarSrcUtil.avatarSrc,
 
     initials: initials,
     avatarColorFromID: avatarColorFromID,

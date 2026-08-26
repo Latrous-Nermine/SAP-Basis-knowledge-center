@@ -129,6 +129,7 @@
               <HBox alignItems="Center" class="sapUiSmallMargin">
                 <Avatar
                   displaySize="M"
+                  src="{parts:[{path:'view-dashboard>userID'},{path:'view-dashboard>avatarMimeType'}], formatter:'.formatter.avatarSrc'}"
                   initials="{path:'view-dashboard>displayName', formatter:'.formatter.initials'}"
                   backgroundColor="{path:'view-dashboard>userID', formatter:'.formatter.avatarColorFromID'}"
                   class="sapUiSmallMarginEnd"/>
