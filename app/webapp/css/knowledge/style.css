@@ -6,20 +6,27 @@
    .aymaxPageContent's uniform 24px on every side (2026-08 unification pass):
    was 0 32px, no top/bottom padding at all, the one visible gap between
    this container and the shared standard. */
+/* 2026-08 "space" pass: 1280 -> 1600. A wide viewport was leaving a very
+   large flat margin on both sides while every card grid below re-wraps at
+   fixed minmax widths regardless of container size - widening the
+   container is what actually lets those grids add another column and use
+   the screen, rather than just growing the (already comfortable) side
+   margins further. Candidate reference width for other Lot 2 pages later,
+   not applied to them yet - out of scope for this pass. */
 .knowledgeContentContainer {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 20px 32px;
   box-sizing: border-box;
   width: 100%;
 }
 
 @media (max-width: 1024px) {
-  .knowledgeContentContainer { padding-left: 24px; padding-right: 24px; }
+  .knowledgeContentContainer { padding: 16px 20px; }
 }
 
 @media (max-width: 600px) {
-  .knowledgeContentContainer { padding-left: 16px; padding-right: 16px; }
+  .knowledgeContentContainer { padding: 12px 16px; }
 }
 
 /* Keeps the search + category row visible while the card list scrolls, styled
@@ -46,10 +53,10 @@
   background: var(--aymax-surface);
   border: 1px solid var(--aymax-border);
   border-radius: var(--aymax-radius-md);
-  padding: 24px;
   margin-bottom: 16px;
   box-shadow: var(--aymax-shadow-sm);
   cursor: pointer;
+  overflow: hidden;
   transition: box-shadow 200ms ease, transform 150ms ease;
   animation: knowledgeCardFadeIn 400ms ease both;
 }
@@ -68,10 +75,107 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 18px 20px 20px;
 }
 
 .knowledgeCardStatusRow {
   gap: 8px;
+}
+
+/* ============================================================
+   Card thumbnail (2026-08 "real visuals" pass) - a real hand-authored SVG
+   illustration (img/knowledge/illustrations/, matched by topic keyword or
+   category - see formatter.js's cardIllustration), replacing the earlier
+   flat-colour-plus-watermark-icon banner. No text label lives on the
+   image anymore (see .knowledgeCardCategoryLabel below, in the body) -
+   the illustration itself is the visual anchor, so nothing competes with
+   it for attention.
+   ============================================================ */
+.knowledgeCardThumb {
+  position: relative;
+  height: 100px;
+  overflow: hidden;
+  background: var(--aymax-neutral-100, #eef1f7);
+}
+
+/* Exactly one of these 8 static-class fills is visible per row (see the
+   fragment's own comment on why: a bound class=/CustomData/Avatar
+   enum-color were all tried and rejected for various reasons). inset:0 on
+   an absolutely positioned element computes its size directly from the
+   offsets against the nearest positioned ancestor (.knowledgeCardThumb) -
+   no percentage width/height needed. background-color is each
+   illustration's own dominant tone, so the edges the SVG doesn't cover
+   (background-size: cover can crop slightly on unusual card widths) never
+   flash white. */
+.knowledgeCardThumbImg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+/* Bare .khIllusX (not scoped to .knowledgeCardThumbImg) - shared by both
+   the card thumbnail AND the rail's topic tile thumbnail
+   (.knowledgeTopicTileThumbImg), which reuses these same 7 classes for
+   its own smaller crop rather than duplicating the image/colour list a
+   second time. */
+.khIllusBtpCloud     { background-color: #2E4EA8; background-image: url("../../img/knowledge/illustrations/illus-btp-cloud.svg"); }
+.khIllusHanaData     { background-color: #0F8677; background-image: url("../../img/knowledge/illustrations/illus-hana-data.svg"); }
+.khIllusFioriUi      { background-color: #5B49C7; background-image: url("../../img/knowledge/illustrations/illus-fiori-ui.svg"); }
+.khIllusCapDev       { background-color: #2E8D57; background-image: url("../../img/knowledge/illustrations/illus-cap-dev.svg"); }
+.khIllusBasisServer  { background-color: #52607A; background-image: url("../../img/knowledge/illustrations/illus-basis-server.svg"); }
+.khIllusSecurity     { background-color: #A8437A; background-image: url("../../img/knowledge/illustrations/illus-security.svg"); }
+.khIllusBestPractice { background-color: #CB7E24; background-image: url("../../img/knowledge/illustrations/illus-best-practice.svg"); }
+.khIllusGeneral      { background-color: #128B96; background-image: url("../../img/knowledge/illustrations/illus-general.svg"); }
+
+.knowledgeCardThumbBadgesWrap {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 1;
+}
+.knowledgeCardThumbBadges {
+  gap: 6px;
+}
+
+/* Small white "chip" so a status/from-question badge stays legible
+   regardless of which illustration it's sitting on. */
+.knowledgeCardThumbBadge {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+.knowledgeFromQuestionBadge {
+  color: var(--aymax-success) !important;
+}
+
+.knowledgeCardThumbStatus.sapMObjStatus {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+.knowledgeCardThumbDelete.sapMBtn,
+.knowledgeCardThumbDelete .sapMBtnIcon {
+  color: #ffffff !important;
+}
+.knowledgeCardThumbDelete.sapMBtn:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Category/type label - moved OFF the image (2026-08), a plain quiet
+   text line just below the thumbnail instead of a white overlay, so the
+   illustration itself stays uncluttered. */
+.knowledgeCardCategoryLabel {
+  color: var(--aymax-text-muted);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 /* Secondary content - one step down from the title, one step up from
@@ -125,6 +229,609 @@
 }
 
 /* ============================================================
+   Hero band (2026-08 flagship redesign) - the same brand gradient
+   already used for Profile's cover band (linear-gradient(135deg,
+   --aymax-primary, --aymax-accent)), reused here rather than inventing
+   a second "brand surface" treatment. Everything inside sits on that
+   gradient, so text/icons are explicitly light regardless of theme.
+   ============================================================ */
+/* Compact (2026-08 v2) - was 28px 32px/gap 16px with a 4-icon decorative
+   cluster on top; the cluster is gone and padding/gap are both down
+   roughly a third, so the hero reads as a strong but brief opener, not a
+   second scroll-length section (explicit feedback: illustrations
+   elsewhere now carry the page's visual weight, the hero doesn't need to
+   compete for it). */
+.knowledgeHero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--aymax-primary), var(--aymax-accent));
+  border-radius: var(--aymax-radius-lg);
+  padding: 18px 28px;
+  margin-bottom: 16px;
+  gap: 10px;
+  box-shadow: var(--aymax-shadow-md);
+}
+
+/* Same shared mesh asset the cards use (img/knowledge/pattern-mesh.svg) -
+   one consistent "textured surface" language across hero/banners/CTA,
+   not a one-off hero-only effect. */
+.knowledgeHero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../../img/knowledge/pattern-mesh.svg");
+  background-repeat: repeat;
+  background-size: 46px 46px;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.knowledgeHeroTopRow,
+.knowledgeHeroSearch,
+.knowledgeHeroStats {
+  position: relative;
+  z-index: 1;
+}
+
+.knowledgeHeroTitle,
+.knowledgeHeroTitle .sapMTitle {
+  color: #ffffff !important;
+}
+
+.knowledgeHeroTagline {
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 46rem;
+  margin-top: 4px;
+}
+
+.knowledgeHeroHomeButton,
+.knowledgeHeroHomeButton .sapMBtnIcon {
+  color: #ffffff !important;
+}
+
+.knowledgeHeroSearch {
+  max-width: 32rem;
+}
+
+.knowledgeHeroSearch .sapMSF {
+  border-radius: var(--aymax-radius-md);
+  overflow: hidden;
+}
+
+.knowledgeHeroStats {
+  gap: 10px;
+}
+
+.knowledgeHeroStat {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--aymax-radius-md);
+  padding: 8px 16px 8px 10px;
+}
+
+.knowledgeHeroStatIcon {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.knowledgeHeroStatIcon .sapUiIcon {
+  color: #ffffff !important;
+  font-size: 0.95rem;
+}
+
+.knowledgeHeroStatText {
+  align-items: flex-start;
+}
+
+.knowledgeHeroStatValue {
+  color: #ffffff !important;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.knowledgeHeroStatLabel {
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-size: 0.76rem;
+}
+
+.knowledgeHeroCta {
+  margin-inline-start: auto;
+}
+/* Fix (2026-08, reported: CTA rendered as raw SAP blue with a white halo,
+   not the intended white pill) - a sap.m.Button of type="Emphasized"
+   paints its actual background/border on the INNER .sapMBtnInner element,
+   not the outer .sapMBtn wrapper this class lives on (confirmed via
+   computed-style inspection: .sapMBtn itself has no background, its
+   Emphasized .sapMBtnInner child has background:rgb(0,112,242) - SAP's
+   default blue - completely opaque, so overriding the OUTER wrapper's
+   background/border, as this rule used to, was invisible: the inner
+   element's own opaque fill painted over it regardless). Targeting
+   .sapMBtnInner directly is the fix - same root cause as the category
+   picker tiles below. */
+.knowledgeHeroCta .sapMBtnInner {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+}
+.knowledgeHeroCta .sapMBtnContent,
+.knowledgeHeroCta .sapMBtnIcon,
+.knowledgeHeroCta .sapMBtnText {
+  color: var(--aymax-primary) !important;
+}
+
+/* ============================================================
+   Two-column discovery band (2026-08 v2) - left column is the existing
+   IconTabBar (unchanged), right column is the fixed-width "Explore" rail.
+   Collapses to a stacked single column at <=1024px - the rail becomes a
+   full-width block below the tabs instead of a horizontal chip strip
+   (simpler than reflowing its own internal grids sideways, and still
+   reads fine stacked since each rail section is already its own compact
+   card). ============================================================ */
+.knowledgeMainRow {
+  gap: 20px;
+  align-items: flex-start;
+}
+.knowledgeMainCol {
+  flex: 1;
+  min-width: 0;
+}
+.knowledgeRail {
+  width: 320px;
+  min-width: 320px;
+  gap: 16px;
+}
+@media (max-width: 1024px) {
+  .knowledgeMainRow {
+    flex-direction: column;
+  }
+  .knowledgeRail {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.knowledgeRailSection {
+  background: var(--aymax-surface);
+  border: 1px solid var(--aymax-border);
+  border-radius: var(--aymax-radius-md);
+  padding: 14px 14px 16px;
+  box-shadow: var(--aymax-shadow-sm);
+}
+.knowledgeRailHeading {
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.knowledgeRailHeadingIcon {
+  color: var(--aymax-primary);
+  font-size: 1rem;
+}
+
+/* ============================================================
+   Tab bar (2026-08 "compact discovery" pass) - the four collections that
+   used to be stacked sections now live behind sap.m.IconTabBar. Restyled
+   to match this module's own visual language instead of the library's
+   flat grey default: pill-shaped filters (echoes .knowledgeCategoryChip),
+   brand-coloured active state, card-like surface.
+   ============================================================ */
+.knowledgeTabBar.sapMITB {
+  background: transparent;
+}
+.knowledgeTabBar .sapMITBHead {
+  background: var(--aymax-surface);
+  border: 1px solid var(--aymax-border);
+  border-radius: var(--aymax-radius-md);
+  padding: 6px;
+  margin-bottom: 16px;
+  box-shadow: var(--aymax-shadow-sm);
+}
+/* IconTabBar's own default CSS fixes each tab item at a flat 88px (5.5rem)
+   - fine for a short label like "Bibliothèque" but clips longer ones
+   ("Récemment ajoutées", "Mes connaissances") against .sapMITBHead's own
+   overflow:hidden, which reads as a truncated/broken label rather than an
+   intentional ellipsis (confirmed via computed style: the text itself has
+   white-space:nowrap and overflow:visible, so nothing here was ever
+   deliberately truncating it - the fixed-width ancestor was just too
+   narrow). Auto-width + a floor instead of a fixed size lets each tab fit
+   its own label. */
+.knowledgeTabBar .sapMITBFilter {
+  border-radius: var(--aymax-radius-sm) !important;
+  width: auto !important;
+  min-width: 5.5rem;
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+.knowledgeTabBar .sapMITBFilterWrapper,
+.knowledgeTabBar .sapMITBText {
+  width: auto !important;
+}
+.knowledgeTabBar .sapMITBSelected {
+  background: color-mix(in srgb, var(--aymax-primary) 9%, transparent);
+}
+.knowledgeTabBar .sapMITBSelected .sapMITBText,
+.knowledgeTabBar .sapMITBSelected .sapMITBFilterIcon,
+.knowledgeTabBar .sapMITBSelected .sapMITBCount {
+  color: var(--aymax-primary) !important;
+}
+.knowledgeTabBar .sapMITBContent {
+  padding: 0;
+  background: transparent;
+}
+.knowledgeTabBar .sapMITBHead .sapMITBFilter::after {
+  display: none;
+}
+
+/* Section subtitles (Featured) - one step down from the section title,
+   same de-emphasis language as .knowledgeCardExcerpt above. */
+.knowledgeSectionSubtitle {
+  color: var(--aymax-text-muted);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   Rail topic tiles (2026-08 v2 "Explore rail") - a real illustration
+   thumbnail crop (same khIllus* image classes the card fragment uses)
+   replaces the old flat colour-swatch Avatar, so the rail itself reads
+   as visually rich "Explore" content rather than an administrative list
+   (explicit feedback). Compact single-column rows, not the old
+   auto-fill grid - the rail is a fixed 320px column, not a page-width
+   section. Active state stays a checkmark badge, not a bound class= (see
+   formatter's own comment on why class= bindings are avoided throughout
+   this module).
+   ============================================================ */
+.knowledgeRailTopicList .sapMLIB {
+  border: none;
+  padding: 0;
+}
+.knowledgeTopicTile {
+  border-radius: var(--aymax-radius-sm);
+  transition: background-color 150ms ease;
+}
+.knowledgeTopicTile:hover {
+  background: var(--aymax-bg);
+}
+.knowledgeTopicTileInner {
+  gap: 10px;
+  padding: 6px 6px;
+  position: relative;
+}
+.knowledgeTopicTileThumb {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: var(--aymax-radius-sm);
+  overflow: hidden;
+}
+.knowledgeTopicTileThumbImg {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.knowledgeTopicTileText {
+  min-width: 0;
+}
+.knowledgeTopicTileName {
+  font-weight: 600;
+  font-size: 0.86rem;
+  color: var(--aymax-text);
+}
+.knowledgeTopicTileCount {
+  font-size: 0.74rem;
+  color: var(--aymax-text-muted);
+}
+.knowledgeTopicTileActiveBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: var(--aymax-success) !important;
+  font-size: 0.9rem;
+}
+
+/* Rail category grid (2026-08 v2) - a compact 2-column icon+count grid,
+   not the old 8-row list, so it reads as quick filter chips rather than a
+   settings panel (explicit feedback). Icon badge reuses the same
+   Avatar-as-colour-swatch mechanism proven reliable elsewhere in this
+   module (categoryAvatarColor/categoryTabIcon - see formatter.js). */
+.knowledgeRailCategoryGrid .sapMListItems {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.knowledgeRailCategoryGrid .sapMLIB {
+  border: none;
+  padding: 0;
+}
+.knowledgeRailCategoryTile {
+  border-radius: var(--aymax-radius-sm);
+  transition: background-color 150ms ease;
+}
+.knowledgeRailCategoryTile:hover {
+  background: var(--aymax-bg);
+}
+.knowledgeRailCategoryInner {
+  gap: 8px;
+  padding: 6px;
+  min-width: 0;
+}
+.knowledgeRailCategoryIcon {
+  flex-shrink: 0;
+}
+.knowledgeRailCategoryText {
+  min-width: 0;
+}
+.knowledgeRailCategoryLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--aymax-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.knowledgeRailCategoryCount {
+  font-size: 0.72rem;
+  color: var(--aymax-text-muted);
+}
+
+/* Library / Featured grid - same repeat(auto-fill, minmax(...)) recipe
+   already proven elsewhere in this app for card collections. Applied to
+   the sap.m.List's own item container, not a bespoke layout control. */
+.knowledgeCardGrid .sapMListItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.knowledgeCardGrid .knowledgeCard {
+  margin-bottom: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.knowledgeCardGrid .knowledgeCard .knowledgeCardBody {
+  flex: 1;
+}
+
+/* Featured is the discovery spotlight - its first card gets extra visual
+   weight (wider span, taller banner, bigger watermark) so the section
+   opens with one clear "best of" moment instead of a flat row of
+   identical tiles. Pure CSS (nth-child), no extra markup or controller
+   state needed. */
+@media (min-width: 720px) {
+  .knowledgeFeaturedGrid .sapMListItems > .sapMLIB:first-child {
+    grid-column: span 2;
+  }
+  .knowledgeFeaturedGrid .sapMListItems > .sapMLIB:first-child .knowledgeCardThumb {
+    height: 150px;
+  }
+  .knowledgeFeaturedGrid .sapMListItems > .sapMLIB:first-child .knowledgeCardTitle .sapMTitle {
+    font-size: 1.25rem !important;
+  }
+}
+
+.knowledgeFromQuestionIcon {
+  color: var(--aymax-accent);
+  font-size: 0.9rem;
+}
+
+.knowledgeCardTitle {
+  margin-top: 2px;
+}
+
+/* Topic chip on the card itself - quieter than the tag tokens below it,
+   a single association rather than a multi-value list. */
+.knowledgeCardTopicChip {
+  color: var(--aymax-primary);
+  background: color-mix(in srgb, var(--aymax-primary) 8%, transparent);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.knowledgeCardFooter {
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.knowledgeCardAuthor {
+  gap: 8px;
+  min-width: 0;
+}
+
+.knowledgeCardAvatar {
+  flex-shrink: 0;
+}
+
+/* Wraps view/comment/attachment counts together on the footer's right
+   side (2026-08 "real visuals" pass) - comments/attachments are new,
+   real, and only shown when non-zero (formatter.hasCount), so this just
+   gives the group its own gap distinct from .knowledgeCardFooter's. */
+.knowledgeCardMetaCounts {
+  gap: 10px;
+}
+
+.knowledgeCardViewCount {
+  gap: 4px;
+  color: var(--aymax-text-muted);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.knowledgeCardViewIcon {
+  color: var(--aymax-text-muted);
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   Contribute dialog - grouped sections (2026-08 redesign) instead of
+   one flat stack of labels/inputs.
+   ============================================================ */
+.knowledgeDialogSectionTitle {
+  color: var(--aymax-primary);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--aymax-border);
+}
+
+.knowledgeDialogRow {
+  gap: 16px;
+}
+
+.knowledgeDialogRowItem {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The richer content (headline input + 7 category tiles + topic + tags +
+   content fields + attachments) made the dialog's natural height exceed
+   the viewport on common screen sizes - without an explicit cap it centred
+   on its own oversized height instead of clamping to the viewport, pushing
+   the custom header off the top edge. verticalScrolling="true" (already
+   set) handles the actual scrolling once this cap forces it to engage. */
+.knowledgeContributeDialogRoot.sapMDialog {
+  max-height: 88vh !important;
+}
+
+/* Content padding fix (2026-08, reported: fields/text glued to the
+   popup's edges) - the fragment's own sapUiContentPadding utility class
+   is present but never actually wins: sap.m.VBox/FlexBox's own base
+   library CSS resets padding:0 on .sapMFlexBox at equal specificity, and
+   (confirmed via computed-style inspection: padding measured 0px despite
+   the class being applied) that library rule loads after the core
+   utility class's plain (non-!important) rule, so it wins the cascade
+   regardless of class order in the markup. An explicit, !important rule
+   on this module's own class is the reliable fix, the same pattern
+   already used for every other UI5-default override in this file. */
+.knowledgeContributeDialog.sapMVBox {
+  padding: 20px 24px !important;
+}
+
+/* Dialog header (2026-08 "richer" pass) - a real "create something"
+   moment, brand-gradient + icon, replacing the plain default title bar.
+   Deliberately kept within sap.m.Bar's own standard toolbar height, not
+   grown taller via CSS - Dialog's internal layout doesn't reflow around a
+   taller custom header (confirmed via an element-level screenshot: the
+   extra height clipped against the dialog's own overflow:hidden instead
+   of the dialog growing to fit). Icon + title only; the subtitle lives in
+   the content body instead. */
+/* Dialog stacking fix (2026-08 v2, found via Playwright screenshot + a
+   real elementFromPoint hit-test - the DOM/computed-style geometry looked
+   entirely correct in isolation, which is exactly why this was never
+   caught before actually rendering it). The shared shell header
+   (.aymaxHeader, css/feed/style.css) is position:sticky with
+   z-index:100 - fine on its own, since nothing on any page used to
+   compete with it. But sap.m.Dialog's own z-index (UI5's popup stack,
+   ~10) sits BELOW that, so wherever a Dialog's absolutely-positioned
+   customHeader (sap.m.Dialog's own CSS: .sapMDialogTitleGroup,
+   position:absolute, top:0, 2.75rem tall) happens to fall within the
+   shell header's own 56px band, the STICKY SHELL HEADER paints on top of
+   it and hides it completely - confirmed via elementFromPoint at the
+   header's own screen coordinates returning .aymaxHeaderLeft, not this
+   dialog, as the topmost hit. Scoped to this one dialog (not a global
+   z-index bump for every popup in the app, and not an edit to Nermine's
+   own file) since this is the one place in Lot 2 a dialog opens this
+   close to the top of the viewport. */
+.knowledgeContributeDialogRoot.sapMDialog {
+  z-index: 200 !important;
+}
+
+.knowledgeDialogHeaderBar.sapMBar {
+  background: linear-gradient(120deg, var(--aymax-accent), var(--aymax-primary)) !important;
+  border-bottom: none !important;
+}
+.knowledgeDialogHeaderLeft {
+  gap: 10px;
+}
+.knowledgeDialogHeaderIcon {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+.knowledgeDialogHeaderIcon .sapUiIcon {
+  color: #ffffff !important;
+  font-size: 0.95rem;
+}
+.knowledgeDialogHeaderTitle,
+.knowledgeDialogHeaderTitle .sapMTitle {
+  color: #ffffff !important;
+}
+
+/* Headline title field - large, quiet until focus, reads like the
+   opening line of an article rather than an admin form field. */
+.knowledgeDialogTitleInput .sapMInputBaseInner {
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  padding-left: 0 !important;
+}
+.knowledgeDialogTitleInput.sapMInputBase {
+  border: none !important;
+  border-bottom: 2px solid var(--aymax-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.knowledgeDialogTitleInput.sapMInputBase.sapMInputBaseHasState,
+.knowledgeDialogTitleInput.sapMInputBase:focus-within {
+  border-bottom-color: var(--aymax-accent) !important;
+}
+
+/* Visual category picker - coloured tiles instead of a <Select>. Default
+   (unselected) state is a soft tint of the tile's own hue; Emphasized
+   (selected, via each tile's own inline expression binding - see the
+   fragment's own comment) switches to the full gradient with white text,
+   the same "selected" language the category filter chips use elsewhere. */
+.knowledgeCategoryPickerRow {
+  gap: 8px;
+}
+.knowledgeCategoryPickerTile.sapMBtn {
+  border-radius: 999px !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  border: 1px solid transparent !important;
+}
+.knowledgeCategoryPickerTile.khHueBlue.sapMBtn   { background: color-mix(in srgb, #4271DE 12%, transparent) !important; color: #223E96 !important; }
+.knowledgeCategoryPickerTile.khHueTeal.sapMBtn   { background: color-mix(in srgb, #15AC98 12%, transparent) !important; color: #0A6F62 !important; }
+.knowledgeCategoryPickerTile.khHueIndigo.sapMBtn { background: color-mix(in srgb, #7566EE 12%, transparent) !important; color: #4B3BB5 !important; }
+.knowledgeCategoryPickerTile.khHueAmber.sapMBtn  { background: color-mix(in srgb, #E8952F 14%, transparent) !important; color: #B0640F !important; }
+.knowledgeCategoryPickerTile.khHueGreen.sapMBtn  { background: color-mix(in srgb, #3FAE6C 12%, transparent) !important; color: #21734A !important; }
+.knowledgeCategoryPickerTile.khHueSlate.sapMBtn  { background: color-mix(in srgb, #6C7A93 14%, transparent) !important; color: #414D5F !important; }
+.knowledgeCategoryPickerTile.khHueCyan.sapMBtn   { background: color-mix(in srgb, #1FB6C4 12%, transparent) !important; color: #0E7580 !important; }
+
+/* Selected state fix (2026-08, same root cause as the Hero CTA above) -
+   type="Emphasized" paints its own opaque fill on the INNER .sapMBtnInner
+   element, not the outer .sapMBtn wrapper .knowledgeCategoryPickerTile/
+   .khHueX live on - a compound selector requiring both on the SAME
+   element (as this block used to write it) can never match, since UI5
+   never puts .sapMBtnEmphasized on the outer wrapper. Rewritten as
+   ancestor(hue) + descendant(.sapMBtnInner.sapMBtnEmphasized) instead -
+   confirmed via computed-style inspection that .sapMBtnInner is exactly
+   where the fill/color need to land. */
+.knowledgeCategoryPickerTile.khHueBlue .sapMBtnInner.sapMBtnEmphasized   { background: linear-gradient(135deg, #4271DE, #223E96) !important; color: #fff !important; }
+.knowledgeCategoryPickerTile.khHueTeal .sapMBtnInner.sapMBtnEmphasized   { background: linear-gradient(135deg, #15AC98, #0A6F62) !important; color: #fff !important; }
+.knowledgeCategoryPickerTile.khHueIndigo .sapMBtnInner.sapMBtnEmphasized { background: linear-gradient(135deg, #7566EE, #4B3BB5) !important; color: #fff !important; }
+.knowledgeCategoryPickerTile.khHueAmber .sapMBtnInner.sapMBtnEmphasized  { background: linear-gradient(135deg, #E8952F, #B0640F) !important; color: #fff !important; }
+.knowledgeCategoryPickerTile.khHueGreen .sapMBtnInner.sapMBtnEmphasized  { background: linear-gradient(135deg, #3FAE6C, #21734A) !important; color: #fff !important; }
+.knowledgeCategoryPickerTile.khHueSlate .sapMBtnInner.sapMBtnEmphasized  { background: linear-gradient(135deg, #6C7A93, #414D5F) !important; color: #fff !important; }
+.knowledgeCategoryPickerTile.khHueCyan .sapMBtnInner.sapMBtnEmphasized   { background: linear-gradient(135deg, #1FB6C4, #0E7580) !important; color: #fff !important; }
+.knowledgeCategoryPickerTile .sapMBtnIcon { color: inherit !important; }
+.knowledgeCategoryPickerTile .sapMBtnText { color: inherit !important; }
+
+/* ============================================================
    Detail page
    ============================================================ */
 
@@ -138,23 +845,68 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-.knowledgeHeaderMeta {
-  /* sapUiSmallGap is not a real SAPUI5 utility class (no built-in "gap"
-     family exists - only sapUi*Margin) - without an explicit gap here,
-     every chip and attribute in this row was rendering with zero space
-     between them. */
+/* Article as a reading surface - its own card, not text floating
+   directly on the page background (2026-08 redesign). */
+.knowledgeArticleCard {
+  background: var(--aymax-surface);
+  border: 1px solid var(--aymax-border);
+  border-radius: var(--aymax-radius-md);
+  padding: 28px;
+  box-shadow: var(--aymax-shadow-sm);
+}
+
+.knowledgeDetailHeaderMeta {
+  gap: 4px;
+}
+
+.knowledgeDetailByline {
+  gap: 4px;
+}
+
+.knowledgeDetailBylineAuthor {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.knowledgeDetailBylineMeta {
+  /* No built-in "gap" utility class in SAPUI5 (only sapUi*Margin) -
+     without this, every ObjectAttribute/view-count chip in the row
+     rendered with zero space between them. */
   gap: 12px 16px;
+  color: var(--aymax-text-muted);
+}
+
+/* File cards (2026-08) - same grid recipe as the card library, applied
+   to the attachments List's own item container. */
+.knowledgeAttachmentGrid .sapMListItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.knowledgeAttachmentTile {
+  border: 1px solid var(--aymax-border);
+  border-radius: var(--aymax-radius-sm);
+  transition: box-shadow 200ms ease, transform 150ms ease;
+}
+.knowledgeAttachmentTile:hover {
+  box-shadow: var(--aymax-shadow-sm);
+  transform: translateY(-1px);
+}
+
+.knowledgeContributorGrid .sapMListItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
 }
 
 .knowledgeContributorCard {
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
+  border: 1px solid var(--aymax-border);
+  border-radius: var(--aymax-radius-sm);
   transition: box-shadow 200ms ease;
 }
 
 .knowledgeContributorCard:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--aymax-shadow-sm);
 }
 
 .knowledgeContributorName {
@@ -168,9 +920,18 @@
 
 .knowledgeCommentCard {
   border-radius: 10px;
-  padding: 12px 14px;
   margin-bottom: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.knowledgeCommentBody {
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.knowledgeCommentAuthor {
+  font-weight: 600;
 }
 
 /* An inline composer reads better anchored with a divider than as a

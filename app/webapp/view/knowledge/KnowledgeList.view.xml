@@ -7,17 +7,69 @@
 
   <Page showHeader="false" showNavButton="false" class="aymaxPage">
     <content>
-      <!-- Centered, max-width reading column with comfortable margins -
-           per Fiori Horizon guidance, not a full-bleed layout. Title row
-           matches Certification's own pattern (showHeader=false + a
-           self-built title, not the native Page header bar) - 2026-08
-           polish pass, same reason every other module converted. -->
+      <!-- 2026-08 "compact discovery" redesign, v2: everything that used to
+           be four large, permanently-stacked sections (Mis en avant /
+           Récemment ajoutées / Mes connaissances / Bibliothèque) is now
+           behind an IconTabBar - one screenful of navigation instead of a
+           long scroll. The Hero stays fixed above it (the one "always
+           relevant" entry point); Topics/Categories moved into the Explore
+           rail alongside the tabs (see the two-column band below) instead
+           of being their own always-visible sections. -->
       <VBox class="knowledgeContentContainer">
 
-        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
-          <Title text="{i18n-knowledge>pageTitle}" level="H1" class="aymaxPageTitle"/>
-          <Button icon="sap-icon://home" type="Transparent" tooltip="{i18n-knowledge>backToFeed}" press=".onHomePress"/>
-        </HBox>
+        <!-- Compact hero (2026-08 v2 "real visuals" pass) - the decorative
+             icon cluster is gone: real illustrations now carry the page's
+             visual weight (topic tiles + card thumbnails below), so this
+             band goes back to being title + value prop + search + one CTA,
+             not a second competing visual moment. Height comes down purely
+             via CSS padding, no markup here needed removing besides the
+             icon cluster itself. -->
+        <VBox class="knowledgeHero">
+          <HBox justifyContent="SpaceBetween" alignItems="Start" class="knowledgeHeroTopRow">
+            <VBox class="knowledgeHeroText">
+              <Title text="{i18n-knowledge>pageTitle}" level="H1" class="knowledgeHeroTitle"/>
+              <Text text="{i18n-knowledge>heroTagline}" class="knowledgeHeroTagline"/>
+            </VBox>
+            <Button
+              icon="sap-icon://home"
+              type="Transparent"
+              tooltip="{i18n-knowledge>backToFeed}"
+              press=".onHomePress"
+              class="knowledgeHeroHomeButton"/>
+          </HBox>
+
+          <SearchField
+            placeholder="{i18n-knowledge>heroSearchPlaceholder}"
+            liveChange=".onSearch"
+            class="knowledgeHeroSearch"/>
+
+          <HBox alignItems="Center" wrap="Wrap" class="knowledgeHeroStats">
+            <HBox class="knowledgeHeroStat">
+              <VBox alignItems="Center" justifyContent="Center" class="knowledgeHeroStatIcon">
+                <core:Icon src="sap-icon://documents" decorative="true"/>
+              </VBox>
+              <VBox class="knowledgeHeroStatText">
+                <Text text="{view-knowledge>/stats/itemCount}" class="knowledgeHeroStatValue"/>
+                <Text text="{i18n-knowledge>statItems}" class="knowledgeHeroStatLabel"/>
+              </VBox>
+            </HBox>
+            <HBox class="knowledgeHeroStat">
+              <VBox alignItems="Center" justifyContent="Center" class="knowledgeHeroStatIcon">
+                <core:Icon src="sap-icon://tags" decorative="true"/>
+              </VBox>
+              <VBox class="knowledgeHeroStatText">
+                <Text text="{view-knowledge>/stats/topicCount}" class="knowledgeHeroStatValue"/>
+                <Text text="{i18n-knowledge>statTopics}" class="knowledgeHeroStatLabel"/>
+              </VBox>
+            </HBox>
+            <Button
+              text="{i18n-knowledge>contribute}"
+              icon="sap-icon://add"
+              type="Emphasized"
+              press=".onContribute"
+              class="knowledgeHeroCta"/>
+          </HBox>
+        </VBox>
 
         <!-- Manager only, collapsed by default - the section itself only
              renders once toggled open (see the fragment's own visible=),
@@ -28,100 +80,233 @@
           type="Emphasized"
           press=".onToggleValidationSection"
           visible="{view-knowledge>/isManager}"
-          class="sapUiMediumMarginBottom"/>
+          class="sapUiTinyMarginBottom"/>
 
         <core:Fragment fragmentName="aymax.hub.view.knowledge.ValidationSection" type="XML"/>
 
-        <VBox class="knowledgeStickyFilters">
-          <!-- Interns are blocked server-side (@restrict on CREATE) - there is
-               no Profile/People service yet to know the caller's role here, so
-               this button stays enabled for everyone; onContribute shows the
-               real 403 if it happens. TODO-INTEGRATION.md I-16. -->
-          <Toolbar>
-            <ToolbarSpacer/>
-            <Button
-              text="{i18n-knowledge>contribute}"
-              type="Emphasized"
-              press=".onContribute"/>
-          </Toolbar>
+        <!-- Two-column discovery band (2026-08 v2) - left: the four
+             collections behind IconTabBar (unchanged ids/bindings/
+             controller methods, only relocated). Right: a fixed-width
+             "Explore" rail - Topics (now with real illustration thumbnails,
+             not a plain colour swatch, per explicit feedback that this
+             shouldn't read as an administrative list) and Categories (a
+             compact icon+count grid, not the old 8-row list). The
+             standalone Contribute banner is gone entirely - the Hero's own
+             CTA is now the one entry point (explicit feedback: exactly one
+             well-placed "Contribuer" action, not a second copy further
+             down). Collapses to a stacked column at <=1024px (CSS). -->
+        <HBox alignItems="Start" class="knowledgeMainRow">
+        <VBox class="knowledgeMainCol">
+        <!-- The four collections that used to be stacked one after another
+             now live one screenful apart - a tab switch, not a scroll. All
+             four Lists below are unchanged (same ids, same bindings, same
+             controller methods) - only where they sit in the tree moved. -->
+        <IconTabBar
+          id="knowledgeTabBar"
+          expandable="false"
+          class="knowledgeTabBar">
+          <items>
 
-          <SearchField
-            placeholder="{i18n-knowledge>searchPlaceholder}"
-            liveChange=".onSearch"
-            class="sapUiSmallMarginTop sapUiSmallMarginBottom"/>
+            <IconTabFilter key="featured" text="{i18n-knowledge>featuredTitle}" icon="sap-icon://favorite">
+              <Text text="{i18n-knowledge>featuredSubtitle}" class="knowledgeSectionSubtitle sapUiSmallMarginBottom"/>
+              <List
+                id="featuredKnowledgeList"
+                items="{
+                  path: 'knowledge>/KnowledgeItems',
+                  filters: [{ path: 'status', operator: 'EQ', value1: 'approved' }],
+                  parameters: { $expand: 'contributors,tags($expand=tag($select=name,color)),topic', sort: 'upvoted' }
+                }"
+                growing="true"
+                growingThreshold="8"
+                showSeparators="None"
+                class="sapUiNoContentPadding knowledgeCardGrid knowledgeFeaturedGrid">
+                <noData>
+                  <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                    <core:Icon src="sap-icon://favorite" class="aymaxEmptyStateIcon"/>
+                    <Text text="{i18n-knowledge>noFeaturedItems}" class="aymaxEmptyStateText"/>
+                  </VBox>
+                </noData>
+                <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
+              </List>
+            </IconTabFilter>
 
-          <HBox wrap="Wrap" items="{view-knowledge>/categoryTabs}">
-            <Button
-              text="{view-knowledge>label}"
-              type="{path:'view-knowledge>active', formatter:'.formatter.tabButtonType'}"
-              press=".onCategoryTabPress"
-              class="knowledgeCategoryChip sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
-          </HBox>
+            <IconTabFilter key="recent" text="{i18n-knowledge>recentTitle}" icon="sap-icon://history">
+              <Text text="{i18n-knowledge>recentSubtitle}" class="knowledgeSectionSubtitle sapUiSmallMarginBottom"/>
+              <List
+                id="recentKnowledgeList"
+                items="{
+                  path: 'knowledge>/KnowledgeItems',
+                  filters: [{ path: 'status', operator: 'EQ', value1: 'approved' }],
+                  parameters: { $expand: 'contributors,tags($expand=tag($select=name,color)),topic', sort: 'recent' }
+                }"
+                growing="true"
+                growingThreshold="8"
+                showSeparators="None"
+                class="sapUiNoContentPadding knowledgeCardGrid">
+                <noData>
+                  <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                    <core:Icon src="sap-icon://history" class="aymaxEmptyStateIcon"/>
+                    <Text text="{i18n-knowledge>noRecentItems}" class="aymaxEmptyStateText"/>
+                  </VBox>
+                </noData>
+                <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
+              </List>
+            </IconTabFilter>
+
+            <!-- MY KNOWLEDGE - author or contributor, any status. Sub-filters
+                 (All/Approved/Pending/Draft) are client-side, same Filter
+                 pattern the category tabs below use. -->
+            <IconTabFilter key="mine" text="{i18n-knowledge>myKnowledgeTitle}" icon="sap-icon://documents">
+              <HBox wrap="Wrap" items="{view-knowledge>/myKnowledgeStatusTabs}" class="sapUiSmallMarginBottom">
+                <Button
+                  text="{view-knowledge>label}"
+                  type="{path:'view-knowledge>active', formatter:'.formatter.tabButtonType'}"
+                  press=".onMyKnowledgeStatusPress"
+                  class="knowledgeCategoryChip sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+              </HBox>
+              <List
+                id="myKnowledgeList"
+                items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors,tags($expand=tag($select=name,color)),topic' }, sorter: { path: 'createdAt', descending: true } }"
+                showSeparators="None"
+                class="sapUiNoContentPadding knowledgeCardGrid">
+                <noData>
+                  <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                    <core:Icon src="sap-icon://documents" class="aymaxEmptyStateIcon"/>
+                    <Text text="{i18n-knowledge>noMyKnowledgeItems}" class="aymaxEmptyStateText"/>
+                  </VBox>
+                </noData>
+                <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
+              </List>
+            </IconTabFilter>
+
+            <!-- LIBRARY - approved only, never anyone else's draft/pending/
+                 rejected content, never my own items again (avoids the
+                 confusing "why is my own article also over here"
+                 duplication). Category filtering now lives here (moved
+                 from the old always-visible sticky bar) - it only ever
+                 meaningfully applied to this browse-everything view. -->
+            <IconTabFilter key="library" text="{i18n-knowledge>libraryTitle}" icon="sap-icon://list">
+              <HBox justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap" class="sapUiSmallMarginBottom">
+                <HBox wrap="Wrap" items="{view-knowledge>/categoryTabs}">
+                  <Button
+                    text="{parts: [{path:'view-knowledge>label'}, {path:'view-knowledge>count'}], formatter:'.formatter.tabLabelWithCount'}"
+                    icon="{path:'view-knowledge>id', formatter:'.formatter.categoryTabIcon'}"
+                    type="{path:'view-knowledge>active', formatter:'.formatter.tabButtonType'}"
+                    press=".onCategoryTabPress"
+                    class="knowledgeCategoryChip sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+                </HBox>
+                <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                  <Label text="{i18n-knowledge>sortLabel}" class="sapUiTinyMarginEnd" labelFor="communitySortSelect"/>
+                  <Select id="communitySortSelect" selectedKey="{view-knowledge>/communitySortKey}" change=".onCommunitySortChange">
+                    <items>
+                      <core:Item key="relevant" text="{i18n-knowledge>sortRelevant}"/>
+                      <core:Item key="recent" text="{i18n-knowledge>sortRecent}"/>
+                      <core:Item key="upvoted" text="{i18n-knowledge>sortUpvoted}"/>
+                    </items>
+                  </Select>
+                </HBox>
+              </HBox>
+              <!-- No client-side `sorter` here (unlike My Knowledge above) -
+                   ranking is entirely server-side (?sort=, see
+                   onCommunitySortChange); a client sorter would silently
+                   re-sort whatever the server returns and undo it. -->
+              <List
+                id="communityKnowledgeList"
+                items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors,tags($expand=tag($select=name,color)),topic' } }"
+                showSeparators="None"
+                class="sapUiNoContentPadding knowledgeCardGrid">
+                <noData>
+                  <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
+                    <core:Icon src="sap-icon://group" class="aymaxEmptyStateIcon"/>
+                    <Text text="{i18n-knowledge>noCommunityItems}" class="aymaxEmptyStateText"/>
+                  </VBox>
+                </noData>
+                <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
+              </List>
+            </IconTabFilter>
+
+          </items>
+        </IconTabBar>
         </VBox>
 
-        <!-- MY KNOWLEDGE - author or contributor, any status. Sub-filters
-             (All/Approved/Pending/Draft) are client-side, same Filter
-             pattern the category tabs above already use. -->
-        <VBox class="knowledgeSection">
-          <Title text="{i18n-knowledge>myKnowledgeTitle}" level="H3" class="sapUiSmallMarginBottom"/>
-          <HBox wrap="Wrap" items="{view-knowledge>/myKnowledgeStatusTabs}" class="sapUiSmallMarginBottom">
-            <Button
-              text="{view-knowledge>label}"
-              type="{path:'view-knowledge>active', formatter:'.formatter.tabButtonType'}"
-              press=".onMyKnowledgeStatusPress"
-              class="knowledgeCategoryChip sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
-          </HBox>
-          <List
-            id="myKnowledgeList"
-            items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors,tags($expand=tag($select=name,color))' }, sorter: { path: 'createdAt', descending: true } }"
-            showSeparators="None"
-            class="sapUiNoContentPadding">
-            <noData>
-              <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
-                <core:Icon src="sap-icon://documents" class="aymaxEmptyStateIcon"/>
-                <Text text="{i18n-knowledge>noMyKnowledgeItems}" class="aymaxEmptyStateText"/>
-              </VBox>
-            </noData>
-            <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
-          </List>
-        </VBox>
+        <!-- EXPLORE RAIL (2026-08 v2) - pure navigation/taxonomy, owns none
+             of the item-level content the tabs already show (avoids the
+             "does the rail duplicate the tabs" trap). -->
+        <VBox class="knowledgeRail">
 
-        <!-- COMMUNITY KNOWLEDGE - approved only, never anyone else's
-             draft/pending/rejected content, never my own items again
-             (avoids the confusing "why is my own article also over
-             here" duplication). -->
-        <VBox class="knowledgeSection sapUiLargeMarginTop">
-          <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
-            <Title text="{i18n-knowledge>communityKnowledgeTitle}" level="H3"/>
-            <HBox alignItems="Center">
-              <Label text="{i18n-knowledge>sortLabel}" class="sapUiTinyMarginEnd" labelFor="communitySortSelect"/>
-              <Select id="communitySortSelect" selectedKey="{view-knowledge>/communitySortKey}" change=".onCommunitySortChange">
-                <items>
-                  <core:Item key="relevant" text="{i18n-knowledge>sortRelevant}"/>
-                  <core:Item key="recent" text="{i18n-knowledge>sortRecent}"/>
-                  <core:Item key="upvoted" text="{i18n-knowledge>sortUpvoted}"/>
-                </items>
-              </Select>
+          <!-- Topics - real illustration thumbnails (same 7 khIllus* CSS
+               classes the card fragment uses), not the old plain colour
+               swatch, so the rail itself reads as "Explore" rather than a
+               settings list (explicit feedback). Empty state hidden the
+               same way as before (no topics seeded yet). -->
+          <VBox class="knowledgeRailSection" visible="{= (${view-knowledge>/topics} || []).length > 0 }">
+            <HBox alignItems="Center" class="knowledgeRailHeading">
+              <core:Icon src="sap-icon://tags" decorative="true" class="knowledgeRailHeadingIcon"/>
+              <Title text="{i18n-knowledge>topicsTitle}" level="H4"/>
             </HBox>
-          </HBox>
-          <!-- No client-side `sorter` here (unlike My Knowledge below) -
-               ranking is entirely server-side (?sort=, see
-               onCommunitySortChange); a client sorter would silently
-               re-sort whatever the server returns and undo it. -->
-          <List
-            id="communityKnowledgeList"
-            items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors,tags($expand=tag($select=name,color))' } }"
-            showSeparators="None"
-            class="sapUiNoContentPadding">
-            <noData>
-              <VBox alignItems="Center" justifyContent="Center" class="aymaxEmptyState">
-                <core:Icon src="sap-icon://group" class="aymaxEmptyStateIcon"/>
-                <Text text="{i18n-knowledge>noCommunityItems}" class="aymaxEmptyStateText"/>
-              </VBox>
-            </noData>
-            <core:Fragment fragmentName="aymax.hub.view.knowledge.KnowledgeCard" type="XML"/>
-          </List>
+            <List
+              items="{view-knowledge>/topics}"
+              mode="None"
+              showSeparators="None"
+              class="sapUiNoContentPadding knowledgeRailTopicList">
+              <CustomListItem type="Active" press=".onTopicPress" class="knowledgeTopicTile">
+                <HBox alignItems="Center" class="knowledgeTopicTileInner">
+                  <HBox class="knowledgeTopicTileThumb">
+                    <VBox visible="{parts:[{path:'view-knowledge>name', targetType:'any'}, {path:'view-knowledge>ID', targetType:'any'}], formatter:'.formatter.isTopicIllustrationBtpCloud'}" class="knowledgeTopicTileThumbImg khIllusBtpCloud"/>
+                    <VBox visible="{parts:[{path:'view-knowledge>name', targetType:'any'}, {path:'view-knowledge>ID', targetType:'any'}], formatter:'.formatter.isTopicIllustrationHanaData'}" class="knowledgeTopicTileThumbImg khIllusHanaData"/>
+                    <VBox visible="{parts:[{path:'view-knowledge>name', targetType:'any'}, {path:'view-knowledge>ID', targetType:'any'}], formatter:'.formatter.isTopicIllustrationFioriUi'}" class="knowledgeTopicTileThumbImg khIllusFioriUi"/>
+                    <VBox visible="{parts:[{path:'view-knowledge>name', targetType:'any'}, {path:'view-knowledge>ID', targetType:'any'}], formatter:'.formatter.isTopicIllustrationCapDev'}" class="knowledgeTopicTileThumbImg khIllusCapDev"/>
+                    <VBox visible="{parts:[{path:'view-knowledge>name', targetType:'any'}, {path:'view-knowledge>ID', targetType:'any'}], formatter:'.formatter.isTopicIllustrationBasisServer'}" class="knowledgeTopicTileThumbImg khIllusBasisServer"/>
+                    <VBox visible="{parts:[{path:'view-knowledge>name', targetType:'any'}, {path:'view-knowledge>ID', targetType:'any'}], formatter:'.formatter.isTopicIllustrationSecurity'}" class="knowledgeTopicTileThumbImg khIllusSecurity"/>
+                    <VBox visible="{parts:[{path:'view-knowledge>name', targetType:'any'}, {path:'view-knowledge>ID', targetType:'any'}], formatter:'.formatter.isTopicIllustrationGeneral'}" class="knowledgeTopicTileThumbImg khIllusGeneral"/>
+                  </HBox>
+                  <VBox class="knowledgeTopicTileText">
+                    <Text text="{view-knowledge>name}" class="knowledgeTopicTileName"/>
+                    <Text text="{path:'view-knowledge>articleCount', formatter:'.formatter.topicChipLabel'}" class="knowledgeTopicTileCount"/>
+                  </VBox>
+                  <core:Icon src="sap-icon://accept" visible="{view-knowledge>active}" class="knowledgeTopicTileActiveBadge"/>
+                </HBox>
+              </CustomListItem>
+            </List>
+          </VBox>
+
+          <!-- Categories - a compact 2-column icon+count grid (not the old
+               8-row list), reads as quick filter chips. Reuses
+               onCategoryTabPress (same handler the Bibliothèque tab's own
+               chip row already calls, CLAUDE.md §10: no duplicated logic)
+               - that handler now also jumps the IconTabBar to "library" so
+               a rail click is actually visible even from another tab. "Tout"
+               is skipped here (visible= below) - it belongs to the tab's
+               own chip row, not this shortcut grid. -->
+          <VBox class="knowledgeRailSection">
+            <HBox alignItems="Center" class="knowledgeRailHeading">
+              <core:Icon src="sap-icon://grid" decorative="true" class="knowledgeRailHeadingIcon"/>
+              <Title text="{i18n-knowledge>libraryTitle}" level="H4"/>
+            </HBox>
+            <List
+              items="{view-knowledge>/categoryTabs}"
+              mode="None"
+              showSeparators="None"
+              class="sapUiNoContentPadding knowledgeRailCategoryGrid">
+              <CustomListItem type="Active" press=".onCategoryTabPress" visible="{= ${view-knowledge>id} !== '' }" class="knowledgeRailCategoryTile">
+                <HBox alignItems="Center" class="knowledgeRailCategoryInner">
+                  <Avatar
+                    displayShape="Square"
+                    displaySize="XS"
+                    icon="{path:'view-knowledge>id', formatter:'.formatter.categoryTabIcon'}"
+                    backgroundColor="{path:'view-knowledge>id', formatter:'.formatter.categoryAvatarColor'}"
+                    class="knowledgeRailCategoryIcon"/>
+                  <VBox class="knowledgeRailCategoryText">
+                    <Text text="{view-knowledge>label}" class="knowledgeRailCategoryLabel"/>
+                    <Text text="{view-knowledge>count}" class="knowledgeRailCategoryCount"/>
+                  </VBox>
+                </HBox>
+              </CustomListItem>
+            </List>
+          </VBox>
+
         </VBox>
+        </HBox>
       </VBox>
     </content>
   </Page>

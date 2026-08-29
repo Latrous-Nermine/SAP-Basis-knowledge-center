@@ -16,74 +16,111 @@
           </VBox>
         </HBox>
 
-        <HBox class="aymaxNavLinks sapUiSmallMarginBegin">
-          <Button text="{i18n>navDashboard}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="dashboard"/></customData>
-          </Button>
-          <Button text="{i18n>navFeed}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="feed"/></customData>
-          </Button>
-          <Button text="{i18n>navQuestions}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="questions"/></customData>
-          </Button>
-          <Button text="{i18n>navRooms}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="rooms"/></customData>
-          </Button>
-          <Button text="{i18n>navTags}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="tags"/></customData>
-          </Button>
-          <Button text="{i18n>navNotifications}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="notifications"/></customData>
-          </Button>
-          <Button text="{i18n>navKnowledge}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="knowledge"/></customData>
-          </Button>
-          <Button text="{i18n>navExperts}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="experts"/></customData>
-          </Button>
-          <Button text="{i18n>navProfile}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="profile"/></customData>
-          </Button>
-          <Button text="{i18n>navExcellenceCenter}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="excellenceCenter"/></customData>
-          </Button>
-          <Button text="{i18n>navRewards}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="rewards"/></customData>
-          </Button>
-          <Button text="{i18n>navCertifications}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="certifications"/></customData>
-          </Button>
-          <Button id="navBtnAdmin" text="{i18n>navAdmin}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="admin"/></customData>
-          </Button>
-          <Button id="navBtnDepot" text="{i18n>navDepot}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="depot"/></customData>
-          </Button>
-          <Button id="navBtnHr" text="{i18n>navHR}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="hr"/></customData>
-          </Button>
-          <Button text="{i18n>navReports}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="reports"/></customData>
-          </Button>
-          <Button id="navBtnRapportsStage" text="{i18n>navRapportsStage}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="rapportsStage"/></customData>
-          </Button>
-          <Button id="navBtnValidation" text="{i18n>navValidation}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="validation"/></customData>
-          </Button>
-          <Button text="{i18n>navBasisAcademy}" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="basisAcademy"/></customData>
-          </Button>
+        <!-- Four product-area groups (2026-08 navbar redesign), replacing
+             the old flat row of 19 links - explicit feedback that it read
+             as a developer menu ("too many elements on one line") rather
+             than a professional product, and it was the direct cause of a
+             confirmed horizontal-overflow bug on mobile (the row simply
+             never fit). Accueil/Knowledge use buttonMode="Split": the main
+             face navigates straight to that group's obvious primary page
+             (dashboard / Centre de connaissances) exactly like a normal
+             nav link did before, and only the small arrow opens the
+             dropdown for the rest of the group. Learning/Company have no
+             single "primary" page, so the whole button opens their menu.
+             Every MenuItem gets its own dedicated press handler (never
+             core:CustomData - a control's default items/content
+             aggregation on a layout control has already been confirmed
+             more than once this session to reject a bare nested
+             CustomData; the same one-handler-per-item pattern already
+             used for KnowledgeList's category picker tiles is reused here
+             for the same reason). -->
+        <HBox class="aymaxNavGroups sapUiSmallMarginBegin" alignItems="Center">
+
+          <MenuButton
+            id="navGroupAccueil"
+            text="{i18n>navGroupAccueil}"
+            type="Transparent"
+            buttonMode="Split"
+            defaultAction=".onNavDashboard"
+            class="aymaxNavGroupBtn">
+            <menu>
+              <Menu>
+                <items>
+                  <MenuItem text="{i18n>navFeed}" press=".onNavFeed"/>
+                </items>
+              </Menu>
+            </menu>
+          </MenuButton>
+
+          <MenuButton
+            id="navGroupKnowledge"
+            text="{i18n>navGroupKnowledge}"
+            type="Transparent"
+            buttonMode="Split"
+            defaultAction=".onNavKnowledge"
+            class="aymaxNavGroupBtn">
+            <menu>
+              <Menu>
+                <items>
+                  <MenuItem text="{i18n>navQuestions}" press=".onNavQuestions"/>
+                  <MenuItem text="{i18n>navExperts}" press=".onNavExperts"/>
+                  <MenuItem text="{i18n>navTags}" press=".onNavTags"/>
+                  <MenuItem text="{i18n>navRooms}" press=".onNavRooms"/>
+                </items>
+              </Menu>
+            </menu>
+          </MenuButton>
+
+          <MenuButton
+            id="navGroupLearning"
+            text="{i18n>navGroupLearning}"
+            type="Transparent"
+            class="aymaxNavGroupBtn">
+            <menu>
+              <Menu>
+                <items>
+                  <MenuItem text="{i18n>navBasisAcademy}" press=".onNavBasisAcademy"/>
+                  <MenuItem text="{i18n>navCertifications}" press=".onNavCertifications"/>
+                </items>
+              </Menu>
+            </menu>
+          </MenuButton>
+
+          <!-- Company - Admin is folded in here even though the user's own
+               illustrative grouping omitted it, so its existing route
+               stays reachable from the nav (flagged explicitly rather than
+               silently dropping a working route). -->
+          <MenuButton
+            id="navGroupCompany"
+            text="{i18n>navGroupCompany}"
+            type="Transparent"
+            class="aymaxNavGroupBtn">
+            <menu>
+              <Menu>
+                <items>
+                  <MenuItem text="{i18n>navExcellenceCenter}" press=".onNavExcellenceCenter"/>
+                  <MenuItem text="{i18n>navRewards}" press=".onNavRewards"/>
+                  <MenuItem id="navItemHr" text="{i18n>navHR}" press=".onNavHR"/>
+                  <MenuItem id="navItemDepot" text="{i18n>navDepot}" press=".onNavDepot"/>
+                  <MenuItem id="navItemRapportsStage" text="{i18n>navRapportsStage}" press=".onNavRapportsStage"/>
+                  <MenuItem text="{i18n>navReports}" press=".onNavReports"/>
+                  <MenuItem id="navItemValidation" text="{i18n>navValidation}" press=".onNavValidation"/>
+                  <MenuItem id="navItemAdmin" text="{i18n>navAdmin}" press=".onNavAdmin"/>
+                </items>
+              </Menu>
+            </menu>
+          </MenuButton>
+
         </HBox>
       </HBox>
 
-      <HBox alignItems="Center">
+      <HBox alignItems="Center" class="aymaxHeaderRight">
         <SearchField
           id="shellSearchField"
           width="240px"
           placeholder="{i18n>headerSearchPlaceholder}"
           search=".onHeaderSearch"
-          class="sapUiSmallMarginEnd"/>
+          class="sapUiSmallMarginEnd aymaxShellSearch"/>
 
         <!-- Same theme-toggle / notifications-bell pair as the standalone
              Lot 1 app's header (app/feed/webapp/view/App.view.xml) -
@@ -93,7 +130,27 @@
              bell to go to the page you're already on is a no-op that
              only invites confusion. -->
         <Button icon="sap-icon://light-mode" type="Transparent" press=".onToggleTheme" tooltip="{i18n>themeToggleTooltip}" class="sapUiTinyMarginEnd"/>
-        <Button id="navBtnNotificationBell" icon="sap-icon://bell" type="Transparent" press=".onNotificationsBellPress" tooltip="{i18n>navNotifications}" class="sapUiSmallMarginEnd"/>
+        <Button id="navBtnNotificationBell" icon="sap-icon://bell" type="Transparent" press=".onNotificationsBellPress" tooltip="{i18n>navNotifications}" class="sapUiTinyMarginEnd"/>
+
+        <!-- Account/avatar menu (2026-08 navbar redesign) - "Profil" moves
+             here from the old flat nav row, the same place a person expects
+             to find their own account, not mixed in among page links.
+             Bound to view>/myProfile (App.controller.js#onInit resolves
+             people>/MyProfile once, the same CAP entity Profile.controller.js
+             already reads for the caller's own avatar/displayName - zero new
+             backend). Menu opens imperatively via Menu#openBy - MenuButton
+             itself can't show a real photo (its own icon property only
+             takes an icon URI, not a control), so this is a plain pressable
+             Avatar instead. -->
+        <Avatar
+          id="navProfileAvatar"
+          displaySize="XS"
+          src="{view>/myProfile/avatarSrc}"
+          initials="{view>/myProfile/initials}"
+          backgroundColor="{view>/myProfile/color}"
+          press=".onProfileMenuPress"
+          tooltip="{i18n>navProfile}"
+          class="aymaxNavProfileAvatar sapUiSmallMarginEnd"/>
 
         <!-- DEV-ONLY role preview (CLAUDE.md §5 C7 exception) - lets
              anyone browsing locally preview each role's dashboard
@@ -103,7 +160,7 @@
              (TODO-INTEGRATION.md). -->
         <HBox alignItems="Center" class="aymaxDevRoleBox">
           <Label text="{i18n>devRoleLabel}" class="sapUiTinyMarginEnd aymaxDevRoleLabel" labelFor="devRoleSelect"/>
-          <Select id="devRoleSelect" width="170px" change=".onDevRoleChange">
+          <Select id="devRoleSelect" width="170px" change=".onDevRoleChange" class="aymaxDevRoleSelect">
             <core:Item key="" text="{i18n>devRoleReal}"/>
             <core:Item key="Employee" text="{i18n>devRoleEmployee}"/>
             <core:Item key="Manager" text="{i18n>devRoleManager}"/>

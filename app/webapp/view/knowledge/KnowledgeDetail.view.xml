@@ -100,16 +100,58 @@
         </uxap:headerTitle>
 
         <uxap:headerContent>
-          <HBox wrap="Wrap" class="knowledgeHeaderMeta" alignItems="Center">
-            <ObjectStatus text="{path:'knowledge>category', formatter:'.formatter.categoryLabel'}" state="Information"/>
-            <ObjectStatus
-              visible="{path:'knowledge>status', formatter:'.formatter.isNotApproved'}"
-              text="{path:'knowledge>status', formatter:'.formatter.statusLabel'}"
-              state="{path:'knowledge>status', formatter:'.formatter.statusState'}"/>
-            <ObjectAttribute title="{i18n-knowledge>attrAuthor}" text="{view-knowledge>/contributorsLabel}"/>
-            <ObjectAttribute title="{i18n-knowledge>attrPublished}" text="{path:'knowledge>publishedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
-            <ObjectAttribute title="{i18n-knowledge>attrUpdated}" text="{path:'knowledge>modifiedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
-          </HBox>
+          <VBox class="knowledgeDetailHeaderMeta">
+            <HBox wrap="Wrap" alignItems="Center" class="knowledgeCardBadgeGroup sapUiTinyMarginBottom">
+              <ObjectStatus text="{path:'knowledge>category', formatter:'.formatter.categoryLabel'}" state="Information"/>
+              <!-- visible= set imperatively (_updateActionVisibility) -
+                   uxap:headerContent turns out to share the SAME declarative
+                   visible= unreliability already documented for uxap:actions
+                   below (found 2026-08 via the same kind of real testing:
+                   this badge stayed visible on approved items regardless of
+                   the formatter). Not a new pattern, just extending an
+                   already-proven one to two controls that needed it too. -->
+              <ObjectStatus
+                id="statusBadge"
+                text="{path:'knowledge>status', formatter:'.formatter.statusLabel'}"
+                state="{path:'knowledge>status', formatter:'.formatter.statusState'}"/>
+              <core:Icon
+                src="sap-icon://sys-help-2"
+                visible="{knowledge>fromQuestion}"
+                tooltip="{path:'knowledge>fromQuestion', formatter:'.formatter.fromQuestionTooltip'}"
+                class="knowledgeFromQuestionIcon"/>
+              <Text
+                id="topicChip"
+                text="{path:'knowledge>topic/name', formatter:'.formatter.topicName'}"
+                class="knowledgeCardTopicChip"/>
+            </HBox>
+            <!-- Byline: one real photo (the primary contributor, same
+                 convention as the card) + every name in text form next
+                 to it - reads like a real article's "By ..." line instead
+                 of a bare attributes table. -->
+            <HBox alignItems="Center" class="knowledgeDetailByline">
+              <!-- Backend-flattened scalars, same as the card (see
+                   KnowledgeCard.fragment.xml's own comment on why a
+                   client-side composite over `contributors` never resolves
+                   here). -->
+              <Avatar
+                displaySize="S"
+                src="{knowledge>primaryContributorAvatarSrc}"
+                initials="{knowledge>primaryContributorInitials}"
+                backgroundColor="{knowledge>primaryContributorColor}"
+                class="sapUiSmallMarginEnd"/>
+              <VBox>
+                <Text text="{view-knowledge>/contributorsLabel}" class="knowledgeDetailBylineAuthor"/>
+                <HBox wrap="Wrap" alignItems="Center" class="knowledgeDetailBylineMeta">
+                  <ObjectAttribute title="{i18n-knowledge>attrPublished}" text="{path:'knowledge>publishedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
+                  <ObjectAttribute title="{i18n-knowledge>attrUpdated}" text="{path:'knowledge>modifiedAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"/>
+                  <HBox alignItems="Center" class="knowledgeCardViewCount">
+                    <core:Icon src="sap-icon://show" class="knowledgeCardViewIcon"/>
+                    <Text text="{path:'knowledge>viewCount', formatter:'.formatter.viewCountLabel'}"/>
+                  </HBox>
+                </HBox>
+              </VBox>
+            </HBox>
+          </VBox>
         </uxap:headerContent>
 
         <uxap:sections>
@@ -118,10 +160,11 @@
             <uxap:subSections>
               <uxap:ObjectPageSubSection>
                 <uxap:blocks>
-                  <!-- The article is the PRIMARY content - deliberately the least
-                       decorated surface on the page, no card framing, so it reads
-                       like a document, not a tile. -->
-                  <Text text="{knowledge>content}" class="knowledgeArticleText"/>
+                  <!-- The article as a real reading surface - a distinct card,
+                       not text floating directly on the page background. -->
+                  <VBox class="knowledgeArticleCard">
+                    <Text text="{knowledge>content}" class="knowledgeArticleText"/>
+                  </VBox>
                 </uxap:blocks>
               </uxap:ObjectPageSubSection>
             </uxap:subSections>
@@ -135,30 +178,46 @@
                     items="{knowledge>attachments}"
                     noDataText=" "
                     showSeparators="None"
-                    class="knowledgeSidePanel sapUiNoContentPadding">
+                    class="sapUiNoContentPadding knowledgeAttachmentGrid">
                     <StandardListItem
-                      icon="sap-icon://attachment"
+                      icon="{path:'knowledge>fileType', formatter:'.formatter.attachmentIcon'}"
                       title="{knowledge>fileName}"
                       description="{path:'knowledge>fileSize', targetType:'any', formatter:'.formatter.fileSize'}"
                       type="Active"
-                      press=".onAttachmentPress"/>
+                      press=".onAttachmentPress"
+                      class="knowledgeAttachmentTile"/>
                   </List>
                 </uxap:blocks>
               </uxap:ObjectPageSubSection>
             </uxap:subSections>
           </uxap:ObjectPageSection>
 
-          <uxap:ObjectPageSection title="{i18n-knowledge>commentsTitle}" visible="{path:'knowledge>status', formatter:'.formatter.canShowComments'}">
+          <!-- visible= set imperatively, same reason as statusBadge/topicChip
+               above - a section's own visible= is the same class of
+               declarative binding that doesn't reliably apply in this
+               ObjectPageLayout. -->
+          <uxap:ObjectPageSection id="commentsSection" title="{i18n-knowledge>commentsTitle}">
             <uxap:subSections>
               <uxap:ObjectPageSubSection>
                 <uxap:blocks>
                   <List id="commentsList" items="{knowledge>comments}" noDataText="{i18n-knowledge>noComments}" showSeparators="None" class="sapUiNoContentPadding">
-                    <StandardListItem
-                      icon="sap-icon://person-placeholder"
-                      title="{knowledge>author_userID}"
-                      description="{knowledge>content}"
-                      info="{path:'knowledge>createdAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"
-                      class="knowledgeCommentCard"/>
+                    <CustomListItem class="knowledgeCommentCard">
+                      <HBox alignItems="Start" class="sapUiTinyMargin">
+                        <Avatar
+                          displaySize="XS"
+                          src="{parts:[{path:'knowledge>author_userID'}, {path:'knowledge>authorAvatarMimeType'}], formatter:'.formatter.avatarSrc'}"
+                          initials="{path:'knowledge>authorDisplayName', formatter:'.formatter.initialsFromName'}"
+                          backgroundColor="{path:'knowledge>author_userID', formatter:'.formatter.avatarColorFromID'}"
+                          class="sapUiTinyMarginEnd"/>
+                        <VBox class="knowledgeCommentBody">
+                          <HBox justifyContent="SpaceBetween" alignItems="Center">
+                            <Text text="{knowledge>authorDisplayName}" class="knowledgeCommentAuthor"/>
+                            <Text text="{path:'knowledge>createdAt', targetType:'any', formatter:'.formatter.relativeDateTime'}" class="knowledgeCardMeta"/>
+                          </HBox>
+                          <Text text="{knowledge>content}"/>
+                        </VBox>
+                      </HBox>
+                    </CustomListItem>
                   </List>
                   <HBox class="knowledgeCommentComposer sapUiTinyMarginTop" alignItems="Center">
                     <Input
@@ -177,12 +236,21 @@
             <uxap:subSections>
               <uxap:ObjectPageSubSection>
                 <uxap:blocks>
-                  <List items="{knowledge>contributors}" noDataText="{i18n-knowledge>noContributors}" showSeparators="None" class="sapUiNoContentPadding">
-                    <StandardListItem
-                      icon="sap-icon://person-placeholder"
-                      title="{knowledge>displayName}"
-                      description="{path:'knowledge>role', formatter:'.formatter.contributorRoleLabel'}"
-                      class="knowledgeContributorCard"/>
+                  <List items="{knowledge>contributors}" noDataText="{i18n-knowledge>noContributors}" showSeparators="None" class="sapUiNoContentPadding knowledgeContributorGrid">
+                    <CustomListItem class="knowledgeContributorCard">
+                      <HBox alignItems="Center" class="sapUiTinyMargin">
+                        <Avatar
+                          displaySize="S"
+                          src="{parts:[{path:'knowledge>user_userID'}, {path:'knowledge>avatarMimeType'}], formatter:'.formatter.avatarSrc'}"
+                          initials="{path:'knowledge>displayName', formatter:'.formatter.initialsFromName'}"
+                          backgroundColor="{path:'knowledge>user_userID', formatter:'.formatter.avatarColorFromID'}"
+                          class="sapUiSmallMarginEnd"/>
+                        <VBox>
+                          <Text text="{knowledge>displayName}" class="knowledgeContributorName"/>
+                          <Text text="{path:'knowledge>role', formatter:'.formatter.contributorRoleLabel'}" class="knowledgeContributorRole"/>
+                        </VBox>
+                      </HBox>
+                    </CustomListItem>
                   </List>
                 </uxap:blocks>
               </uxap:ObjectPageSubSection>

@@ -11,6 +11,31 @@ import { NoOpSecurityGuardian, decisionForRiskScore } from './domain/knowledge/S
 
 const securityGuardian = new NoOpSecurityGuardian();
 
+// Mirrors app/webapp/model/knowledge/formatter.js's own initialsFromName/
+// avatarColorFromID exactly (same rules, same fallback token) - the two
+// copies can't share a module across the browser/Node boundary, same
+// unavoidable duplication as the attachment-type/size checks already have
+// client + server copies of. Used only to precompute KnowledgeItems'
+// primaryContributor* virtual fields below (see knowledge-service.cds's
+// own comment on why the UI can't derive these from `contributors` itself).
+function initialsFromName(sName) {
+  if (!sName) return '?';
+  const aParts = sName.trim().split(/\s+/);
+  const sFirst = aParts[0] ? aParts[0].charAt(0) : '';
+  const sSecond = aParts.length > 1 ? aParts[1].charAt(0) : '';
+  return (sFirst + sSecond).toUpperCase() || '?';
+}
+
+const AVATAR_COLOR_TOKENS = ['Accent1', 'Accent2', 'Accent3', 'Accent4', 'Accent5', 'Accent6', 'Accent7', 'Accent8', 'Accent9', 'Accent10'];
+function avatarColorFromID(sUserID) {
+  if (!sUserID) return 'Accent6';
+  let iHash = 0;
+  for (let i = 0; i < sUserID.length; i++) {
+    iHash = (iHash * 31 + sUserID.charCodeAt(i)) >>> 0;
+  }
+  return AVATAR_COLOR_TOKENS[iHash % AVATAR_COLOR_TOKENS.length];
+}
+
 /** Reputation awarded per approved Knowledge Center item/contribution -
     modest, real values in the same order of magnitude as the Questions
     module's own awards (+15 accepted answer, +10 answer bonus), NOT
@@ -27,7 +52,7 @@ export default class KnowledgeService extends cds.ApplicationService {
 
   async init() {
     const {
-      KnowledgeItems, KnowledgeContributors, KnowledgeRelations,
+      KnowledgeItems, KnowledgeContributors, KnowledgeRelations, KnowledgeAttachments,
       KnowledgeVotes, KnowledgeContributions, UserProfiles,
     } = cds.entities('aymax.knowledgehub');
     const { Comments } = cds.entities('aymax.knowledgehub');
@@ -113,18 +138,77 @@ export default class KnowledgeService extends cds.ApplicationService {
         }
       }
 
-      const contributorUserIDs = new Set();
+      // Real profile photos on contributors + comment authors (2026-08,
+      // Knowledge Center redesign) - same batched-lookup shape as
+      // displayName above, one extra column. avatarMimeType (not the
+      // image bytes themselves) is all a card/avatar needs to decide
+      // whether to show a real photo or fall back to initials - the
+      // actual bytes are always fetched separately, on demand, from
+      // PeopleService's own media-stream endpoint (model/shared/avatarSrc.js).
+      const peopleUserIDs = new Set();
       for (const row of rows) {
-        for (const c of row.contributors || []) contributorUserIDs.add(c.user_userID);
+        for (const c of row.contributors || []) peopleUserIDs.add(c.user_userID);
+        for (const c of row.comments || []) peopleUserIDs.add(c.author_userID);
       }
-      if (contributorUserIDs.size) {
-        const people = await SELECT.from(UserProfiles).columns('userID', 'displayName')
-          .where({ userID: { in: [...contributorUserIDs] } });
-        const nameByID = new Map(people.map((p) => [p.userID, p.displayName]));
+      if (peopleUserIDs.size) {
+        const people = await SELECT.from(UserProfiles).columns('userID', 'displayName', 'avatarMimeType')
+          .where({ userID: { in: [...peopleUserIDs] } });
+        const personByID = new Map(people.map((p) => [p.userID, p]));
         for (const row of rows) {
           for (const c of row.contributors || []) {
-            c.displayName = nameByID.get(c.user_userID) || c.user_userID;
+            const person = personByID.get(c.user_userID);
+            c.displayName = person?.displayName || c.user_userID;
+            c.avatarMimeType = person?.avatarMimeType || null;
           }
+          for (const c of row.comments || []) {
+            const person = personByID.get(c.author_userID);
+            c.authorDisplayName = person?.displayName || c.author_userID;
+            c.authorAvatarMimeType = person?.avatarMimeType || null;
+          }
+        }
+      }
+
+      // Comment/attachment counts (2026-08 "real visuals" pass) - real
+      // secondary metadata for the card footer, not fake polish. List
+      // views never $expand comments/attachments (that would pull full
+      // rows just to count them), so this fetches only the FK column and
+      // counts in JS - cheap at this dataset's size, and avoids depending
+      // on untested CQL groupBy/aggregate syntax for a small, non-critical
+      // addition (drop this block first if it ever needs to be cut for
+      // time - nothing else on the card depends on it).
+      const allItemIDs = rows.map((r) => r.ID);
+      const [commentRows, attachmentRows] = await Promise.all([
+        SELECT.from(Comments).columns('knowledgeItem_ID').where({ knowledgeItem_ID: { in: allItemIDs } }),
+        SELECT.from(KnowledgeAttachments).columns('item_ID').where({ item_ID: { in: allItemIDs } }),
+      ]);
+      const commentCountByItem = new Map();
+      for (const c of commentRows) commentCountByItem.set(c.knowledgeItem_ID, (commentCountByItem.get(c.knowledgeItem_ID) || 0) + 1);
+      const attachmentCountByItem = new Map();
+      for (const a of attachmentRows) attachmentCountByItem.set(a.item_ID, (attachmentCountByItem.get(a.item_ID) || 0) + 1);
+      for (const row of rows) {
+        row.commentsCount = commentCountByItem.get(row.ID) || 0;
+        row.attachmentsCount = attachmentCountByItem.get(row.ID) || 0;
+      }
+
+      // Card/detail byline flattening (2026-08) - see knowledge-service.cds's
+      // own comment on why this can't be left to a client-side composite
+      // binding over `contributors`. Runs after the block above so
+      // contributor.displayName/avatarMimeType are already resolved.
+      for (const row of rows) {
+        const contributors = row.contributors || [];
+        row.contributorsLabel = contributors.map((c) => c.displayName || c.user_userID).join(', ');
+
+        const primary = contributors[0];
+        if (primary) {
+          row.primaryContributorAvatarSrc = primary.avatarMimeType
+            ? `/odata/v4/people/People('${encodeURIComponent(primary.user_userID)}')/avatar`
+            : '';
+          row.primaryContributorInitials = initialsFromName(primary.displayName || primary.user_userID);
+          row.primaryContributorColor = avatarColorFromID(primary.user_userID);
+        } else {
+          row.primaryContributorAvatarSrc = '';
+          row.primaryContributorInitials = '?';
+          row.primaryContributorColor = 'Accent6';
         }
       }
     });

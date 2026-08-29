@@ -18,10 +18,20 @@
    of the row empty (2026-08 fix). The real items container is
    .sapMListItems, one level down - same grid recipe as
    .certList .sapMListItems (css/certifications/style.css) for
-   consistency with the reference page. */
+   consistency with the reference page.
+
+   auto-fit, not auto-fill (2026-08 fix: reported "page doesn't use the
+   available space") - with few items (this catalogue currently has 3),
+   auto-fill still lays out as many COLUMN TRACKS as fit the container
+   (confirmed via computed style: 4 tracks of 276px in a 1200px
+   container for only 3 real cards), leaving the leftover track(s)
+   genuinely empty instead of giving that width back to the real cards.
+   auto-fit collapses empty tracks to 0, so minmax(...,1fr) lets the
+   actual cards stretch to fill the row - identical behaviour once there
+   are enough items to fill every row anyway, better when there aren't. */
 .rewardsGridList .sapMListItems {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
   gap: 16px !important;
 }
 

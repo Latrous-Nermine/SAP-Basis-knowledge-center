@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6C7A93"/>
+      <stop offset="1" stop-color="#414D5F"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="160" fill="url(#bg)"/>
+  <circle cx="204" cy="26" r="30" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="1.5"/>
+  <!-- server rack: three stacked units -->
+  <g>
+    <rect x="72" y="44" width="96" height="24" rx="4" fill="#ffffff" fill-opacity="0.92"/>
+    <rect x="72" y="72" width="96" height="24" rx="4" fill="#ffffff" fill-opacity="0.78"/>
+    <rect x="72" y="100" width="96" height="24" rx="4" fill="#ffffff" fill-opacity="0.62"/>
+  </g>
+  <!-- status indicator dots on each unit -->
+  <g fill="#3FAE6C">
+    <circle cx="84" cy="56" r="3.5"/>
+    <circle cx="84" cy="84" r="3.5"/>
+    <circle cx="84" cy="112" r="3.5"/>
+  </g>
+  <g fill="#414D5F" fill-opacity="0.5">
+    <rect x="98" y="53" width="46" height="6" rx="3"/>
+    <rect x="98" y="81" width="34" height="6" rx="3"/>
+    <rect x="98" y="109" width="40" height="6" rx="3"/>
+  </g>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4271DE"/>
+      <stop offset="1" stop-color="#223E96"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="160" fill="url(#bg)"/>
+  <!-- orbit rings, purely atmospheric -->
+  <circle cx="200" cy="30" r="46" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1.5"/>
+  <circle cx="34" cy="132" r="30" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="1.5"/>
+  <!-- cloud silhouette -->
+  <g fill="#ffffff" fill-opacity="0.95">
+    <path d="M70 96c-12 0-21-9-21-20 0-10 7-18 17-20 3-13 15-22 29-22 15 0 27 11 29 25 12 1 21 11 21 22 0 12-10 22-22 22H70z"/>
+  </g>
+  <!-- connected service nodes beneath the cloud -->
+  <g stroke="#ffffff" stroke-width="2" stroke-opacity="0.85">
+    <line x1="76" y1="104" x2="76" y2="122"/>
+    <line x1="120" y1="98" x2="120" y2="126"/>
+    <line x1="164" y1="104" x2="164" y2="118"/>
+    <line x1="76" y1="122" x2="120" y2="126"/>
+    <line x1="120" y1="126" x2="164" y2="118"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="76" cy="122" r="5"/>
+    <circle cx="120" cy="126" r="6"/>
+    <circle cx="164" cy="118" r="5"/>
+  </g>
+</svg>

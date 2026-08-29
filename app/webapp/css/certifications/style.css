@@ -19,9 +19,18 @@
 .certList {
   display: block;
 }
+/* auto-fit, not auto-fill (2026-08 fix: reported "page doesn't use the
+   available space") - each section here (Obtenues/En cours/Recommandées)
+   typically has just 2 cards; auto-fill still reserves as many column
+   tracks as the 1200px container can fit at 320px each (3), leaving one
+   track genuinely empty next to the real cards instead of giving that
+   width back to them. auto-fit collapses empty tracks to 0 so
+   minmax(...,1fr) lets the real cards stretch to fill the row instead -
+   same behaviour as auto-fill once a section has enough cards to fill
+   every row anyway. */
 .certList .sapMListItems {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
   gap: 16px !important;
 }
 

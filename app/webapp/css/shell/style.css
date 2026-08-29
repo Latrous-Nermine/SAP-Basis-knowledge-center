@@ -1,0 +1,106 @@
+/* Shared shell nav (2026-08 navbar redesign) - the four MenuButton product
+   groups in App.view.xml, plus the account/avatar menu. Deliberately its
+   own file, not an edit to Nermine's css/feed/style.css (which still owns
+   .aymaxHeader/.aymaxNavLinks/.aymaxLogo - the old .aymaxNavLinks
+   scroll-fade rule is left there, unused, rather than touching her file
+   for a pure cleanup). Registered in manifest.json's sap.ui5.resources.css. */
+
+/* overflow-x:auto safety net, same recipe .aymaxNavLinks already used in
+   css/feed/style.css for the same reason: four compact MenuButtons fit
+   at any normal desktop/tablet width, but on a narrow phone width even
+   this compact row plus the logo can outgrow what's left after the
+   header's right side claims its own space - scrolling the row instead
+   of forcing the whole PAGE to overflow horizontally (confirmed via
+   Playwright at 360px: this was the actual remaining source of body-level
+   overflow once the right side's own elements were addressed below). */
+.aymaxNavGroups {
+  gap: 2px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-width: 0;
+  flex-shrink: 1;
+  scrollbar-width: thin;
+}
+
+.aymaxNavGroupBtn.sapMMenuBtn {
+  border-radius: var(--aymax-radius-sm);
+}
+
+/* Active-group underline (2026-08) - toggled imperatively via
+   App.controller.js#_updateActiveNav (toggleStyleClass), never a bound
+   class=. A bottom border rather than a filled background so it reads as
+   "you are here" without competing with the group's own dropdown arrow
+   for visual weight. */
+.aymaxNavGroupBtn.aymaxNavActive .sapMBtn,
+.aymaxNavGroupBtn.aymaxNavActive.sapMMenuBtn > .sapMBtn {
+  color: var(--aymax-primary) !important;
+  box-shadow: inset 0 -2px 0 var(--aymax-primary);
+}
+
+.aymaxNavProfileAvatar {
+  cursor: pointer;
+}
+.aymaxNavProfileAvatar:hover {
+  opacity: 0.85;
+}
+
+/* Below desktop width (2026-08) - logo (132px, non-shrinking) + four nav
+   groups + search/theme/bell/avatar/role-select cannot all share one row
+   once the viewport drops much under ~1000px, however much any individual
+   piece shrinks (confirmed via Playwright element inspection down to
+   tablet width, 768px: giving .aymaxNavGroups overflow-x:auto alone just
+   let the flex algorithm squeeze it to a near-0px-wide, practically
+   unreachable sliver instead of actually scrolling it - "fixed" by the
+   body-scrollWidth metric alone, but the nav was silently gone). Wrapping
+   the header into its own three stacked rows (logo / nav groups /
+   search+icons) here keeps every one of them at a real, usable width
+   instead, at both tablet (768px) and phone (360px) widths.
+   .aymaxHeader is position:sticky, so an auto height that grows across
+   those rows just pushes the page's own content down in normal flow -
+   nothing overlaps. The right-side HBox (App.view.xml) also has
+   wrap="Wrap" set as a real control property (not a CSS trick), so if its
+   own row still runs out of room at a real phone width, its later
+   children (role select, then avatar/bell/theme) drop to their own
+   further line rather than forcing horizontal scroll. */
+@media (max-width: 960px) {
+  .aymaxHeader {
+    flex-wrap: wrap;
+    height: auto !important;
+    row-gap: 6px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .aymaxHeaderLeft {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .aymaxNavGroups {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .aymaxHeaderRight {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+  .aymaxDevRoleBox .aymaxDevRoleLabel {
+    display: none;
+  }
+  .aymaxDevRoleSelect {
+    width: 120px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .aymaxShellSearch {
+    width: 140px !important;
+  }
+  /* Dev-only role preview (CLAUDE.md §5 C7) - a local convenience for
+     testing on a desktop-sized window, already flagged for removal
+     before the real XSUAA rollout. Hiding it below a real phone width
+     costs nothing a real employee would ever need (production carries
+     no dev-role box at all) and frees the ~170px nothing else in this
+     row can spare. */
+  .aymaxDevRoleBox {
+    display: none;
+  }
+}

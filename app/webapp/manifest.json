@@ -394,6 +394,7 @@
     },
     "resources": {
       "css": [
+        { "uri": "css/shell/style.css" },
         { "uri": "css/search/style.css" },
         { "uri": "css/notifications/style.css" },
         { "uri": "css/profile/style.css" },

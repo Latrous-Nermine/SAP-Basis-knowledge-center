@@ -57,7 +57,7 @@ sap.ui.define([
         path: "/KnowledgeItems('" + sItemID + "')",
         model: "knowledge",
         parameters: {
-          $expand: "contributors,comments,attachments,tags($expand=tag($select=name,color))"
+          $expand: "contributors,comments,attachments,tags($expand=tag($select=name,color)),topic"
         }
       });
 
@@ -101,6 +101,15 @@ sap.ui.define([
       this.byId("btnSubmitForReview").setVisible(formatter.canSubmitForReview(sStatus));
       this.byId("btnApproveItem").setVisible(bCanReview);
       this.byId("btnRejectItem").setVisible(bCanReview);
+
+      // Same imperative treatment (2026-08 redesign) - headerContent and
+      // ObjectPageSection turned out to share the same declarative visible=
+      // unreliability as uxap:actions above, not just that aggregation.
+      this.byId("statusBadge").setVisible(formatter.isNotApproved(sStatus));
+      this.byId("commentsSection").setVisible(formatter.canShowComments(sStatus));
+
+      var sTopicName = oContext.getProperty("topic/name");
+      this.byId("topicChip").setVisible(!!sTopicName);
     },
 
     _loadRelated: function(sItemID) {

@@ -93,6 +93,7 @@ sap.ui.define([
       this._sSearchQuery = "";
       this._sMyKnowledgeStatus = "";
       this._sCurrentUserID = "";
+      this._sActiveTopic = "";
 
       var oBundle = this.getResourceBundle();
       var aTabs = [{ id: "", label: oBundle.getText("categoryAll"), active: true }]
@@ -114,6 +115,9 @@ sap.ui.define([
       // ranking with no ?sort= param sent at all, so the list itself is
       // already correctly ordered before this ever needs to change.
       this.getViewModel().setProperty("/communitySortKey", "relevant");
+
+      this._loadCategoryCounts();
+      this._loadTopics();
       this.getViewModel().setProperty("/validation", {
         filterStatus: "pending",
         counts: { pending: 0, approved: 0, rejected: 0, all: 0 },
@@ -185,6 +189,96 @@ sap.ui.define([
       window.location.href = "/feed/webapp/index.html";
     },
 
+    // ────────────────────────────────────────────────────────────
+    // Discovery surfaces (2026-08 redesign) - all three read data that
+    // already existed on the backend (getCategoryCounts, Topics, the
+    // "relevant" ranking) but was never surfaced in this module's own UI.
+    // ────────────────────────────────────────────────────────────
+
+    // Merges real counts onto the category tabs already built in onInit -
+    // a separate call rather than building counts into onInit itself, so
+    // the tabs render immediately with a count of 0 rather than waiting
+    // on a round-trip before showing anything.
+    _loadCategoryCounts: function() {
+      this.oModel.bindContext("/getCategoryCounts()").requestObject().then(function(oData) {
+        var aCounts = (oData && oData.value) || [];
+        var oCountByCategory = {};
+        var iTotal = 0;
+        aCounts.forEach(function(c) {
+          oCountByCategory[c.category] = c.count;
+          iTotal += c.count;
+        });
+
+        var aTabs = this.getViewModel().getProperty("/categoryTabs");
+        aTabs.forEach(function(t) {
+          t.count = t.id ? (oCountByCategory[t.id] || 0) : iTotal;
+        });
+        this.getViewModel().setProperty("/categoryTabs", aTabs);
+        this.getViewModel().setProperty("/stats/itemCount", iTotal);
+      }.bind(this)).catch(function() { /* tabs still work without counts */ });
+    },
+
+    // Topics row - browsing by Topic is the one axis db/lot2.cds already
+    // models (KnowledgeItems.topic, KnowledgeTopics.articleCount) but this
+    // page never exposed. Read-only reference list, loaded once.
+    _loadTopics: function() {
+      var oTopicsModel = this.getOwnerComponent().getModel("knowledge");
+      var oBinding = oTopicsModel.bindList("/Topics", null, null, [new Filter("articleCount", FilterOperator.GT, 0)]);
+      oBinding.requestContexts(0, 12).then(function(aContexts) {
+        // active must be a real boolean, never left undefined - a plain
+        // property binding with an unresolved value falls back to the
+        // CONTROL property's own default, not to false, and visible=
+        // defaults to true (found 2026-08: the topic tile's "active"
+        // checkmark badge showed on every tile, not just the selected
+        // one, until this was explicit).
+        var aTopics = aContexts.map(function(c) {
+          var oTopic = c.getObject();
+          oTopic.active = false;
+          return oTopic;
+        });
+        this.getViewModel().setProperty("/topics", aTopics);
+        this.getViewModel().setProperty("/stats/topicCount", aTopics.length);
+        // Dialog-only copy with a leading "no topic" entry - see the
+        // fragment's own comment on why this can't just be /topics.
+        this.getViewModel().setProperty("/newItemTopicOptions",
+          [{ ID: "", name: this.getText("fieldTopicNone") }].concat(aTopics));
+      }.bind(this)).catch(function() {
+        this.getViewModel().setProperty("/topics", []);
+        this.getViewModel().setProperty("/newItemTopicOptions", [{ ID: "", name: this.getText("fieldTopicNone") }]);
+      }.bind(this));
+    },
+
+    // Both Topics and Categories now live in the rail AND (Categories only)
+    // as the Bibliothèque tab's own inline chip row - either source calls
+    // the same handler, so there is exactly one place that owns "which
+    // filter is active" (CLAUDE.md §10: no duplicated logic). Jumping to
+    // "library" is a no-op when the press came from that tab's own chip
+    // row (already selected) and is what makes a RAIL click actually
+    // visible when the user is on Featured/Récent/Mes connaissances -
+    // without it, the filter would apply invisibly to a tab not on screen.
+    _showLibraryTab: function() {
+      var oTabBar = this.byId("knowledgeTabBar");
+      if (oTabBar && oTabBar.getSelectedKey() !== "library") {
+        oTabBar.setSelectedKey("library");
+      }
+    },
+
+    // Same active-flag-on-the-array-item pattern as onCategoryTabPress
+    // below, so both chip rows share the one tabButtonType formatter and
+    // there's no separate "which ID is active" property to keep in sync.
+    onTopicPress: function(oEvent) {
+      var sTopicID = oEvent.getSource().getBindingContext("view-knowledge").getProperty("ID");
+      this._sActiveTopic = (this._sActiveTopic === sTopicID) ? "" : sTopicID;
+
+      var aTopics = this.getViewModel().getProperty("/topics");
+      aTopics.forEach(function(t) { t.active = (t.ID === this._sActiveTopic); }.bind(this));
+      this.getViewModel().setProperty("/topics", aTopics);
+
+      this._applyFilters();
+      if (this._sActiveTopic) this._showLibraryTab();
+    },
+
+
     onCategoryTabPress: function(oEvent) {
       var sCategory = oEvent.getSource().getBindingContext("view-knowledge").getProperty("id");
       this._sActiveCategory = sCategory;
@@ -194,6 +288,7 @@ sap.ui.define([
       this.getViewModel().setProperty("/categoryTabs", aTabs);
 
       this._applyFilters();
+      if (sCategory) this._showLibraryTab();
     },
 
     onSearch: function(oEvent) {
@@ -233,6 +328,9 @@ sap.ui.define([
       var aCommonFilters = [];
       if (this._sActiveCategory) {
         aCommonFilters.push(new Filter("category", FilterOperator.EQ, this._sActiveCategory));
+      }
+      if (this._sActiveTopic) {
+        aCommonFilters.push(new Filter("topic_ID", FilterOperator.EQ, this._sActiveTopic));
       }
       if (this._sSearchQuery.trim()) {
         var sQuery = this._sSearchQuery.trim();
@@ -314,7 +412,7 @@ sap.ui.define([
         }.bind(this));
       }
       this.getViewModel().setProperty("/newItem", {
-        title: "", category: "article", excerpt: "", content: "",
+        title: "", category: "article", topic_ID: "", excerpt: "", content: "",
         pendingAttachments: [], uploading: false
       });
       this._oTagPickerModel.setData({ tags: [], suggestions: [] });
@@ -336,6 +434,27 @@ sap.ui.define([
     onCancelNewItem: function() {
       this._pDialog.then(function(oDialog) { oDialog.close(); });
     },
+
+    // Visual category picker (2026-08 "richer" pass) - one tile per
+    // category, selection shown via each tile's own inline
+    // {= .../category === 'x' ? 'Emphasized' : 'Default' } expression
+    // binding against a plain JSON-model string, not a bound class= (see
+    // formatter.js's own comment on why class= bindings are avoided
+    // throughout this module) - and one handler per category rather than
+    // a single handler reading a category off customData, since
+    // core:CustomData bare-nested in a layout control's default
+    // aggregation has already been confirmed to throw in this UI5
+    // version (see KnowledgeCard.fragment.xml's own history on that).
+    _selectCategory: function(sCategory) {
+      this.getViewModel().setProperty("/newItem/category", sCategory);
+    },
+    onSelectCategoryArticle: function() { this._selectCategory("article"); },
+    onSelectCategoryDocumentation: function() { this._selectCategory("documentation"); },
+    onSelectCategoryReport: function() { this._selectCategory("report"); },
+    onSelectCategoryTutorial: function() { this._selectCategory("tutorial"); },
+    onSelectCategoryBestPractice: function() { this._selectCategory("best_practice"); },
+    onSelectCategoryFaq: function() { this._selectCategory("faq"); },
+    onSelectCategoryTemplate: function() { this._selectCategory("template"); },
 
     onTagPickerTokenUpdate: function(oEvent) {
       var aTags = TagPicker.applyTokenUpdate(oEvent, this._oTagPickerModel.getProperty("/tags"));
@@ -390,13 +509,19 @@ sap.ui.define([
         return;
       }
 
-      var oListBinding = this.oModel.bindList("/KnowledgeItems");
-      var oContext = oListBinding.create({
+      var oPayload = {
         title: oNewItem.title,
         category: oNewItem.category,
         excerpt: oNewItem.excerpt,
         content: oNewItem.content
-      });
+      };
+      // Optional association - omitted entirely (not sent as "") when
+      // unselected, since topic_ID is a UUID column and "" is not a
+      // valid one.
+      if (oNewItem.topic_ID) oPayload.topic_ID = oNewItem.topic_ID;
+
+      var oListBinding = this.oModel.bindList("/KnowledgeItems");
+      var oContext = oListBinding.create(oPayload);
 
       oContext.created().then(function() {
         var sItemID = oContext.getProperty("ID");

@@ -35,6 +35,7 @@ service KnowledgeService {
     attachments   : redirected to KnowledgeAttachments,
     relatedItems  : redirected to KnowledgeRelations,
     contributions : redirected to KnowledgeContributions,
+    comments      : redirected to ItemComments,
     /** +1 / -1 / null - the caller's own vote, computed in a batched
         after-READ hook (same pattern as PeopleService's isFollowedByMe),
         never via $expand of KnowledgeVotes: that entity's own @restrict
@@ -43,7 +44,30 @@ service KnowledgeService {
         actual cross-user test, not assumed. A virtual field sidesteps
         the gap entirely instead of trying to force expand-time restrict
         to behave differently. */
-    virtual myVote : Integer
+    virtual myVote : Integer,
+
+    /** Card/detail byline (2026-08 redesign) - flattened onto the ITEM
+        itself, not left for the UI to derive from the `contributors`
+        $expand at render time. Found empirically: a client-side composite
+        binding whose parts include a collection-valued nav property
+        (`contributors`) never resolves - every part comes back `undefined`
+        to the formatter, with or without explicit `targetType`, tested
+        extensively (see git history / session notes on this file's UI
+        counterpart). Precomputing flat scalars here sidesteps the whole
+        class of bug: each of these is a plain single-part string binding
+        client-side, the same proven-reliable shape as categoryLabel/
+        statusLabel already use. */
+    virtual contributorsLabel            : String,
+    virtual primaryContributorAvatarSrc  : String,
+    virtual primaryContributorInitials   : String,
+    virtual primaryContributorColor      : String,
+
+    /** Real card-footer metadata (2026-08 "real visuals" pass), computed
+        in the same after-READ hook - counts only, never the full
+        comments/attachments $expand (list views don't need the content,
+        only how many). */
+    virtual commentsCount    : Integer,
+    virtual attachmentsCount : Integer
   };
 
   // Each of these four is a detail table of KnowledgeItems (item_ID FK) -
@@ -61,7 +85,11 @@ service KnowledgeService {
     /** Resolved in the same after-READ hook as KnowledgeItems.myVote -
         must be declared here or OData strips it from the response, same
         reason myVote needed its own virtual declaration. */
-    virtual displayName : String
+    virtual displayName : String,
+    /** Card/detail avatar (2026-08 redesign) - same reason: the hook
+        already sets it, but a field OData doesn't know about is dropped
+        from the response regardless of what the handler puts on the row. */
+    virtual avatarMimeType : String
   };
 
   @readonly
@@ -78,6 +106,27 @@ service KnowledgeService {
       same plain unrestricted projection Feed/Rooms already use for it. */
   @readonly
   entity Tags as projection on kh.Tags;
+
+  /** Comments themselves (content/createdAt/author_userID) already came
+      through $expand=comments without an explicit projection here - CAP
+      auto-exposes an association target's own columns. This projection
+      only exists to carry two NEW virtual fields (author name + real
+      photo, resolved in the same after-READ batch as
+      KnowledgeContributors.displayName/avatarMimeType) - same reason
+      KnowledgeContributors needed its own explicit projection instead of
+      a bare `*`: an entity with no projection in THIS service has nowhere
+      to declare a virtual field on. Lot 1's own Comments entity/schema is
+      untouched - this is a read-only reference into it, same pattern as
+      Tags above. */
+  @readonly
+  @restrict: [
+    { grant: 'READ', where: 'knowledgeItem.status = ''approved'' or exists knowledgeItem.contributors[user_userID = $user.id]' }
+  ]
+  entity ItemComments as projection on kh.Comments {
+    *,
+    virtual authorDisplayName    : String,
+    virtual authorAvatarMimeType : String
+  };
 
   // CREATE (not @readonly, unlike its three siblings above): real upload
   // needs a write path. Role-gated the same as KnowledgeItems; the handler

@@ -3,40 +3,100 @@
   xmlns:core="sap.ui.core"
   xmlns:u="sap.ui.unified">
 
-  <Dialog title="{i18n-knowledge>contribute}" contentWidth="32rem" verticalScrolling="true" busy="{view-knowledge>/newItem/uploading}">
+  <Dialog contentWidth="36rem" verticalScrolling="true" busy="{view-knowledge>/newItem/uploading}" class="knowledgeContributeDialogRoot">
+    <!-- Custom header (2026-08 "richer" pass) - a real "create something"
+         moment, not a plain admin-form title bar. Icon + title only here,
+         sized to fit sap.m.Bar's own standard toolbar height - the
+         subtitle lives in the content body instead of also being crammed
+         into this bar (found empirically: growing the bar's own height
+         via CSS to fit a two-line icon+title+subtitle stack clipped its
+         content against the dialog's own overflow:hidden, confirmed via
+         an element-level screenshot, not just a viewport one - Dialog's
+         internal layout doesn't actually reflow around a taller header). -->
+    <customHeader>
+      <Bar class="knowledgeDialogHeaderBar">
+        <contentLeft>
+          <HBox alignItems="Center" class="knowledgeDialogHeaderLeft">
+            <VBox alignItems="Center" justifyContent="Center" class="knowledgeDialogHeaderIcon">
+              <core:Icon src="sap-icon://lightbulb" decorative="true"/>
+            </VBox>
+            <Title text="{i18n-knowledge>contribute}" level="H3" class="knowledgeDialogHeaderTitle"/>
+          </HBox>
+        </contentLeft>
+      </Bar>
+    </customHeader>
     <content>
-      <VBox class="sapUiContentPadding">
-        <Label text="{i18n-knowledge>fieldTitle}" labelFor="newItemTitle" class="sapUiTinyMarginBottom"/>
-        <Input id="newItemTitle" value="{view-knowledge>/newItem/title}" width="100%" class="sapUiSmallMarginBottom"/>
+      <VBox class="sapUiContentPadding knowledgeContributeDialog">
+        <Text text="{i18n-knowledge>contributeIntro}" class="knowledgeSectionSubtitle sapUiSmallMarginBottom"/>
 
-        <!-- Tags : sélection parmi les tags existants ou saisie libre d'un
-             nouveau tag (créé au moment de la publication). Le fragment
-             partagé attend son propre modèle par défaut ({/tags},
-             {/suggestions}), posé par onContribute - voir
-             model/shared/TagPicker.js. -->
-        <Label text="{i18n-knowledge>fieldTags}" labelFor="tagPickerInput" class="sapUiTinyMarginBottom"/>
-        <core:Fragment fragmentName="aymax.hub.view.shared.fragments.TagPicker" type="XML"/>
+        <!-- Guided 6-step flow (2026-08 v2, explicit feedback): type ->
+             topic -> title/summary -> content -> tags/files -> publish
+             (step 6 is the dialog's own footer buttons, already its own
+             visually distinct zone). Was: title first, tags before
+             content - reordered to match the stated sequence exactly, no
+             field removed or renamed, only regrouped under step headings. -->
 
-        <Label text="{i18n-knowledge>fieldCategory}" labelFor="newItemCategory" class="sapUiTinyMarginBottom sapUiTinyMarginTop"/>
-        <Select id="newItemCategory" selectedKey="{view-knowledge>/newItem/category}" width="100%" class="sapUiSmallMarginBottom">
-          <items>
-            <core:Item key="article" text="{i18n-knowledge>category.article}"/>
-            <core:Item key="documentation" text="{i18n-knowledge>category.documentation}"/>
-            <core:Item key="report" text="{i18n-knowledge>category.report}"/>
-            <core:Item key="tutorial" text="{i18n-knowledge>category.tutorial}"/>
-            <core:Item key="best_practice" text="{i18n-knowledge>category.bestPractice}"/>
-            <core:Item key="faq" text="{i18n-knowledge>category.faq}"/>
-            <core:Item key="template" text="{i18n-knowledge>category.template}"/>
-          </items>
+        <!-- STEP 1 - Visual category picker (2026-08) - one coloured tile
+             per category instead of a plain <Select>, so choosing a
+             category feels like picking a content type, not filling in a
+             form field. Selection state is each tile's own inline
+             {= .../category === 'x' ? 'Emphasized' : 'Default' }
+             expression against the plain JSON-model string (proven-safe
+             pattern throughout this module) - hue per tile is a literal,
+             static class (not bound), since which tile is which category
+             is fixed at authoring time. -->
+        <Title text="{i18n-knowledge>stepType}" level="H4" class="knowledgeDialogSectionTitle"/>
+        <HBox wrap="Wrap" class="knowledgeCategoryPickerRow sapUiSmallMarginBottom">
+          <Button icon="sap-icon://document-text" text="{i18n-knowledge>category.article}" press=".onSelectCategoryArticle" type="{= ${view-knowledge>/newItem/category} === 'article' ? 'Emphasized' : 'Default' }" class="knowledgeCategoryPickerTile khHueBlue"/>
+          <Button icon="sap-icon://course-book" text="{i18n-knowledge>category.documentation}" press=".onSelectCategoryDocumentation" type="{= ${view-knowledge>/newItem/category} === 'documentation' ? 'Emphasized' : 'Default' }" class="knowledgeCategoryPickerTile khHueTeal"/>
+          <Button icon="sap-icon://line-chart" text="{i18n-knowledge>category.report}" press=".onSelectCategoryReport" type="{= ${view-knowledge>/newItem/category} === 'report' ? 'Emphasized' : 'Default' }" class="knowledgeCategoryPickerTile khHueIndigo"/>
+          <Button icon="sap-icon://learning-assistant" text="{i18n-knowledge>category.tutorial}" press=".onSelectCategoryTutorial" type="{= ${view-knowledge>/newItem/category} === 'tutorial' ? 'Emphasized' : 'Default' }" class="knowledgeCategoryPickerTile khHueAmber"/>
+          <Button icon="sap-icon://lightbulb" text="{i18n-knowledge>category.bestPractice}" press=".onSelectCategoryBestPractice" type="{= ${view-knowledge>/newItem/category} === 'best_practice' ? 'Emphasized' : 'Default' }" class="knowledgeCategoryPickerTile khHueGreen"/>
+          <Button icon="sap-icon://question-mark" text="{i18n-knowledge>category.faq}" press=".onSelectCategoryFaq" type="{= ${view-knowledge>/newItem/category} === 'faq' ? 'Emphasized' : 'Default' }" class="knowledgeCategoryPickerTile khHueSlate"/>
+          <Button icon="sap-icon://form" text="{i18n-knowledge>category.template}" press=".onSelectCategoryTemplate" type="{= ${view-knowledge>/newItem/category} === 'template' ? 'Emphasized' : 'Default' }" class="knowledgeCategoryPickerTile khHueCyan"/>
+        </HBox>
+
+        <!-- STEP 2 - Topic -->
+        <Title text="{i18n-knowledge>stepTopic}" level="H4" class="knowledgeDialogSectionTitle sapUiMediumMarginTop"/>
+        <Label text="{i18n-knowledge>fieldTopic}" labelFor="newItemTopic" class="sapUiTinyMarginBottom"/>
+        <!-- Reuses the topics already loaded on the main page
+             (KnowledgeList.controller.js#_loadTopics), plus one
+             synthetic leading "no topic" entry (/newItemTopicOptions,
+             built alongside /topics) - a second, dialog-only array so
+             that placeholder never leaks into the main page's own
+             topic chip row, which binds /topics directly. -->
+        <Select id="newItemTopic" selectedKey="{view-knowledge>/newItem/topic_ID}" width="100%" items="{view-knowledge>/newItemTopicOptions}" class="sapUiSmallMarginBottom">
+          <core:Item key="{view-knowledge>ID}" text="{view-knowledge>name}"/>
         </Select>
 
-        <Label text="{i18n-knowledge>fieldExcerpt}" labelFor="newItemExcerpt" class="sapUiTinyMarginBottom"/>
+        <!-- STEP 3 - Title + summary. Headline-style title field - large,
+             borderless until focus, reads like the opening line of an
+             article rather than an admin form field labelled "Titre". -->
+        <Title text="{i18n-knowledge>stepTitle}" level="H4" class="knowledgeDialogSectionTitle sapUiMediumMarginTop"/>
+        <Input
+          id="newItemTitle"
+          value="{view-knowledge>/newItem/title}"
+          placeholder="{i18n-knowledge>fieldTitlePlaceholder}"
+          width="100%"
+          class="knowledgeDialogTitleInput sapUiSmallMarginBottom"/>
+        <Label text="{i18n-knowledge>fieldExcerpt} *" labelFor="newItemExcerpt" class="sapUiTinyMarginBottom"/>
         <Input id="newItemExcerpt" value="{view-knowledge>/newItem/excerpt}" width="100%" class="sapUiSmallMarginBottom"/>
 
-        <Label text="{i18n-knowledge>fieldContent}" labelFor="newItemContent" class="sapUiTinyMarginBottom"/>
-        <TextArea id="newItemContent" value="{view-knowledge>/newItem/content}" rows="7" width="100%" class="sapUiSmallMarginBottom"/>
+        <!-- STEP 4 - Content -->
+        <Title text="{i18n-knowledge>stepContent}" level="H4" class="knowledgeDialogSectionTitle sapUiMediumMarginTop"/>
+        <Label text="{i18n-knowledge>fieldContent} *" labelFor="newItemContent" class="sapUiTinyMarginBottom"/>
+        <TextArea id="newItemContent" value="{view-knowledge>/newItem/content}" rows="7" width="100%"/>
 
-        <Label text="{i18n-knowledge>fieldAttachments}" labelFor="newItemAttachments" class="sapUiTinyMarginBottom"/>
+        <!-- STEP 5 - Tags + files -->
+        <Title text="{i18n-knowledge>stepTagsFiles}" level="H4" class="knowledgeDialogSectionTitle sapUiMediumMarginTop"/>
+        <Label text="{i18n-knowledge>fieldTags} ({i18n-knowledge>optionalMark})" labelFor="tagPickerInput" class="sapUiTinyMarginBottom"/>
+        <!-- Sélection parmi les tags existants ou saisie libre d'un nouveau
+             tag (créé au moment de la publication). Le fragment partagé
+             attend son propre modèle par défaut ({/tags}, {/suggestions}),
+             posé par onContribute - voir model/shared/TagPicker.js. -->
+        <core:Fragment fragmentName="aymax.hub.view.shared.fragments.TagPicker" type="XML"/>
+
+        <Label text="{i18n-knowledge>fieldAttachments} ({i18n-knowledge>optionalMark})" class="sapUiTinyMarginTop sapUiTinyMarginBottom"/>
         <!-- Manual mode: no uploadUrl, so nothing auto-uploads on selection -
              this only grabs File objects. The real upload (metadata CREATE +
              stream PUT) only happens after the item itself exists, in

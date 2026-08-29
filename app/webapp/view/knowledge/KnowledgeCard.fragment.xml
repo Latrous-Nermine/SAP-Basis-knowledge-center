@@ -2,27 +2,73 @@
   xmlns="sap.m"
   xmlns:core="sap.ui.core">
 
-  <!-- Shared between the My Knowledge and Community Knowledge lists
-       (KnowledgeList.view.xml) - identical card, different source list,
-       so this only ever needs to change in one place. -->
+  <!-- Shared between all four tab lists in KnowledgeList.view.xml -
+       identical card, different source list, so this only ever needs to
+       change in one place. -->
   <CustomListItem type="Navigation" press=".onItemPress" class="knowledgeCard">
+    <!-- Real thumbnail (2026-08 "real visuals" pass) - one of 8
+         hand-authored SVG illustrations (img/knowledge/illustrations/),
+         picked by topic keyword match if the item has a topic, else by
+         category (formatter.cardIllustration - see its own comment).
+         Exactly one of the 8 static-class fills below is visible per row:
+         the same proven "N static alternatives + two-part composite
+         visible=" mechanism the category colour banner used before this
+         pass (a bound class= silently never applies on this fragment,
+         confirmed repeatedly, and this keeps that same reliability
+         instead of gambling on a fresh dynamic Image.src binding). -->
+    <HBox alignItems="Stretch" justifyContent="SpaceBetween" class="knowledgeCardThumb">
+      <VBox visible="{parts:[{path:'knowledge>category', targetType:'any'}, {path:'knowledge>topic/name', targetType:'any'}], formatter:'.formatter.isIllustrationBtpCloud'}" class="knowledgeCardThumbImg khIllusBtpCloud"/>
+      <VBox visible="{parts:[{path:'knowledge>category', targetType:'any'}, {path:'knowledge>topic/name', targetType:'any'}], formatter:'.formatter.isIllustrationHanaData'}" class="knowledgeCardThumbImg khIllusHanaData"/>
+      <VBox visible="{parts:[{path:'knowledge>category', targetType:'any'}, {path:'knowledge>topic/name', targetType:'any'}], formatter:'.formatter.isIllustrationFioriUi'}" class="knowledgeCardThumbImg khIllusFioriUi"/>
+      <VBox visible="{parts:[{path:'knowledge>category', targetType:'any'}, {path:'knowledge>topic/name', targetType:'any'}], formatter:'.formatter.isIllustrationCapDev'}" class="knowledgeCardThumbImg khIllusCapDev"/>
+      <VBox visible="{parts:[{path:'knowledge>category', targetType:'any'}, {path:'knowledge>topic/name', targetType:'any'}], formatter:'.formatter.isIllustrationBasisServer'}" class="knowledgeCardThumbImg khIllusBasisServer"/>
+      <VBox visible="{parts:[{path:'knowledge>category', targetType:'any'}, {path:'knowledge>topic/name', targetType:'any'}], formatter:'.formatter.isIllustrationSecurity'}" class="knowledgeCardThumbImg khIllusSecurity"/>
+      <VBox visible="{parts:[{path:'knowledge>category', targetType:'any'}, {path:'knowledge>topic/name', targetType:'any'}], formatter:'.formatter.isIllustrationBestPractice'}" class="knowledgeCardThumbImg khIllusBestPractice"/>
+      <VBox visible="{parts:[{path:'knowledge>category', targetType:'any'}, {path:'knowledge>topic/name', targetType:'any'}], formatter:'.formatter.isIllustrationGeneral'}" class="knowledgeCardThumbImg khIllusGeneral"/>
+      <!-- Overlay badges, each wrapped in its own VBox (see
+           formatter.js's own note on why: a plain Text/Icon/HBox child of
+           an HBox gets wrapped in an internal positioned .sapMFlexItem
+           div, which position:absolute then resolves against instead of
+           .knowledgeCardThumb - a VBox child doesn't get that wrapper). -->
+      <VBox class="knowledgeCardThumbBadgesWrap">
+       <HBox alignItems="Center" class="knowledgeCardThumbBadges">
+        <core:Icon
+          src="sap-icon://accept"
+          visible="{knowledge>fromQuestion}"
+          tooltip="{path:'knowledge>fromQuestion', formatter:'.formatter.fromQuestionTooltip'}"
+          class="knowledgeCardThumbBadge knowledgeFromQuestionBadge"/>
+        <!-- Two-part composite binding, both parts with explicit
+             targetType:'any' (found 2026-08: a single-part
+             formatter-based visible= binding on this fragment doesn't
+             reliably apply here). This exact recipe is the only
+             technique verified to work on this fragment. -->
+        <ObjectStatus
+          visible="{parts:[{path:'knowledge>status', targetType:'any'}, {path:'knowledge>ID', targetType:'any'}], formatter:'.formatter.isNotApproved'}"
+          text="{path:'knowledge>status', formatter:'.formatter.statusLabel'}"
+          state="{path:'knowledge>status', formatter:'.formatter.statusState'}"
+          class="knowledgeCardThumbStatus"/>
+        <Button
+          icon="sap-icon://delete"
+          type="Transparent"
+          tooltip="{i18n-knowledge>deleteDraft}"
+          visible="{parts:[{path:'knowledge>status', targetType:'any'}, {path:'knowledge>ID', targetType:'any'}], formatter:'.formatter.canSubmitForReview'}"
+          press=".onDeleteDraft"
+          class="knowledgeCardThumbDelete"/>
+       </HBox>
+      </VBox>
+    </HBox>
     <VBox class="knowledgeCardBody">
-      <HBox justifyContent="SpaceBetween" alignItems="Center" class="knowledgeCardStatusRow">
-        <ObjectStatus text="{path:'knowledge>category', formatter:'.formatter.categoryLabel'}" state="Information"/>
-        <HBox alignItems="Center" class="knowledgeCardStatusRow">
-          <ObjectStatus
-            visible="{path:'knowledge>status', formatter:'.formatter.isNotApproved'}"
-            text="{path:'knowledge>status', formatter:'.formatter.statusLabel'}"
-            state="{path:'knowledge>status', formatter:'.formatter.statusState'}"/>
-          <Button
-            icon="sap-icon://delete"
-            type="Transparent"
-            tooltip="{i18n-knowledge>deleteDraft}"
-            visible="{path:'knowledge>status', formatter:'.formatter.canSubmitForReview'}"
-            press=".onDeleteDraft"/>
-        </HBox>
-      </HBox>
-      <Title text="{knowledge>title}" wrapping="true"/>
+      <!-- Category/type label moved OFF the image (2026-08) - a plain
+           text line, not a white overlay on the thumbnail, per explicit
+           request that the visual stay purely visual. -->
+      <Text text="{path:'knowledge>category', formatter:'.formatter.categoryLabel'}" class="knowledgeCardCategoryLabel"/>
+      <Title text="{knowledge>title}" wrapping="true" class="knowledgeCardTitle"/>
+      <!-- Topic chip: single Association, so a plain path/visible= binding
+           is safe here (unlike the tags collection below). -->
+      <Text
+        text="{path:'knowledge>topic/name', formatter:'.formatter.topicName'}"
+        visible="{parts:[{path:'knowledge>topic/name', targetType:'any'}, {path:'knowledge>ID', targetType:'any'}], formatter:'.formatter.hasTopic'}"
+        class="knowledgeCardTopicChip"/>
       <!-- No visible= binding: "tags" is a collection (KnowledgeItemTags
            composition) and an ODataPropertyBinding can't resolve a
            collection path as a primitive to feed a formatter/expression
@@ -35,13 +81,47 @@
         class="knowledgeCardTags">
         <Token text="{knowledge>tag/name}"/>
       </Tokenizer>
-      <Text text="{knowledge>excerpt}" maxLines="3" class="knowledgeCardExcerpt"/>
-      <Text
-        text="{parts: [{path:'knowledge>contributors'}, {path:'knowledge>createdAt', targetType:'any'}], formatter:'.formatter.metaLine'}"
-        class="knowledgeCardMeta"/>
+      <Text text="{knowledge>excerpt}" maxLines="2" class="knowledgeCardExcerpt"/>
+      <HBox justifyContent="SpaceBetween" alignItems="Center" class="knowledgeCardFooter">
+        <HBox alignItems="Center" class="knowledgeCardAuthor">
+          <!-- Backend-flattened scalars (knowledge-service.js's after-READ
+               hook), not a client-side composite over `contributors` - a
+               collection-valued part inside a composite binding never
+               resolves here (confirmed empirically). Plain single-part
+               scalar bindings, same proven shape as categoryLabel above. -->
+          <Avatar
+            displaySize="XS"
+            src="{knowledge>primaryContributorAvatarSrc}"
+            initials="{knowledge>primaryContributorInitials}"
+            backgroundColor="{knowledge>primaryContributorColor}"
+            class="knowledgeCardAvatar"/>
+          <Text text="{knowledge>contributorsLabel}" class="knowledgeCardMeta"/>
+          <Text text=" · " class="knowledgeCardMeta"/>
+          <Text
+            text="{path:'knowledge>createdAt', targetType:'any', formatter:'.formatter.relativeDateTime'}"
+            class="knowledgeCardMeta"/>
+        </HBox>
+        <HBox alignItems="Center" class="knowledgeCardMetaCounts">
+          <HBox alignItems="Center" class="knowledgeCardViewCount">
+            <core:Icon src="sap-icon://show" class="knowledgeCardViewIcon"/>
+            <Text text="{path:'knowledge>viewCount', formatter:'.formatter.viewCountLabel'}"/>
+          </HBox>
+          <!-- Real secondary metadata (2026-08), not decoration -
+               comments/attachments only show when there actually are
+               some, same "hasCount" guard on both. -->
+          <HBox alignItems="Center" class="knowledgeCardViewCount" visible="{path:'knowledge>commentsCount', formatter:'.formatter.hasCount'}">
+            <core:Icon src="sap-icon://comment" class="knowledgeCardViewIcon"/>
+            <Text text="{knowledge>commentsCount}"/>
+          </HBox>
+          <HBox alignItems="Center" class="knowledgeCardViewCount" visible="{path:'knowledge>attachmentsCount', formatter:'.formatter.hasCount'}">
+            <core:Icon src="sap-icon://attachment" class="knowledgeCardViewIcon"/>
+            <Text text="{knowledge>attachmentsCount}"/>
+          </HBox>
+        </HBox>
+      </HBox>
       <HBox
         alignItems="Center"
-        visible="{path:'knowledge>status', formatter:'.formatter.canVote'}"
+        visible="{parts:[{path:'knowledge>status', targetType:'any'}, {path:'knowledge>ID', targetType:'any'}], formatter:'.formatter.canVote'}"
         class="knowledgeVoteControls">
         <ToggleButton
           icon="sap-icon://thumb-up"
