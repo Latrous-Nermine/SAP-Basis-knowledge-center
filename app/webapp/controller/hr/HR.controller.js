@@ -23,7 +23,10 @@ sap.ui.define([
     },
 
     onHomePress: function() {
-      window.location.href = "/feed/webapp/index.html";
+      // Feed is rendered inside this shell at its own "feed" route
+      // (view/feed/Feed.view.xml) - navigate via the router, not a
+      // hard page load to the standalone /feed/webapp app.
+      this.getRouter().navTo("feed");
     },
 
     onTabSelect: function(oEvent) {

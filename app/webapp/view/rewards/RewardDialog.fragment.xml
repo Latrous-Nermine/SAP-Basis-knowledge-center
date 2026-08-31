@@ -1,0 +1,81 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <!-- Add/Edit reward (2026-08) - one dialog for both, distinguished by
+       view-rewards>/rewardFormIsEdit (title only; the save handler decides
+       CREATE vs UPDATE from whether an existing binding context was
+       captured when the dialog was opened, see Rewards.controller.js). -->
+  <Dialog
+    id="rewardDialog"
+    contentWidth="26rem"
+    title="{= ${view-rewards>/rewardFormIsEdit} ? ${i18n-rewards>rewardDialogEditTitle} : ${i18n-rewards>rewardDialogAddTitle} }">
+    <content>
+      <VBox class="rewardDialogContent">
+
+        <Label text="{i18n-rewards>fieldRewardName} *" labelFor="rewardNameInput" class="sapUiTinyMarginBottom"/>
+        <Input
+          id="rewardNameInput"
+          value="{view-rewards>/rewardForm/name}"
+          placeholder="{i18n-rewards>fieldRewardNamePlaceholder}"
+          width="100%"
+          class="sapUiSmallMarginBottom"/>
+
+        <Label text="{i18n-rewards>fieldRewardPoints} *" labelFor="rewardPointsInput" class="sapUiTinyMarginBottom"/>
+        <Input
+          id="rewardPointsInput"
+          value="{view-rewards>/rewardForm/points}"
+          type="Number"
+          width="100%"
+          class="sapUiSmallMarginBottom"/>
+
+        <Label text="{i18n-rewards>fieldRewardCategory}" labelFor="rewardCategoryInput" class="sapUiTinyMarginBottom"/>
+        <!-- Free text, with existing categories offered as suggestions
+             (real data pulled from the currently-loaded catalogue, see
+             _openRewardDialog - not a fixed/invented enum, this column
+             is a plain free-text String(60) in the schema). Same
+             showSuggestion/suggestionItems mechanism already proven on
+             the Knowledge Center tag picker this session. -->
+        <Input
+          id="rewardCategoryInput"
+          value="{view-rewards>/rewardForm/category}"
+          placeholder="{i18n-rewards>fieldRewardCategoryPlaceholder}"
+          showSuggestion="true"
+          suggestionItems="{view-rewards>/rewardCategorySuggestions}"
+          width="100%"
+          class="sapUiSmallMarginBottom">
+          <suggestionItems>
+            <core:Item text="{view-rewards>name}"/>
+          </suggestionItems>
+        </Input>
+
+        <Label text="{i18n-rewards>fieldRewardIcon}" class="sapUiTinyMarginBottom"/>
+        <!-- Six icons, all empirically confirmed rendering correctly in
+             this app (three already live in the seed data, three more
+             verified this session) - deliberately not a larger/invented
+             icon library. Selected state is the theme's own default
+             Emphasized style (solid brand blue, white icon) - no custom
+             background override, which is exactly what broke the
+             Knowledge Center category tiles earlier (an Emphasized
+             button's fill paints on .sapMBtnInner, not the outer .sapMBtn
+             a class= override would target) - the plain default look
+             sidesteps that bug entirely by not needing an override at all. -->
+        <HBox wrap="Wrap" class="rewardIconPickerRow sapUiSmallMarginBottom">
+          <Button icon="sap-icon://gift" tooltip="Cadeau" press=".onSelectRewardIconGift" type="{= ${view-rewards>/rewardForm/icon} === 'sap-icon://gift' ? 'Emphasized' : 'Default' }" class="rewardIconPickerBtn sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+          <Button icon="sap-icon://laptop" tooltip="Ordinateur portable" press=".onSelectRewardIconLaptop" type="{= ${view-rewards>/rewardForm/icon} === 'sap-icon://laptop' ? 'Emphasized' : 'Default' }" class="rewardIconPickerBtn sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+          <Button icon="sap-icon://iphone" tooltip="Téléphone" press=".onSelectRewardIconPhone" type="{= ${view-rewards>/rewardForm/icon} === 'sap-icon://iphone' ? 'Emphasized' : 'Default' }" class="rewardIconPickerBtn sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+          <Button icon="sap-icon://travel-request" tooltip="Sac / accessoire" press=".onSelectRewardIconBag" type="{= ${view-rewards>/rewardForm/icon} === 'sap-icon://travel-request' ? 'Emphasized' : 'Default' }" class="rewardIconPickerBtn sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+          <Button icon="sap-icon://favorite" tooltip="Distinction" press=".onSelectRewardIconFavorite" type="{= ${view-rewards>/rewardForm/icon} === 'sap-icon://favorite' ? 'Emphasized' : 'Default' }" class="rewardIconPickerBtn sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+          <Button icon="sap-icon://course-book" tooltip="Formation" press=".onSelectRewardIconCourse" type="{= ${view-rewards>/rewardForm/icon} === 'sap-icon://course-book' ? 'Emphasized' : 'Default' }" class="rewardIconPickerBtn sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+        </HBox>
+
+      </VBox>
+    </content>
+    <beginButton>
+      <Button text="{i18n-rewards>save}" type="Emphasized" press=".onSaveReward"/>
+    </beginButton>
+    <endButton>
+      <Button text="{i18n-rewards>cancel}" press=".onCancelReward"/>
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

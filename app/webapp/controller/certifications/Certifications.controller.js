@@ -23,7 +23,10 @@ sap.ui.define([
     },
 
     onHomePress: function() {
-      window.location.href = "/feed/webapp/index.html";
+      // Feed is rendered inside this shell at its own "feed" route
+      // (view/feed/Feed.view.xml) - navigate via the router, not a
+      // hard page load to the standalone /feed/webapp app.
+      this.getRouter().navTo("feed");
     },
 
     // Real now (unlike the original's raw property PATCH, which can't
@@ -34,7 +37,7 @@ sap.ui.define([
     onStartCertification: function(oEvent) {
       var oContext = oEvent.getSource().getBindingContext("certifications");
       var sID = oContext.getProperty("ID");
-      var sName = oContext.getProperty("certification").name;
+      var sName = oContext.getProperty("certification/name");
 
       var oActionContext = this.bindAction(this.oModel, "/startCertification", {
         userCertificationID: sID
@@ -54,13 +57,13 @@ sap.ui.define([
     // preserved as-is.
     onViewCertificate: function(oEvent) {
       var oContext = oEvent.getSource().getBindingContext("certifications");
-      var sName = oContext ? oContext.getProperty("certification").name : "";
+      var sName = oContext ? oContext.getProperty("certification/name") : "";
       MessageToast.show("Ouverture du certificat : " + sName);
     },
 
     onContinueCertification: function(oEvent) {
       var oContext = oEvent.getSource().getBindingContext("certifications");
-      var sName = oContext ? oContext.getProperty("certification").name : "";
+      var sName = oContext ? oContext.getProperty("certification/name") : "";
       MessageToast.show("Reprise de la formation : " + sName);
     },
 
@@ -70,7 +73,7 @@ sap.ui.define([
     onCompleteCertification: function(oEvent) {
       var oContext = oEvent.getSource().getBindingContext("certifications");
       var sID = oContext.getProperty("ID");
-      var sName = oContext.getProperty("certification").name;
+      var sName = oContext.getProperty("certification/name");
 
       var oActionContext = this.bindAction(this.oModel, "/completeCertification", {
         userCertificationID: sID

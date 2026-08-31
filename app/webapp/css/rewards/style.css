@@ -73,3 +73,24 @@
 .rewardsBtnSecondary .sapMBtnInner:hover {
   background: var(--aymax-neutral-100) !important;
 }
+
+/* ============================================================
+   Add/Edit dialog (2026-08)
+   ============================================================ */
+/* Explicit padding, not the sapUiContentPadding utility class - already
+   confirmed once this session (Knowledge Center's own Contribute dialog)
+   that sap.m.VBox/FlexBox's own base library CSS resets padding:0 on
+   .sapMFlexBox at equal specificity and wins the cascade regardless of
+   utility-class order, so content ends up flush against the dialog's
+   edges. Avoided here from the start instead of hitting the same bug
+   again. */
+.rewardDialogContent {
+  padding: 4px 4px 8px;
+}
+
+.rewardIconPickerRow {
+  gap: 6px;
+}
+.rewardIconPickerBtn.sapMBtn {
+  min-width: 2.75rem;
+}

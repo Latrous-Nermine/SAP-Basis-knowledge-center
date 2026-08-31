@@ -455,13 +455,43 @@
 .knowledgeTabBar .sapMITBText {
   width: auto !important;
 }
+/* Selected-tab contrast fix (2026-08, reported: "the chosen tab's colour
+   collapses with the background" + "the filter circles are not equal") -
+   two related problems, one fix. The old 9% tint over this bar's own
+   white surface (.sapMITBHead) was too close to white to read as
+   "selected" at a glance; separately, the theme's own default gives ONLY
+   the selected filter's icon a solid colour fill while the other three
+   stay outline-only, which - since every icon glyph (star/clock/
+   documents/list) has different intrinsic visual weight at the same
+   circle size - read as "the circles aren't the same" even though their
+   actual dimensions are identical (confirmed via computed style: all
+   four are 44px/border-radius 48px/2px border, only backgroundColor
+   differs). Fix: unselected icons go fully neutral (muted grey, not
+   blue) so they visibly recede, and the selected tab gets a much
+   stronger, unambiguous treatment (deeper tint + bottom accent bar) -
+   the two states are now deliberately, consistently different instead of
+   a subtle, easy-to-miss difference. */
+.knowledgeTabBar .sapMITBFilter .sapMITBFilterIcon {
+  border-color: var(--aymax-neutral-400) !important;
+  color: var(--aymax-neutral-500) !important;
+}
+.knowledgeTabBar .sapMITBFilter .sapMITBText {
+  color: var(--aymax-text-muted) !important;
+}
 .knowledgeTabBar .sapMITBSelected {
-  background: color-mix(in srgb, var(--aymax-primary) 9%, transparent);
+  background: color-mix(in srgb, var(--aymax-primary) 14%, transparent);
+  border-radius: var(--aymax-radius-sm) !important;
+  box-shadow: inset 0 -3px 0 var(--aymax-primary);
 }
 .knowledgeTabBar .sapMITBSelected .sapMITBText,
-.knowledgeTabBar .sapMITBSelected .sapMITBFilterIcon,
 .knowledgeTabBar .sapMITBSelected .sapMITBCount {
   color: var(--aymax-primary) !important;
+  font-weight: 600;
+}
+.knowledgeTabBar .sapMITBSelected .sapMITBFilterIcon {
+  border-color: var(--aymax-primary) !important;
+  background: var(--aymax-primary) !important;
+  color: #ffffff !important;
 }
 .knowledgeTabBar .sapMITBContent {
   padding: 0;
@@ -550,13 +580,25 @@
   grid-template-columns: 1fr 1fr;
   gap: 4px;
 }
+/* min-width:0 on the grid ITEM itself (2026-08 fix: reported "Documentation
+   / Rapports / Tutoriels / Questions résolues" text overflowing past its
+   tile's border) - a CSS grid item's default min-width is "auto", which
+   means it refuses to shrink below its content's unwrapped intrinsic
+   width even inside a 1fr track (the ellipsis/min-width:0 already set a
+   level or two further down, on .knowledgeRailCategoryInner/Text, never
+   got a chance to engage: the GRID ITEM itself had already grown the
+   whole tile - and the text bleeding out of it - past the column's real
+   width). This is the actual fix; everything below is now free to wrap/
+   truncate correctly within the width the grid really gives each tile. */
 .knowledgeRailCategoryGrid .sapMLIB {
   border: none;
   padding: 0;
+  min-width: 0;
 }
 .knowledgeRailCategoryTile {
   border-radius: var(--aymax-radius-sm);
   transition: background-color 150ms ease;
+  min-width: 0;
 }
 .knowledgeRailCategoryTile:hover {
   background: var(--aymax-bg);
@@ -571,14 +613,22 @@
 }
 .knowledgeRailCategoryText {
   min-width: 0;
+  overflow: hidden;
 }
+/* Wraps onto a second line instead of ellipsis-truncating (2026-08 fix) -
+   "Questions résolues"/"Bonnes pratiques" stay fully readable rather than
+   being cut down to "Questions r...". word-break/overflow-wrap covers the
+   case where a single word alone would still be wider than the tile;
+   overflow:hidden on both this and its parent is the safety net that
+   guarantees nothing can ever paint outside the tile regardless. */
 .knowledgeRailCategoryLabel {
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--aymax-text);
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .knowledgeRailCategoryCount {
   font-size: 0.72rem;
@@ -727,26 +777,19 @@
    extra height clipped against the dialog's own overflow:hidden instead
    of the dialog growing to fit). Icon + title only; the subtitle lives in
    the content body instead. */
-/* Dialog stacking fix (2026-08 v2, found via Playwright screenshot + a
-   real elementFromPoint hit-test - the DOM/computed-style geometry looked
-   entirely correct in isolation, which is exactly why this was never
-   caught before actually rendering it). The shared shell header
-   (.aymaxHeader, css/feed/style.css) is position:sticky with
-   z-index:100 - fine on its own, since nothing on any page used to
-   compete with it. But sap.m.Dialog's own z-index (UI5's popup stack,
-   ~10) sits BELOW that, so wherever a Dialog's absolutely-positioned
-   customHeader (sap.m.Dialog's own CSS: .sapMDialogTitleGroup,
-   position:absolute, top:0, 2.75rem tall) happens to fall within the
-   shell header's own 56px band, the STICKY SHELL HEADER paints on top of
-   it and hides it completely - confirmed via elementFromPoint at the
-   header's own screen coordinates returning .aymaxHeaderLeft, not this
-   dialog, as the topmost hit. Scoped to this one dialog (not a global
-   z-index bump for every popup in the app, and not an edit to Nermine's
-   own file) since this is the one place in Lot 2 a dialog opens this
-   close to the top of the viewport. */
-.knowledgeContributeDialogRoot.sapMDialog {
-  z-index: 200 !important;
-}
+/* Dialog stacking - the earlier fix here (a CSS z-index:200 !important
+   override scoped to just this dialog) is GONE (2026-08 follow-up): it
+   fixed the header-vs-sticky-shell-header problem it was written for, but
+   broke every popup opened FROM WITHIN this dialog afterwards (the tag
+   picker's own suggestion list, first noticed - it existed with correct
+   content/position but rendered BEHIND the dialog's own content, since
+   UI5's popup stacking manager has no idea a raw CSS override happened
+   and kept assigning children their normal low z-index, now lower than
+   the artificially-boosted dialog). The real fix is
+   App.controller.js#onInit's Popup.setInitialZIndex(110) - raises UI5's
+   actual internal counter once, at the source, so this dialog AND every
+   popup opened from it (or anywhere else in the app) stack correctly
+   above the shell header with no per-control override needed. */
 
 .knowledgeDialogHeaderBar.sapMBar {
   background: linear-gradient(120deg, var(--aymax-accent), var(--aymax-primary)) !important;

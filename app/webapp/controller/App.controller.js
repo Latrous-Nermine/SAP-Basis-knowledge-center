@@ -4,8 +4,9 @@ sap.ui.define([
   "../model/shared/avatarSrc",
   "sap/m/MessageToast",
   "sap/m/Menu",
-  "sap/m/MenuItem"
-], function(BaseController, devRole, avatarSrcUtil, MessageToast, Menu, MenuItem) {
+  "sap/m/MenuItem",
+  "sap/ui/core/Popup"
+], function(BaseController, devRole, avatarSrcUtil, MessageToast, Menu, MenuItem, Popup) {
   "use strict";
 
   // navKey (customData on each nav Button) -> actual route name. Most are
@@ -114,6 +115,23 @@ sap.ui.define([
   return BaseController.extend("aymax.hub.controller.App", {
 
     onInit: function() {
+      // Fix (2026-08) - the shared shell header (.aymaxHeader,
+      // css/feed/style.css) is position:sticky with z-index:100, which
+      // sits ABOVE every UI5 popup's own default z-index range (~10-30).
+      // A page-specific CSS override on one dialog (tried first, for the
+      // Knowledge Center Contribute dialog's header) only fixes that ONE
+      // popup - anything opened FROM WITHIN it afterwards (a suggestion
+      // list, a Select's own dropdown, a MessageBox) still gets UI5's own
+      // un-overridden low z-index and renders BEHIND the CSS-forced
+      // dialog, since the override never touches UI5's actual internal
+      // popup counter - confirmed live: the Contribute dialog's tag
+      // suggestion popup existed with correct content/position but
+      // elementFromPoint proved the dialog's own content was rendering on
+      // top of it. Raising the real baseline via Popup.setInitialZIndex
+      // once, here, fixes it at the source for every popup in the app
+      // (this dialog and any future one), so the per-dialog CSS hack in
+      // css/knowledge/style.css was removed once this landed.
+      Popup.setInitialZIndex(110);
       this.getRouter().attachRouteMatched(this._onRouteMatched, this);
       this.byId("devRoleSelect").setSelectedKey(devRole.getStoredRole());
       this._applyNavVisibility();

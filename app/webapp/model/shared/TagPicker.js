@@ -13,12 +13,26 @@ sap.ui.define([
   return {
 
     // All existing tags, for the picker's default (no-query) suggestion list.
+    //
+    // Fix (2026-08, reported: "I want to choose from tags that already
+    // exist" - the picker never showed any) - the bindList() parameters
+    // object here used to pass "$$skipCount": true, which OData V4 model
+    // list bindings actually reject outright ("Unsupported binding
+    // parameter: $$skipCount" - confirmed live; $$skipCount is not a
+    // real UI5 v4 binding parameter). bindList() throws SYNCHRONOUSLY on
+    // an unsupported parameter, so the try/catch below was catching that
+    // on every single call and resolving to [] - not a network/permission
+    // failure, this method never even reached the server. The real
+    // /Tags endpoint itself works fine (verified via direct OData call).
+    // No count optimisation was ever needed here anyway - this only ever
+    // wants the actual rows, never a total count - so the parameter is
+    // simply dropped rather than replaced.
     loadAllTags: function(oModelTags) {
       return new Promise(function(resolve) {
         if (!oModelTags) { resolve([]); return; }
         var oBinding;
         try {
-          oBinding = oModelTags.bindList("/Tags", null, null, null, { "$$skipCount": true });
+          oBinding = oModelTags.bindList("/Tags");
         } catch (oError) {
           resolve([]);
           return;

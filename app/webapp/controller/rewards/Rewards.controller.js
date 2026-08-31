@@ -2,8 +2,9 @@ sap.ui.define([
   "../BaseController",
   "../../model/rewards/formatter",
   "sap/m/MessageToast",
-  "sap/m/MessageBox"
-], function(BaseController, formatter, MessageToast, MessageBox) {
+  "sap/m/MessageBox",
+  "sap/ui/core/Fragment"
+], function(BaseController, formatter, MessageToast, MessageBox, Fragment) {
   "use strict";
 
   return BaseController.extend("aymax.hub.controller.rewards.Rewards", {
@@ -55,7 +56,10 @@ sap.ui.define([
     },
 
     onHomePress: function() {
-      window.location.href = "/feed/webapp/index.html";
+      // Feed is rendered inside this shell at its own "feed" route
+      // (view/feed/Feed.view.xml) - navigate via the router, not a
+      // hard page load to the standalone /feed/webapp app.
+      this.getRouter().navTo("feed");
     },
 
     // Only the "Articles disponibles" stat is computed for real - the
@@ -66,15 +70,118 @@ sap.ui.define([
       this.getViewModel().setProperty("/availableCount", oEvent.getParameter("total"));
     },
 
-    // Riadh's original had no add/edit form built at all (toast-only
-    // simulation) - preserved as-is rather than building a new dialog
-    // that wasn't part of what's being migrated.
+    // Add/Edit (2026-08) - Riadh's original had no form built at all
+    // (toast-only simulation); built for real now, on explicit request.
+    // The backend's own @restrict already granted HR/Administrator
+    // CREATE/UPDATE on Rewards from the start (rewards-service.cds) - the
+    // authorization was never the missing piece, only this dialog was.
     onAddReward: function() {
-      MessageToast.show(this.getText("addEditNotBuilt"));
+      this._openRewardDialog(null);
     },
 
-    onEditReward: function() {
-      MessageToast.show(this.getText("addEditNotBuilt"));
+    onEditReward: function(oEvent) {
+      this._openRewardDialog(oEvent.getSource().getBindingContext("rewards"));
+    },
+
+    // oExistingContext is null for Add, or the pressed card's own
+    // "rewards" binding context for Edit - captured now (not re-looked-up
+    // in onSaveReward) since it directly identifies which row to PATCH.
+    _openRewardDialog: function(oExistingContext) {
+      if (!this._pRewardDialog) {
+        this._pRewardDialog = Fragment.load({
+          id: this.getView().getId(),
+          name: "aymax.hub.view.rewards.RewardDialog",
+          controller: this
+        }).then(function(oDialog) {
+          this.getView().addDependent(oDialog);
+          return oDialog;
+        }.bind(this));
+      }
+
+      this._oEditingRewardContext = oExistingContext;
+      this.getViewModel().setProperty("/rewardFormIsEdit", !!oExistingContext);
+      this.getViewModel().setProperty("/rewardForm", oExistingContext ? {
+        name: oExistingContext.getProperty("name"),
+        points: oExistingContext.getProperty("points"),
+        category: oExistingContext.getProperty("category"),
+        icon: oExistingContext.getProperty("icon") || "sap-icon://gift"
+      } : {
+        name: "", points: null, category: "", icon: "sap-icon://gift"
+      });
+
+      // Category suggestions - the distinct values already in the loaded
+      // catalogue (real data, not an invented enum: the column is a plain
+      // free-text String(60) in the schema - see db/lot3.cds). Read from
+      // the visible list's own already-loaded rows rather than a fresh
+      // request, since they're already sitting right there.
+      var aRows = this.byId("rewardsList").getBinding("items").getCurrentContexts()
+        .map(function(c) { return c.getProperty("category"); })
+        .filter(Boolean);
+      var aDistinctCategories = aRows.filter(function(s, i) { return aRows.indexOf(s) === i; });
+      this.getViewModel().setProperty("/rewardCategorySuggestions",
+        aDistinctCategories.map(function(s) { return { name: s }; }));
+
+      this._pRewardDialog.then(function(oDialog) { oDialog.open(); });
+    },
+
+    _selectRewardIcon: function(sIcon) {
+      this.getViewModel().setProperty("/rewardForm/icon", sIcon);
+    },
+    onSelectRewardIconGift: function() { this._selectRewardIcon("sap-icon://gift"); },
+    onSelectRewardIconLaptop: function() { this._selectRewardIcon("sap-icon://laptop"); },
+    onSelectRewardIconPhone: function() { this._selectRewardIcon("sap-icon://iphone"); },
+    onSelectRewardIconBag: function() { this._selectRewardIcon("sap-icon://travel-request"); },
+    onSelectRewardIconFavorite: function() { this._selectRewardIcon("sap-icon://favorite"); },
+    onSelectRewardIconCourse: function() { this._selectRewardIcon("sap-icon://course-book"); },
+
+    onCancelReward: function() {
+      this._pRewardDialog.then(function(oDialog) { oDialog.close(); });
+    },
+
+    onSaveReward: function() {
+      var oForm = this.getViewModel().getProperty("/rewardForm");
+
+      if (!oForm.name || !oForm.name.trim()) {
+        MessageToast.show(this.getText("errorRewardName"));
+        return;
+      }
+      var iPoints = parseInt(oForm.points, 10);
+      if (!iPoints || iPoints <= 0) {
+        MessageToast.show(this.getText("errorRewardPoints"));
+        return;
+      }
+
+      var oPayload = {
+        name: oForm.name.trim(),
+        points: iPoints,
+        category: (oForm.category || "").trim(),
+        icon: oForm.icon || "sap-icon://gift"
+      };
+
+      if (this._oEditingRewardContext) {
+        var oContext = this._oEditingRewardContext;
+        Object.keys(oPayload).forEach(function(sKey) { oContext.setProperty(sKey, oPayload[sKey]); });
+        this.oModel.submitBatch("$auto").then(function() {
+          MessageToast.show(this.getText("rewardUpdated"));
+          this._pRewardDialog.then(function(oDialog) { oDialog.close(); });
+        }.bind(this)).catch(function(oError) {
+          MessageBox.error((oError && oError.message) || this.getText("errorUpdateReward"));
+        }.bind(this));
+      } else {
+        // Created directly against the visible list's own binding (not a
+        // separate bindList("/Rewards")) so the new card appears
+        // immediately - same fix already needed once this session for
+        // Knowledge Center's own "my new item doesn't show up" bug
+        // (filter()/create() on a DIFFERENT binding instance than the one
+        // actually rendering the list never reaches it).
+        var oListBinding = this.byId("rewardsList").getBinding("items");
+        oListBinding.create(oPayload).created().then(function() {
+          MessageToast.show(this.getText("rewardCreated"));
+          this._pRewardDialog.then(function(oDialog) { oDialog.close(); });
+        }.bind(this)).catch(function(oError) {
+          MessageBox.error((oError && oError.message) || this.getText("errorCreateReward"));
+        }.bind(this));
+      }
     },
 
     // Delete IS wired for real (unlike add/edit) - it's a single,

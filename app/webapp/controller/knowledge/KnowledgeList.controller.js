@@ -118,6 +118,20 @@ sap.ui.define([
 
       this._loadCategoryCounts();
       this._loadTopics();
+      // Fix (2026-08, reported: "when I want to choose a tag nothing
+      // displays") - existing tags used to only ever start loading the
+      // first time onContribute() ran (i.e. the first time the dialog
+      // itself opened), which raced a fast click straight into the tag
+      // field: showItems() had nothing to show yet, and re-triggering it
+      // once the data landed turned out not to reliably reopen an
+      // already-focused/already-dismissed suggestion popup (confirmed
+      // live - the aggregation genuinely had all 8 tags by then,
+      // suggestionItemsLen:8, the popup just never came back). Loading
+      // once here instead, at the same page-init point Topics already
+      // uses (_loadTopics, same reasoning), means _aAllTags is normally
+      // already populated long before the dialog ever opens - the same
+      // reason Topic's own picker never raced in the first place.
+      this._loadAllTags();
       this.getViewModel().setProperty("/validation", {
         filterStatus: "pending",
         counts: { pending: 0, approved: 0, rejected: 0, all: 0 },
@@ -184,9 +198,10 @@ sap.ui.define([
     },
 
     onHomePress: function() {
-      // Feed is unchanged and unmoved - still a separate app, still
-      // reached the same way.
-      window.location.href = "/feed/webapp/index.html";
+      // Feed is rendered inside this shell at its own "feed" route
+      // (view/feed/Feed.view.xml) - navigate via the router, not a
+      // hard page load to the standalone /feed/webapp app.
+      this.getRouter().navTo("feed");
     },
 
     // ────────────────────────────────────────────────────────────
@@ -248,6 +263,17 @@ sap.ui.define([
       }.bind(this));
     },
 
+    // Existing tags for the Contribute dialog's tag picker - loaded once
+    // here (same timing as _loadTopics above), not lazily on the
+    // dialog's first open, so _aAllTags is normally ready long before
+    // anyone can click into the field (see onInit's own comment on the
+    // race this closes).
+    _loadAllTags: function() {
+      TagPicker.loadAllTags(this.oModelTags).then(function(aAllTags) {
+        this._aAllTags = aAllTags;
+      }.bind(this));
+    },
+
     // Both Topics and Categories now live in the rail AND (Categories only)
     // as the Bibliothèque tab's own inline chip row - either source calls
     // the same handler, so there is exactly one place that owns "which
@@ -291,9 +317,20 @@ sap.ui.define([
       if (sCategory) this._showLibraryTab();
     },
 
+    // Fix (2026-08, reported: "search only works once I've pressed a
+    // filter") - _applyFilters() only ever touches myKnowledgeList/
+    // communityKnowledgeList (the two lists a search/category/topic
+    // filter can meaningfully apply to - Featured/Récent are curated,
+    // not filterable, by design). "Mis en avant" is the tab open by
+    // default, so typing into the Hero search field with no other
+    // interaction filtered lists the user couldn't see, and looked like
+    // search did nothing at all. Jumping to Bibliothèque on a non-empty
+    // query is the same fix already applied to onCategoryTabPress/
+    // onTopicPress for the identical reason.
     onSearch: function(oEvent) {
       this._sSearchQuery = oEvent.getParameter("newValue") || "";
       this._applyFilters();
+      if (this._sSearchQuery.trim()) this._showLibraryTab();
     },
 
     // changeParameters() is orthogonal to .filter() (category/search below)
@@ -407,7 +444,33 @@ sap.ui.define([
         }).then(function(oDialog) {
           oDialog.setModel(this._oTagPickerModel);
           this.getView().addDependent(oDialog);
-          TagPicker.addFreeTextValidator(this.byId("tagPickerInput"));
+          var oTagPickerInput = this.byId("tagPickerInput");
+          TagPicker.addFreeTextValidator(oTagPickerInput);
+          // Fix (2026-08, reported: "I want to choose from tags that
+          // already exist") - startSuggestion="0" on the fragment's own
+          // MultiInput (see TagPicker.fragment.xml) only lowers the typed-
+          // character threshold, it does NOT open the popup on a plain
+          // focus with zero characters (confirmed live: still nothing on
+          // click). showItems() is the real, public sap.m.Input API for
+          // forcing the suggestion list open regardless of the current
+          // value - wiring it to the control's native "focus" DOM event
+          // (attachBrowserEvent, real public Control API) means clicking
+          // into the empty field immediately shows the pre-loaded
+          // top-used-tags list (TagPicker.filterSuggestions(aAllTags, "")
+          // already populates /suggestions before the dialog opens, see
+          // below) instead of requiring the user to already know a tag
+          // name to type.
+          // this._bTagPickerFocused tracks whether the field currently has
+          // focus, so the loadAllTags().then() below (further down) knows
+          // whether to also call showItems() once the data actually
+          // arrives - see that block's own comment for the race this closes.
+          oTagPickerInput.attachBrowserEvent("focus", function() {
+            this._bTagPickerFocused = true;
+            oTagPickerInput.showItems(function() { return true; });
+          }.bind(this));
+          oTagPickerInput.attachBrowserEvent("blur", function() {
+            this._bTagPickerFocused = false;
+          }.bind(this));
           return oDialog;
         }.bind(this));
       }
@@ -419,10 +482,27 @@ sap.ui.define([
       var oTagInput = this.byId("tagPickerInput");
       if (oTagInput) oTagInput.removeAllTokens();
 
+      // Fix (2026-08, reported: "when I want to choose a tag nothing
+      // displays") - loadAllTags() is a network round-trip, and on the
+      // dialog's very first open (before _aAllTags is cached) a user who
+      // clicks straight into the tag field can genuinely beat it there:
+      // the focus-triggered showItems() above only shows whatever is
+      // ALREADY in /suggestions at that instant (confirmed live - with
+      // zero wait after opening the dialog, the tag field showed 0
+      // items while the Topic select, whose data loads once at page
+      // init rather than fresh per dialog-open, still showed all 4).
+      // Re-calling showItems() here too, once the data actually lands,
+      // covers exactly that case - harmless no-op if the field was never
+      // focused, and a no-op re-open if it was already showing the (now
+      // identical) list.
       if (!this._aAllTags) {
         TagPicker.loadAllTags(this.oModelTags).then(function(aAllTags) {
           this._aAllTags = aAllTags;
           this._oTagPickerModel.setProperty("/suggestions", TagPicker.filterSuggestions(aAllTags, ""));
+          if (this._bTagPickerFocused) {
+            var oTagPickerInput = this.byId("tagPickerInput");
+            if (oTagPickerInput) oTagPickerInput.showItems(function() { return true; });
+          }
         }.bind(this));
       } else {
         this._oTagPickerModel.setProperty("/suggestions", TagPicker.filterSuggestions(this._aAllTags, ""));
@@ -534,7 +614,19 @@ sap.ui.define([
         this._aAllTags = null; // usageCount changed - reload next time the dialog opens
         MessageToast.show(this.getText("newItemCreated"));
         this._pDialog.then(function(oDialog) { oDialog.close(); });
+        // Fix (2026-08, reported: "I can't see my new contribution in Mes
+        // connaissances") - _applyFilters() rebuilds the SAME Filter
+        // objects (nothing about category/status/search changed), and
+        // ODataListBinding#filter() with structurally-equal filters
+        // doesn't refetch - confirmed live: the new draft was correctly
+        // in the DB and correctly a contributor row (server-side, before-
+        // CREATE hook), but stayed invisible in the UI until a full page
+        // reload. myKnowledgeList's own binding needs an explicit
+        // refresh() to actually re-fetch; _applyFilters() stays too, in
+        // case a filter/search WAS also active when this fired.
         this._applyFilters();
+        var oMyList = this.byId("myKnowledgeList").getBinding("items");
+        if (oMyList) oMyList.refresh();
       }.bind(this)).catch(function() {
         MessageBox.error(this.getText("errorCreate"));
       }.bind(this));

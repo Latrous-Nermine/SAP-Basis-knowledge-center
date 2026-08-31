@@ -9,10 +9,23 @@
        with /tags and /suggestions (see model/shared/TagPicker.js), kept
        separate from the host's own named view model (e.g. view-knowledge)
        to avoid colliding with its existing prefixed bindings. -->
+  <!-- startSuggestion=0 (2026-08 fix: reported "I want to choose from
+       tags that already exist", confirmed the suggestion popup only ever
+       opened once the user had already typed a character - clicking into
+       an empty field showed nothing, so there was no way to discover
+       existing tags without guessing one by name first) - the field's own
+       suggestionItems are already pre-populated with the top existing
+       tags by usage (onContribute -> TagPicker.filterSuggestions(aAllTags,
+       "")) before the dialog even opens, this property just tells the
+       control to actually show them at 0 typed characters instead of
+       waiting for the 1-character default. Verified against the real
+       sap.m.Input source (1.120.0) - startSuggestion is a real, public
+       property for exactly this. -->
   <MultiInput
     id="tagPickerInput"
     placeholder="Tapez un tag et appuyez sur Entrée (ex: SAP, ABAP)..."
     showSuggestion="true"
+    startSuggestion="0"
     suggestionItems="{/suggestions}"
     maxTokens="15"
     width="100%"

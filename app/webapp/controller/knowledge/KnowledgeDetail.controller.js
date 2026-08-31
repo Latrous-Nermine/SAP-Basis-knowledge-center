@@ -209,15 +209,19 @@ sap.ui.define([
 
       oActionContext.execute().then(function() {
         this.getViewModel().setProperty("/newCommentText", "");
-        // Refreshing the parent element binding does NOT reliably re-fetch
-        // a nested $expand'd collection like `comments` - a known OData V4
-        // model nuance, not something specific to this app. Refresh the
-        // comments list's OWN binding directly instead - it's the one
-        // that actually needs new data, and doing this targets exactly
-        // that instead of hoping a parent refresh cascades correctly.
-        this.byId("commentsList").getBinding("items").refresh();
-      }.bind(this)).catch(function() {
-        MessageBox.error(this.getText("errorAddComment"));
+        // Confirmed live: calling .refresh() directly on the comments
+        // List's own binding throws "Refresh on this binding is not
+        // supported" - `comments` only exists as part of the KnowledgeItem
+        // element binding's own $expand (see _onObjectMatched), it isn't
+        // an independently-refreshable binding in UI5's OData V4 model.
+        // requestSideEffects() on the parent context is the model's own
+        // supported API for "re-fetch this expanded nested path after an
+        // action changed it server-side" - this was the actual cause of
+        // every "Impossible d'ajouter le commentaire" error: the comment
+        // itself always saved fine, this refresh call threw right after.
+        this.getView().getBindingContext("knowledge").requestSideEffects(["comments"]);
+      }.bind(this)).catch(function(oError) {
+        MessageBox.error((oError && oError.message) || this.getText("errorAddComment"));
       }.bind(this));
     }
   });

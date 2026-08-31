@@ -77,9 +77,10 @@ sap.ui.define([
     },
 
     onHomePress: function() {
-      // Feed is unchanged and unmoved - still a separate app, still
-      // reached the same way.
-      window.location.href = "/feed/webapp/index.html";
+      // Feed is rendered inside this shell at its own "feed" route
+      // (view/feed/Feed.view.xml) - navigate via the router, not a
+      // hard page load to the standalone /feed/webapp app.
+      this.getRouter().navTo("feed");
     },
 
     onProjectPress: function(oEvent) {
@@ -90,8 +91,16 @@ sap.ui.define([
       // one of those known exceptions, so it reaches here too. Without this
       // guard, clicking a phase both opened it AND collapsed its own
       // parent project in the same click.
-      var oSrcControl = oEvent.getParameter("srcControl");
-      if (this._isInsidePhaseList(oSrcControl)) {
+      //
+      // A previous version tried to detect this via
+      // oEvent.getParameter("srcControl") - confirmed live (UI5 1.120.0
+      // sap/m/ListItemBase.js#ontap) that CustomListItem's "press" is
+      // fired as a bare `this.firePress()` with NO parameters at all, so
+      // that check silently always returned false and never actually
+      // caught anything. onPhasePress below always runs first (DOM bubble
+      // order puts the nested/inner item's own tap handling before the
+      // ancestor's), so a short time-window guard is what actually works.
+      if (this._iLastPhasePressTime && (Date.now() - this._iLastPhasePressTime) < 100) {
         return;
       }
 
@@ -99,15 +108,8 @@ sap.ui.define([
       this._selectProject(oContext.getProperty("ID"), true);
     },
 
-    _isInsidePhaseList: function(oControl) {
-      while (oControl) {
-        if (oControl.hasStyleClass && oControl.hasStyleClass("excellencePhaseList")) return true;
-        oControl = oControl.getParent();
-      }
-      return false;
-    },
-
     onPhasePress: function(oEvent) {
+      this._iLastPhasePressTime = Date.now();
       var oContext = oEvent.getSource().getBindingContext("excellence");
       // Phase rows are nested under their project in the JSON model
       // (/projects/{i}/phases/{j}) - walking the path back to /projects/{i}
