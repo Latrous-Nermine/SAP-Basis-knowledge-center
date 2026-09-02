@@ -55,19 +55,21 @@ sap.ui.define([
     Administrator: []
   };
 
+  // 2026-09: values renamed from navBtn* to navItem* - these are now
+  // MenuItems inside the "Entreprise" group's dropdown (App.view.xml),
+  // not top-level Buttons, but .setVisible() works identically on both,
+  // so _applyNavVisibility below needed no logic change, only these ids.
   var NAVKEY_TO_BUTTON_ID = {
-    hr: "navBtnHr",
-    rapportsStage: "navBtnRapportsStage",
-    depot: "navBtnDepot",
-    validation: "navBtnValidation",
-    admin: "navBtnAdmin"
+    hr: "navItemHr",
+    rapportsStage: "navItemRapportsStage",
+    depot: "navItemDepot",
+    validation: "navItemValidation",
+    admin: "navItemAdmin"
   };
 
   return Controller.extend("aymax.feed.controller.App", {
 
     onInit: function() {
-      var oRouter = this.getOwnerComponent().getRouter();
-      oRouter.attachRouteMatched(this._onRouteMatched, this);
       this._applyNavVisibility();
     },
 
@@ -90,29 +92,23 @@ sap.ui.define([
       }.bind(this));
     },
 
-    _onRouteMatched: function(oEvent) {
-      var sRouteName = oEvent.getParameter("name");
-      this._updateActiveNav(sRouteName);
-    },
-
-    _updateActiveNav: function(sActiveKey) {
-      var aButtons = this.getView().$().find(".aymaxNavLinks button");
-      aButtons.each(function(i, el) {
-        var $el = $(el);
-        var sKey = $el.attr("data-navKey");
-        if (sKey === sActiveKey) {
-          $el.addClass("aymaxNavActive");
-        } else {
-          $el.removeClass("aymaxNavActive");
-        }
-      });
+    // Shared by onNavTo (Profil, still a plain Button+CustomData below)
+    // and the one-handler-per-MenuItem wrappers underneath it - same
+    // split rationale as the shared shell's own App.controller.js#_navTo.
+    _navTo: function(sKey) {
+      if (mExternalRoutes[sKey]) {
+        window.location.href = mExternalRoutes[sKey];
+        return;
+      }
+      if (!mRoutes[sKey]) return;
+      this.getOwnerComponent().getRouter().navTo(mRoutes[sKey], {}, true);
     },
 
     onNavTo: function(oEvent) {
       var oButton = oEvent.getSource();
       var aCustomData = oButton.getCustomData();
       var sKey = null;
-      
+
       for (var i = 0; i < aCustomData.length; i++) {
         if (aCustomData[i].getKey() === "navKey") {
           sKey = aCustomData[i].getValue();
@@ -121,15 +117,26 @@ sap.ui.define([
       }
 
       if (!sKey) return;
-
-      if (mExternalRoutes[sKey]) {
-        window.location.href = mExternalRoutes[sKey];
-        return;
-      }
-
-      if (!mRoutes[sKey]) return;
-      this.getOwnerComponent().getRouter().navTo(mRoutes[sKey], {}, true);
+      this._navTo(sKey);
     },
+
+    onNavDashboard: function() { this._navTo("dashboard"); },
+    onNavFeed: function() { this._navTo("feed"); },
+    onNavKnowledge: function() { this._navTo("knowledge"); },
+    onNavQuestions: function() { this._navTo("questions"); },
+    onNavExperts: function() { this._navTo("experts"); },
+    onNavTags: function() { this._navTo("tags"); },
+    onNavRooms: function() { this._navTo("rooms"); },
+    onNavBasisAcademy: function() { this._navTo("basisAcademy"); },
+    onNavCertifications: function() { this._navTo("certifications"); },
+    onNavExcellenceCenter: function() { this._navTo("excellenceCenter"); },
+    onNavRewards: function() { this._navTo("rewards"); },
+    onNavHR: function() { this._navTo("hr"); },
+    onNavDepot: function() { this._navTo("depot"); },
+    onNavRapportsStage: function() { this._navTo("rapportsStage"); },
+    onNavReports: function() { this._navTo("reports"); },
+    onNavValidation: function() { this._navTo("validation"); },
+    onNavAdmin: function() { this._navTo("admin"); },
 
     // Notifications live entirely in the shared shell (app/webapp), not
     // here - same cross-app redirect pattern as mExternalRoutes above.

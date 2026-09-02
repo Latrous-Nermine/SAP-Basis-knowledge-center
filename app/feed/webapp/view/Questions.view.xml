@@ -30,21 +30,14 @@
           <!-- Barre de recherche + filtres sur même ligne -->
           <HBox class="sapUiMediumMarginBottom aymaxQuestionsToolbar" justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap">
 
-            <!-- Recherche texte -->
+            <!-- Recherche unifiée : titre, contenu ou tag (2026-09,
+                 fusion des deux champs précédents) -->
             <HBox alignItems="Center" class="aymaxSearchGroup">
               <SearchField
                 id="questionSearchField"
-                width="260px"
-                placeholder="Rechercher une question..."
+                width="320px"
+                placeholder="Rechercher par titre, contenu ou tag..."
                 search=".onSearchQuestions"
-                class="sapUiSmallMarginEnd"/>
-
-              <!-- Recherche par tag -->
-              <SearchField
-                id="tagSearchField"
-                width="200px"
-                placeholder="Rechercher par tag..."
-                search=".onSearchByTag"
                 class="sapUiSmallMarginEnd"/>
             </HBox>
 
@@ -73,12 +66,6 @@
                 class="aymaxFilterBtn"/>
             </HBox>
 
-          </HBox>
-
-          <!-- Tag actif (filtre en cours) -->
-          <HBox id="activeTagFilterBox" visible="false" class="sapUiSmallMarginBottom" alignItems="Center">
-            <Text text="Tag filtré : " class="aymaxMeta sapUiTinyMarginEnd"/>
-            <Token id="activeTagToken" text="" delete=".onClearTagFilter"/>
           </HBox>
 
           <!-- Liste des questions -->

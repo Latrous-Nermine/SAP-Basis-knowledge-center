@@ -52,16 +52,25 @@
             </menu>
           </MenuButton>
 
+          <!-- 2026-09 fix: was buttonMode="Split" with defaultAction=
+               onNavKnowledge - clicking the "Connaissances" label went
+               straight to the Knowledge Center, and Questions/Experts/
+               Tags/Rooms were reachable only via the separate, easy-to-miss
+               arrow hit-area (confirmed live: reported as "Questions page
+               not accessible from the navbar"). Plain MenuButton now,
+               matching Learning/Company below - any click opens the full
+               list, Knowledge Center included as its own first item so it
+               stays exactly as reachable as before, just no longer hidden
+               behind a two-target split control. -->
           <MenuButton
             id="navGroupKnowledge"
             text="{i18n>navGroupKnowledge}"
             type="Transparent"
-            buttonMode="Split"
-            defaultAction=".onNavKnowledge"
             class="aymaxNavGroupBtn">
             <menu>
               <Menu>
                 <items>
+                  <MenuItem text="{i18n>navKnowledge}" press=".onNavKnowledge"/>
                   <MenuItem text="{i18n>navQuestions}" press=".onNavQuestions"/>
                   <MenuItem text="{i18n>navExperts}" press=".onNavExperts"/>
                   <MenuItem text="{i18n>navTags}" press=".onNavTags"/>

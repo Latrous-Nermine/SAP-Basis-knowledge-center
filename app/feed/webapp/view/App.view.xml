@@ -17,73 +17,99 @@
           </VBox>
         </HBox>
 
-        <!-- Same full destination list, same order, as the shared shell's
-             own header (app/webapp/view/App.view.xml) - 2026-08 polish
-             pass. This app only ever listed 8 of the shell's 19
-             destinations, which made the navbar visibly "change"
-             crossing between the two apps for the same logged-in user.
-             navKey values matching mExternalRoutes/HIDDEN_FOR_ROLE in
-             App.controller.js; feed/questions/rooms/tags stay internal
-             routes (mRoutes there), everything else redirects to the
-             shell. -->
-        <HBox class="aymaxNavLinks sapUiSmallMarginBegin">
-          <Button text="Tableau de bord" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="dashboard"/></customData>
-          </Button>
-          <Button text="Fil d'actualité" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="feed"/></customData>
-          </Button>
-          <Button text="Questions" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="questions"/></customData>
-          </Button>
-          <Button text="Rooms" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="rooms"/></customData>
-          </Button>
-          <Button text="Tags" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="tags"/></customData>
-          </Button>
-          <Button text="Notifications" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="notifications"/></customData>
-          </Button>
-          <Button text="Centre de connaissances" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="knowledge"/></customData>
-          </Button>
-          <Button text="Experts" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="experts"/></customData>
-          </Button>
-          <Button text="Profil" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="profile"/></customData>
-          </Button>
-          <Button text="Centre d'excellence" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="excellenceCenter"/></customData>
-          </Button>
-          <Button text="Récompenses" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="rewards"/></customData>
-          </Button>
-          <Button text="Certifications" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="certifications"/></customData>
-          </Button>
-          <Button id="navBtnAdmin" text="Administration" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="admin"/></customData>
-          </Button>
-          <Button id="navBtnDepot" text="Dépôt de projet" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="depot"/></customData>
-          </Button>
-          <Button id="navBtnHr" text="Ressources humaines" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="hr"/></customData>
-          </Button>
-          <Button text="Vue d'ensemble" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="reports"/></customData>
-          </Button>
-          <Button id="navBtnRapportsStage" text="Rapport de stage" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="rapportsStage"/></customData>
-          </Button>
-          <Button id="navBtnValidation" text="Validation" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="validation"/></customData>
-          </Button>
-          <Button text="Basis Academy" type="Transparent" press=".onNavTo">
-            <customData><core:CustomData key="navKey" value="basisAcademy"/></customData>
-          </Button>
+        <!-- 2026-09 fix: replaces the flat 17-button row (grown from an
+             original 8 to the shell's full 19-destination list during the
+             2026-08 polish pass, without ever getting the shell's own
+             2026-08 grouping fix) - confirmed live via Playwright at
+             1440px: the row overflowed off the right edge of the viewport
+             ("Vue d'ensemble" clipped), and .aymaxNavLinks/.aymaxHeader in
+             header.css force flex-wrap:nowrap, so it never wrapped either.
+             Same 4-group MenuButton pattern as the shared shell's own
+             header (app/webapp/view/App.view.xml, 2026-08 navbar
+             redesign), same group names/order/contents, so the nav no
+             longer visibly "changes" crossing between the two apps -
+             exactly the goal the original flat-list expansion was already
+             trying to reach. Notifications drops out of the group list
+             (the bell icon on the right already covers it, matching the
+             shell); Profil moves next to the avatar for the same reason.
+             One dedicated press handler per item (App.controller.js) -
+             sap.m.Menu/MenuItem has already been confirmed elsewhere in
+             this project not to reliably read a bare nested CustomData,
+             so onNavTo's generic customData-key lookup isn't reused here;
+             it stays in place only for Profil below, which is a plain
+             Button. -->
+        <HBox class="aymaxNavGroups sapUiSmallMarginBegin" alignItems="Center">
+
+          <MenuButton
+            id="navGroupAccueil"
+            text="Accueil"
+            type="Transparent"
+            buttonMode="Split"
+            defaultAction=".onNavDashboard"
+            class="aymaxNavGroupBtn">
+            <menu>
+              <Menu>
+                <items>
+                  <MenuItem text="Fil d'actualité" press=".onNavFeed"/>
+                </items>
+              </Menu>
+            </menu>
+          </MenuButton>
+
+          <MenuButton
+            id="navGroupKnowledge"
+            text="Connaissances"
+            type="Transparent"
+            class="aymaxNavGroupBtn">
+            <menu>
+              <Menu>
+                <items>
+                  <MenuItem text="Centre de connaissances" press=".onNavKnowledge"/>
+                  <MenuItem text="Questions" press=".onNavQuestions"/>
+                  <MenuItem text="Experts" press=".onNavExperts"/>
+                  <MenuItem text="Tags" press=".onNavTags"/>
+                  <MenuItem text="Rooms" press=".onNavRooms"/>
+                </items>
+              </Menu>
+            </menu>
+          </MenuButton>
+
+          <MenuButton
+            id="navGroupLearning"
+            text="Formation"
+            type="Transparent"
+            class="aymaxNavGroupBtn">
+            <menu>
+              <Menu>
+                <items>
+                  <MenuItem text="Basis Academy" press=".onNavBasisAcademy"/>
+                  <MenuItem text="Certifications" press=".onNavCertifications"/>
+                </items>
+              </Menu>
+            </menu>
+          </MenuButton>
+
+          <MenuButton
+            id="navGroupCompany"
+            text="Entreprise"
+            type="Transparent"
+            class="aymaxNavGroupBtn">
+            <menu>
+              <Menu>
+                <items>
+                  <MenuItem text="Centre d'excellence" press=".onNavExcellenceCenter"/>
+                  <MenuItem text="Récompenses" press=".onNavRewards"/>
+                  <MenuItem id="navItemHr" text="Ressources humaines" press=".onNavHR"/>
+                  <MenuItem id="navItemDepot" text="Dépôt de projet" press=".onNavDepot"/>
+                  <MenuItem id="navItemRapportsStage" text="Rapport de stage" press=".onNavRapportsStage"/>
+                  <MenuItem text="Vue d'ensemble" press=".onNavReports"/>
+                  <MenuItem id="navItemValidation" text="Validation" press=".onNavValidation"/>
+                  <MenuItem id="navItemAdmin" text="Administration" press=".onNavAdmin"/>
+                </items>
+              </Menu>
+            </menu>
+          </MenuButton>
+
         </HBox>
       </HBox>
 
@@ -92,6 +118,9 @@
         <SearchField width="260px" placeholder="Rechercher..." search=".onGlobalSearch" class="sapUiSmallMarginEnd"/>
         <Button icon="sap-icon://light-mode" type="Transparent" press=".onToggleTheme" tooltip="Changer de thème" class="sapUiTinyMarginEnd"/>
         <Button icon="sap-icon://bell" type="Transparent" press=".onNotificationsPress" tooltip="Notifications" class="sapUiTinyMarginEnd"/>
+        <Button text="Profil" type="Transparent" press=".onNavTo" class="sapUiTinyMarginEnd">
+          <customData><core:CustomData key="navKey" value="profile"/></customData>
+        </Button>
         <Avatar src="{parts:[{path:'view>/currentUser/avatarUrl'},{path:'view>/currentUser/displayName'}], formatter:'.formatAvatar'}" displaySize="S"/>
       </HBox>
     </HBox>

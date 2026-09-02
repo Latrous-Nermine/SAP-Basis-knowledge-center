@@ -75,6 +75,29 @@
   white-space: nowrap;
 }
 
+/* ===== NAV GROUPS (2026-09) =====
+   Four grouped MenuButtons, replacing the old 17-item .aymaxNavLinks row
+   above (left in place, unused, rather than deleting it - matches the
+   shared shell's own precedent of leaving Nermine's old rules alone
+   rather than editing her file for a pure cleanup). Same class names and
+   same rules as the shell's own css/shell/style.css, so the header looks
+   identical crossing between the two apps. overflow-x:auto is a safety
+   net, not the primary fix - four compact buttons fit at any normal
+   width; it just means the row scrolls instead of forcing the whole
+   page to overflow horizontally if it ever doesn't. */
+.aymaxNavGroups {
+  gap: 2px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-width: 0;
+  flex-shrink: 1;
+  scrollbar-width: thin;
+}
+
+.aymaxNavGroupBtn.sapMMenuBtn {
+  border-radius: var(--aymax-radius-sm);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
   .aymaxNavLink { font-size: 11.5px !important; padding: 4px 6px !important; }

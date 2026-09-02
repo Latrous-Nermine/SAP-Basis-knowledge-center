@@ -16,7 +16,6 @@ sap.ui.define([
 
     // Etat local du filtre actif
     _sActiveFilter: "all",
-    _sActiveTag:    "",
 
     onInit: function() {
       this.oModel     = this.getOwnerComponent().getModel("questions");
@@ -108,39 +107,18 @@ sap.ui.define([
     },
 
     // ============================================================
-    // RECHERCHE PAR TEXTE
+    // RECHERCHE (2026-09: un seul champ, titre + contenu + tags -
+    // fusion des deux SearchFields précédents "Rechercher une
+    // question..." et "Rechercher par tag...", qui affichaient deux
+    // cases quasi vides côte à côte pour ce qui était déjà, côté tag,
+    // une recherche titre/contenu/tags combinée. _applyFilters ci-
+    // dessous construit maintenant ce même filtre combiné à partir
+    // d'une seule requête, qu'il s'agisse d'un mot du titre, du
+    // contenu, ou d'un nom de tag.)
     // ============================================================
     onSearchQuestions: function(oEvent) {
       var sQuery = oEvent.getParameter("query") || "";
-      this._sSearchQuery = sQuery;
-      this._applyFilters();
-    },
-
-    // ============================================================
-    // RECHERCHE PAR TAG
-    // ============================================================
-    onSearchByTag: function(oEvent) {
-      var sTag = oEvent.getParameter("query") || "";
-      this._sActiveTag = sTag.trim();
-
-      // Afficher/masquer le bandeau "Tag filtré"
-      var oTagBox   = this.byId("activeTagFilterBox");
-      var oTagToken = this.byId("activeTagToken");
-
-      if (this._sActiveTag) {
-        oTagToken.setText(this._sActiveTag);
-        oTagBox.setVisible(true);
-      } else {
-        oTagBox.setVisible(false);
-      }
-
-      this._applyFilters();
-    },
-
-    onClearTagFilter: function() {
-      this._sActiveTag = "";
-      this.byId("activeTagFilterBox").setVisible(false);
-      this.byId("tagSearchField").setValue("");
+      this._sSearchQuery = sQuery.trim();
       this._applyFilters();
     },
 
@@ -187,31 +165,20 @@ sap.ui.define([
         aFilters.push(new Filter("status", FilterOperator.EQ, this._sActiveFilter));
       }
 
-      // Filtre texte (titre ou contenu)
+      // Filtre texte unifié : titre, contenu, ou tag associé (vrai filtre
+      // serveur sur les tags via lambda Any, même mécanisme que
+      // contributors/any(...) ailleurs dans ce projet) - un seul champ de
+      // recherche couvre les trois, une requête tape à la fois.
       if (this._sSearchQuery) {
         aFilters.push(new Filter({
           filters: [
             new Filter("title",   FilterOperator.Contains, this._sSearchQuery),
-            new Filter("content", FilterOperator.Contains, this._sSearchQuery)
-          ],
-          and: false
-        }));
-      }
-
-      // Filtre tag — vrai filtre serveur sur les tags associés (lambda Any,
-      // même mécanisme que contributors/any(...) ailleurs dans ce projet),
-      // plus le fallback titre/contenu pour rester tolérant si l'utilisateur
-      // tape un mot qui n'est pas exactement un nom de tag.
-      if (this._sActiveTag) {
-        aFilters.push(new Filter({
-          filters: [
-            new Filter("title",   FilterOperator.Contains, this._sActiveTag),
-            new Filter("content", FilterOperator.Contains, this._sActiveTag),
+            new Filter("content", FilterOperator.Contains, this._sSearchQuery),
             new Filter({
               path: "tags",
               operator: "Any",
               variable: "t",
-              condition: new Filter("t/tag/name", FilterOperator.Contains, this._sActiveTag)
+              condition: new Filter("t/tag/name", FilterOperator.Contains, this._sSearchQuery)
             })
           ],
           and: false
