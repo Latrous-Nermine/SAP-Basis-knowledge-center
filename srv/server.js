@@ -42,12 +42,24 @@ const ROLE_TO_USER = {
   Intern: 'stagiaire',
 };
 
+// Default identity for a request that carries neither X-Dev-Role nor its
+// own Authorization header - i.e. the very first hit of a fresh browser
+// session, before app/webapp/model/devRole.js has had a chance to tag
+// anything. Without this, that first request gets CAP's normal 401 +
+// WWW-Authenticate challenge, which is what makes the browser pop its
+// native (unlabeled, confusing) Basic-Auth login dialog. Same non-bypass
+// guarantee as the X-Dev-Role path below: this only ever picks WHICH
+// mocked user logs in, every @restrict/@requires still runs for real.
+const DEFAULT_DEV_USER = 'nadia';
+
 cds.on('bootstrap', (app) => {
   if (cds.env.profiles?.includes('production')) return;
   app.use((req, _res, next) => {
     const devUser = ROLE_TO_USER[req.headers['x-dev-role']];
     if (devUser) {
       req.headers.authorization = 'Basic ' + Buffer.from(`${devUser}:devrole`).toString('base64');
+    } else if (!req.headers.authorization) {
+      req.headers.authorization = 'Basic ' + Buffer.from(`${DEFAULT_DEV_USER}:devrole`).toString('base64');
     }
     next();
   });
