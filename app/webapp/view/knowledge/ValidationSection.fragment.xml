@@ -2,14 +2,14 @@
   xmlns="sap.m"
   xmlns:core="sap.ui.core">
 
-  <!-- "Contenu à valider" (2026-08, Manager only) - same content as the
-       standalone Validation page (Validation.view.xml), embedded here
-       instead so a Manager finds it alongside their team's Knowledge
-       Center submissions rather than as a separate navbar destination
-       (App.controller.js's HIDDEN_FOR_ROLE hides "validation" for
-       Manager now). Binds the same shared "validation" OData model, so
-       it's the exact same TEAM-scoped data (validation-service.cds's
-       own @restrict), not a copy. -->
+  <!-- "Contenu à valider" (Manager only). Lists the Knowledge Center's
+       own pending items (KnowledgeItems, status = 'pending') - the ones
+       an Employee sends through "Soumettre pour validation". It used to
+       bind Lot 3's separate ValidationItems queue, which submitForReview
+       never writes to, so a submitted contribution never showed up here.
+       Approve/Reject call the same approveItem/rejectItem actions as
+       KnowledgeDetail, so the workflow, reputation and notification
+       logic all run server-side exactly as from the detail page. -->
   <VBox
     visible="{= ${view-knowledge>/isManager} === true &amp;&amp; ${view-knowledge>/validation/sectionVisible} === true }"
     class="sapUiLargeMarginBottom knowledgeValidationSection">
@@ -19,98 +19,47 @@
     </HBox>
     <Text text="{i18n-knowledge>validationSectionSubtitle}" class="aymaxMeta sapUiSmallMarginBottom"/>
 
-    <!-- STATS ROW -->
+    <!-- STATS -->
     <HBox class="aymaxValidationStats sapUiSmallMarginBottom" wrap="Wrap">
       <VBox class="aymaxStatPill aymaxStatPillWarning sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
         <Title text="{view-knowledge>/validation/counts/pending}" level="H4" class="aymaxStatPillValue"/>
         <Text text="{i18n-validation>statPending}" class="aymaxMeta"/>
       </VBox>
-      <VBox class="aymaxStatPill aymaxStatPillSuccess sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
-        <Title text="{view-knowledge>/validation/counts/approved}" level="H4" class="aymaxStatPillValue"/>
-        <Text text="{i18n-validation>statApproved}" class="aymaxMeta"/>
-      </VBox>
-      <VBox class="aymaxStatPill aymaxStatPillError sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
-        <Title text="{view-knowledge>/validation/counts/rejected}" level="H4" class="aymaxStatPillValue"/>
-        <Text text="{i18n-validation>statRejected}" class="aymaxMeta"/>
-      </VBox>
-      <VBox class="aymaxStatPill sapUiSmallMarginEnd sapUiSmallMarginBottom" alignItems="Center">
-        <Title text="{view-knowledge>/validation/counts/all}" level="H4" class="aymaxStatPillValue"/>
-        <Text text="{i18n-validation>statAll}" class="aymaxMeta"/>
-      </VBox>
-    </HBox>
-
-    <!-- FILTER TABS -->
-    <HBox class="sapUiMediumMarginBottom" wrap="Wrap">
-      <Button
-        text="{path: 'view-knowledge>/validation/counts/pending', formatter: '.validationFormatter.formatTabPending'}"
-        type="{= ${view-knowledge>/validation/filterStatus} === 'pending' ? 'Emphasized' : 'Default'}"
-        press=".onValidationTabSelect"
-        class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
-        <customData><core:CustomData key="tab" value="pending"/></customData>
-      </Button>
-      <Button
-        text="{path: 'view-knowledge>/validation/counts/approved', formatter: '.validationFormatter.formatTabApproved'}"
-        type="{= ${view-knowledge>/validation/filterStatus} === 'approved' ? 'Emphasized' : 'Default'}"
-        press=".onValidationTabSelect"
-        class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
-        <customData><core:CustomData key="tab" value="approved"/></customData>
-      </Button>
-      <Button
-        text="{path: 'view-knowledge>/validation/counts/rejected', formatter: '.validationFormatter.formatTabRejected'}"
-        type="{= ${view-knowledge>/validation/filterStatus} === 'rejected' ? 'Emphasized' : 'Default'}"
-        press=".onValidationTabSelect"
-        class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
-        <customData><core:CustomData key="tab" value="rejected"/></customData>
-      </Button>
-      <Button
-        text="{path: 'view-knowledge>/validation/counts/all', formatter: '.validationFormatter.formatTabAll'}"
-        type="{= ${view-knowledge>/validation/filterStatus} === 'all' ? 'Emphasized' : 'Default'}"
-        press=".onValidationTabSelect"
-        class="sapUiSmallMarginEnd sapUiSmallMarginBottom aymaxFilterTab">
-        <customData><core:CustomData key="tab" value="all"/></customData>
-      </Button>
     </HBox>
 
     <!-- LIST -->
     <List
       id="validationSectionList"
-      items="{path: 'validation>/ValidationItems'}"
+      items="{ path: 'knowledge>/KnowledgeItems', parameters: { $expand: 'contributors' }, filters: [{ path: 'status', operator: 'EQ', value1: 'pending' }], sorter: { path: 'createdAt', descending: true } }"
       showSeparators="None"
-      noDataText="{i18n-validation>noDataText}"
+      noDataText="{i18n-knowledge>validationNoPending}"
       class="aymaxValidationList">
       <CustomListItem class="aymaxCard sapUiSmallMarginBottom aymaxValidationItem">
         <VBox class="sapUiSmallMargin">
 
           <HBox alignItems="Center" class="sapUiSmallMarginBottom">
             <ObjectStatus
-              text="{path: 'validation>status', formatter: '.validationFormatter.formatStatusText'}"
-              state="{path: 'validation>status', formatter: '.validationFormatter.formatStatusState'}"
+              text="{i18n-knowledge>status.pending}"
+              state="Warning"
               inverted="true"
               class="aymaxBadge sapUiSmallMarginEnd"/>
-            <Text text="{validation>category}" class="aymaxTagOutline"/>
+            <Text text="{path:'knowledge>category', formatter:'.formatter.categoryLabel'}" class="aymaxTagOutline"/>
           </HBox>
 
-          <Title text="{validation>title}" level="H3" class="aymaxItemTitle sapUiTinyMarginBottom"/>
+          <Title text="{knowledge>title}" level="H3" class="aymaxItemTitle sapUiTinyMarginBottom"/>
           <HBox alignItems="Center" class="sapUiSmallMarginBottom">
             <core:Icon src="sap-icon://employee" size="0.85rem" class="sapUiTinyMarginEnd aymaxIconMuted"/>
-            <Text text="{validation>authorName}" class="aymaxMetaText sapUiTinyMarginEnd"/>
-            <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
-            <Text text="{validation>dept}" class="aymaxMetaText sapUiTinyMarginEnd"/>
+            <Text text="{knowledge>contributorsLabel}" class="aymaxMetaText sapUiTinyMarginEnd"/>
             <Text text="·" class="aymaxMetaText sapUiTinyMarginEnd"/>
             <core:Icon src="sap-icon://time" size="0.75rem" class="sapUiTinyMarginEnd aymaxIconMuted"/>
-            <Text text="{path: 'validation>createdAt', formatter: '.validationFormatter.formatCreatedAt'}" class="aymaxMetaText"/>
+            <Text text="{path:'knowledge>createdAt', targetType:'any', formatter:'.formatter.relativeDateTime'}" class="aymaxMetaText"/>
           </HBox>
-          <Text text="{validation>excerpt}" class="aymaxExcerpt sapUiMediumMarginBottom" wrapping="true"/>
+          <Text text="{knowledge>excerpt}" class="aymaxExcerpt sapUiMediumMarginBottom" wrapping="true"/>
 
-          <!-- Actions (only if pending) -->
-          <HBox
-            visible="{= ${validation>status} === 'pending'}"
-            justifyContent="End"
-            alignItems="Center"
-            class="aymaxItemActions">
-            <Button text="{i18n-validation>btnReject}" type="Reject" icon="sap-icon://decline" press=".onValidationReject" class="sapUiSmallMarginEnd"/>
-            <Button text="{i18n-validation>btnModify}" type="Default" icon="sap-icon://edit" press=".onValidationModify" class="sapUiSmallMarginEnd"/>
-            <Button text="{i18n-validation>btnApprove}" type="Accept" icon="sap-icon://accept" press=".onValidationApprove"/>
+          <HBox justifyContent="End" alignItems="Center" class="aymaxItemActions">
+            <Button text="{i18n-knowledge>rejectItem}" type="Reject" icon="sap-icon://decline" press=".onValidationReject" class="sapUiSmallMarginEnd"/>
+            <Button text="{i18n-knowledge>validationOpenItem}" type="Default" icon="sap-icon://display" press=".onItemPress" class="sapUiSmallMarginEnd"/>
+            <Button text="{i18n-knowledge>approveItem}" type="Accept" icon="sap-icon://accept" press=".onValidationApprove"/>
           </HBox>
 
         </VBox>

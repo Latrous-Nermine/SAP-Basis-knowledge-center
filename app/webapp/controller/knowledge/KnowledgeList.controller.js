@@ -133,8 +133,7 @@ sap.ui.define([
       // reason Topic's own picker never raced in the first place.
       this._loadAllTags();
       this.getViewModel().setProperty("/validation", {
-        filterStatus: "pending",
-        counts: { pending: 0, approved: 0, rejected: 0, all: 0 },
+        counts: { pending: 0 },
         // Collapsed by default - the section itself (and the list inside
         // it) only renders once the Manager presses the toggle button,
         // explicit request (2026-08). Counts still load eagerly below
@@ -165,7 +164,6 @@ sap.ui.define([
         this.getViewModel().setProperty("/isManager", bIsManager);
         if (bIsManager) {
           this._loadValidationCounts();
-          this._applyValidationFilter("pending");
         }
       }.bind(this)).catch(function() {
         this.getViewModel().setProperty("/isManager", false);
@@ -705,99 +703,54 @@ sap.ui.define([
     },
 
     // ============================================================
-    // "Contenu à valider" (2026-08, Manager only) - mirrors
-    // Validation.controller.js's own logic exactly (same backend calls,
-    // same ValidationService), scoped under its own /validation view-model
-    // path and onValidationXxx method names so nothing here collides with
-    // this controller's own existing state/handlers.
+    // "Contenu à valider" (Manager only) - the Knowledge Center's own
+    // pending items (KnowledgeItems, status = 'pending'), i.e. what an
+    // Employee sent through "Soumettre pour validation". This section
+    // used to list Lot 3's separate ValidationItems queue, which
+    // submitForReview never writes to, so a submitted contribution never
+    // appeared here. Decisions go through the same approveItem/rejectItem
+    // actions as KnowledgeDetail (@requires: 'Manager', workflow
+    // transition check, reputation, notification - all server-side).
     // ============================================================
 
     _loadValidationCounts: function() {
       var oViewModel = this.getViewModel();
-      this.oValidationModel.bindContext("/getValidationCounts()").requestObject().then(function(oData) {
-        oViewModel.setProperty("/validation/counts", {
-          pending: oData.pending || 0,
-          approved: oData.approved || 0,
-          rejected: oData.rejected || 0,
-          all: oData.total || 0
-        });
+      var oBinding = this.oModel.bindList("/KnowledgeItems", null, [],
+        [new Filter("status", FilterOperator.EQ, "pending")], { $count: true });
+      oBinding.requestContexts(0, 1).then(function() {
+        oViewModel.setProperty("/validation/counts/pending", oBinding.getCount() || 0);
       }).catch(function(oError) {
-        console.error("Error loading ValidationCounts:", oError);
+        console.error("Error loading pending count:", oError);
       });
     },
 
-    _applyValidationFilter: function(sKey) {
+    _refreshValidationSection: function() {
       var oList = this.byId("validationSectionList");
-      if (!oList) return;
-      var oBinding = oList.getBinding("items");
-      if (!oBinding) return;
-
-      var aFilters = sKey === "all" ? [] : [new Filter("status", FilterOperator.EQ, sKey)];
-      oBinding.filter(aFilters);
+      var oBinding = oList && oList.getBinding("items");
+      if (oBinding) oBinding.refresh();
+      this._loadValidationCounts();
     },
 
-    onValidationTabSelect: function(oEvent) {
-      var sKey = oEvent.getSource().data("tab");
-      this.getViewModel().setProperty("/validation/filterStatus", sKey);
-      this._applyValidationFilter(sKey);
-    },
-
-    _changeValidationStatus: function(oContext, sNewStatus) {
-      oContext.setProperty("status", sNewStatus);
-      this.oValidationModel.submitBatch("$auto").then(function() {
-        MessageToast.show(this._oValidationBundle.getText("statusUpdated", [validationFormatter.formatStatusText(sNewStatus)]));
+    _decideValidation: function(oEvent, sAction, sSuccessKey, sErrorKey) {
+      var sItemID = oEvent.getSource().getBindingContext("knowledge").getProperty("ID");
+      var oActionContext = this.bindAction(this.oModel, "/" + sAction, { itemID: sItemID });
+      oActionContext.execute().then(function() {
+        MessageToast.show(this.getText(sSuccessKey));
+        // Refresh every Knowledge list on the page: the item leaves the
+        // pending queue and, if approved, joins the community lists.
+        this.oModel.refresh();
         this._loadValidationCounts();
-        this._applyValidationFilter(this.getViewModel().getProperty("/validation/filterStatus"));
       }.bind(this)).catch(function(oError) {
-        MessageBox.error((oError && oError.message) || this._oValidationBundle.getText("errorUpdateStatus"));
+        MessageBox.error((oError && oError.message) || this.getText(sErrorKey));
       }.bind(this));
     },
 
     onValidationApprove: function(oEvent) {
-      this._changeValidationStatus(oEvent.getSource().getBindingContext("validation"), "approved");
+      this._decideValidation(oEvent, "approveItem", "approveItemSuccess", "errorApproveItem");
     },
 
     onValidationReject: function(oEvent) {
-      this._changeValidationStatus(oEvent.getSource().getBindingContext("validation"), "rejected");
-    },
-
-    // Reuses the standalone Validation page's own dialog fragment as-is
-    // (aymax.hub.view.validation.EditContentDialog) - it only references
-    // the shared i18n-validation/validation models, nothing specific to
-    // that page, so there's nothing to duplicate here.
-    onValidationModify: function(oEvent) {
-      var oContext = oEvent.getSource().getBindingContext("validation");
-      if (!this._pValidationEditDialog) {
-        this._pValidationEditDialog = Fragment.load({
-          id: this.getView().getId(),
-          name: "aymax.hub.view.validation.EditContentDialog",
-          controller: this
-        }).then(function(oDialog) {
-          this.getView().addDependent(oDialog);
-          return oDialog;
-        }.bind(this));
-      }
-      this._pValidationEditDialog.then(function(oDialog) {
-        oDialog.setBindingContext(oContext, "validation");
-        oDialog.open();
-      });
-    },
-
-    // Method names fixed by EditContentDialog.fragment.xml's own
-    // press=".onCancelModify"/".onConfirmModify" - same names the
-    // standalone Validation controller uses for the same fragment.
-    onCancelModify: function() {
-      this.oValidationModel.resetChanges();
-      this._pValidationEditDialog.then(function(oDialog) { oDialog.close(); });
-    },
-
-    onConfirmModify: function() {
-      this.oValidationModel.submitBatch("$auto").then(function() {
-        MessageToast.show(this._oValidationBundle.getText("contentUpdated"));
-        this._pValidationEditDialog.then(function(oDialog) { oDialog.close(); });
-      }.bind(this)).catch(function(oError) {
-        MessageBox.error((oError && oError.message) || this._oValidationBundle.getText("errorUpdateContent"));
-      }.bind(this));
+      this._decideValidation(oEvent, "rejectItem", "rejectItemSuccess", "errorRejectItem");
     }
   });
 });
