@@ -97,7 +97,7 @@ In development, authentication is mocked. Five test users are defined in `packag
 |---|---|---|
 | Lot 1 — Collaboration | Feed, rooms, topics, tags, questions and answers | Nermine Latrous |
 | Lot 2 — Knowledge | Knowledge center, search, experts, profiles, notifications, dashboards | Ons Chehab |
-| Lot 3 — Company features | HR, rewards, certifications, deliverables, reports, validation, administration | Riadh |
+| Lot 3 — Company features | HR, rewards, certifications, deliverables, reports, validation, administration | Riadh Tarhouni |
 
 Ons Chehab also set up the role-based security and integrated the three modules into a single application.
 
